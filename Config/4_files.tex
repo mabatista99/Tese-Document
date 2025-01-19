@@ -1,0 +1,47 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Config/4_files.tex
+%% NOVA thesis configuration file
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE Config/4_files.tex}%
+%%------------------------------------------------------------
+% BibTeX bibliography files and customization.
+\ntaddfile{bib}{bibliography.bib}
+
+%%------------------------------------------------------------
+% \ntaddfile{dedicatory}{dedicatory}
+
+%%------------------------------------------------------------
+\ntaddfile{acknowledgements}{acknowledgements}
+
+%%------------------------------------------------------------
+\ntaddfile{quote}{quote}
+
+%%------------------------------------------------------------
+% Abstract files in multiple languages
+\ntaddfile{abstract}[pt]{abstract-pt}  % Abstract in Portuguese
+\ntaddfile{abstract}[en]{abstract-en}  % Abstract in English
+
+%%------------------------------------------------------------
+% Lists of Glossary, Acronyms and Symbols
+%   syntax: \ntaddfile{glossaries}[list-type]{filename}
+\ntaddfile{glossaries}[glossary]{glossary}
+\ntaddfile{glossaries}[acronym]{acronyms}
+\ntaddfile{glossaries}[symbols]{symbols}
+
+%%------------------------------------------------------------
+% Main text - document chapters
+\ntaddfile{chapter}{chapter1}
+\ntaddfile{chapter}{chapter2}
+\ntaddfile{chapter}{chapter3}
+
+%%------------------------------------------------------------
+% Text appendices
+% \ntaddfile{appendix}{appendix1}
+% \ntaddfile{appendix}{appendix2}
+
+%%------------------------------------------------------------
+% Text annexes
+% \ntaddfile{annex}{annex1}
+

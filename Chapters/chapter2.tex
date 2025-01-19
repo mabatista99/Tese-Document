@@ -1,0 +1,257 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% chapter2.tex
+%% NOVA thesis document file
+%%
+%% Chapter with the template manual
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE chapter2.tex}%
+
+\chapter{State-Of-The-Art}
+\label{cha:State-Of-The-Art}
+
+This chapter provides a view of the state-of-the-art of web development as well
+as event management platforms and connection with iot devices.
+Firstly, it presents an overview on how the web development is structured and
+explains the concept of software architecture and some of its patterns. Then the
+main two parts of web development, the frontend (both for web and mobile) and
+backend, are discussed along with its frameworks.
+
+In a second part, some event management platform solutions will be reviewed
+along with its technologies.
+
+Finally we will look on how we can connect a IoT device with our platform and
+how its being already done in other solutions.
+
+\section{Software Architecture Patterns}
+
+\subsection{Monolithic Architecture}
+A monolithic architecture is a software design pattern in which all parts ---
+such as the \gls{UI}, business logic and data access layers --- are tightly
+coupled and deployed together as a single unit\cite{7436659,10031648}. This
+was the most popular approach for decades due to how simple it is, specially in
+the early stages of software development\cite{Garlan2018}.
+
+\subsubsection{Advantages}
+Despite some problems, monoliths have some advantages on the other architectures,
+specially for smaller applications or early-stage development:
+\begin{itemize}
+	\item \textbf{Simplicity}
+
+	      The monolithic architecture is probably the simplest way of structuring a
+	      project and monolithic solutions are easier to design, develop and deploy
+	      than other solutions.
+	      Having the code in a single codebase removes the need for complex
+	      integration, making it more attractive for smaller teams with limited
+	      resources or expertise.
+	\item \textbf{Efficiency}
+
+	      Since there is a single application in monolithic systems, there are no
+	      services integrations and developers can debug without dealing with
+	      inter-service communications. Testing is also easier because all of the
+	      components are located in the same codebase and run in the same environment.
+	\item \textbf{Straightforward Deployment}
+
+	      Deploying a monolithic application involves managing a single artifact. This
+	      reduces operational complexity compared to systems where deployment
+	      pipelines must coordinate multiple services.
+\end{itemize}
+\subsubsection{Challenges}
+For bigger architectures, this solution might not be adequate as several
+challenges appear as applications grow in size and complexity.
+\begin{itemize}
+	\item \textbf{Scalability Constraints}
+
+	      As mentioned above, Scaling a monolithic system can be much harder when
+	      compared with other modular architectures. Let's say that hipotetically,
+	      an application is composed of three modules. One is in constant
+	      overload and needs to be scaled with urgency, the second has some peaks of
+	      usage but doesn't require to be scaled, and the third is barely used and
+	      could be ajusted to use less resources. In an architecture where this
+	      modules are separated for example in three services, scaling publishers
+	      efficient and we can scale up the first service and scale down the third.
+	      However, in a monolith, we can only scale everything as one, meaning there
+	      can be modules that force the scaling of unrelated components unnecesarily.
+	      In the example above, we would need to scale the whole system, including
+	      the third module that is already wasting more resources that it needs.
+	\item \textbf{Maintenance}
+
+	      Monoliths are prone to tech debt accumulation over time. The lack
+	      of modularity present in these systems frequently results in what is known as a
+	      "big ball of mud", meaning that dependencies between the system's elements are
+	      unclear, slowing the development process and making maintanance an
+	      hard and continuous process\cite{7333476}.
+
+	\item \textbf{Deployment Risk}
+
+	      Every change in the codebase requires all the application to be redeployed,
+	      increasing the risk of downtime and complicating release cycles. If an error
+	      is deployed to the public environment, it can cause the whole system to go
+	      down while in modular systems, if a problem is deployed in one of the
+	      modules, the others are independent and can still run even if the one with
+	      the problem is down, meaning that only part of the system is unavailable.
+
+	\item \textbf{Lack of Flexibility}
+
+	      Since all of the application's logic resides in a single codebase, it will
+	      likely be enforced that everything should be developed using an uniform
+	      technology stack. In architectures that have the application divided in
+	      modules is possible for each module to have its own technology stack,
+	      which can facilitate the development of some specific features that are
+	      easier to do with specific technologies.
+\end{itemize}
+
+\subsection{Client-Server Architecture}
+The client-server architecture is a software design paradigm that devides the
+system into two types, the clients and the servers. The clients are service
+requesters responsible for initiating requests tipically as consequence of user
+interaction, and can be for example a website or a mobile app. On the other
+side, servers process that requests, access the data if needed and return the
+adequate responses. This separation of concerns allows one server to provide
+consistent data to multiple clients.
+Examples include email systems, where clients(e.g. email software) interact with
+a centralized server that is responsible for sending and storing the emails.
+
+\subsubsection{Advantages}
+\subsubsection{Challenges}
+
+
+\section{Backend Development}
+Managing the underlying logic, data storage, and communication processes that
+allow the web application to operate is the responsibility of the backend.
+The backend operates behind the scenes managing data, processes requests, and
+responding to them, while the frontend gives users a visual and interactive
+experience.
+
+\subsection{Backend Frameworks}
+\subsubsection{Nestjs}
+Nest JS is a node.js framework\cite{nestJS}
+\subsubsection{ExpressJS}
+\subsubsection{JAVA Spring}
+
+\subsection{Receiving IoT Events}
+
+\subsection{Processing \& Routing Events}
+
+\subsection{Security \& Authentication}
+
+
+\section{APIs \& Real-Time Data Exposure}
+The frontend and backend are two separate parts of the web application and are
+usually running on two different servers. In order for them to communicate with
+each other an Application Programming Interface (API) is needed. The API is the
+part of the backend that its exposed to the outside and its the gateway to all
+of the backend logic.
+\subsection{REST vs GraphQL}
+\subsection{WebSockets \& Server-Sent Events(SSE)}
+\subsection{API Gateway \& Load Balancing}
+
+\section{Database \& Storage}
+\subsection{SQL}
+\subsection{noSQL}
+\subsection{Time-Series Databases}
+\subsection{Data Caching}
+
+\section{Frontend Development}
+The frontend is the part of the web application that runs in the user's
+browser and it's the part that the user can see and interact with.
+It is divided into three parts: The markup, the styling and the scripting.
+The markup defines the structure of the website, the styling is the part that
+defines all of the styling of the page including colors fonts and empty spaces
+(margins/paddings) and the scripting is the part that enables the interaction
+of the user with the website, including buttons functionalities, form handling
+etc..
+It can be developed in many languages but all of them are in the end transpiled
+to the languages that the browsers can understand which are: Hypertext markup
+Language (HTML) for markup, Cascading Stylesheets (CSS) for styling and
+Javascript (JS) for scripting.
+With the advance of technology many libraries were created to facilitate the
+development experience. In the following sections we will address the most
+popular ones.
+
+\subsection{Frameworks}
+
+\subsubsection{ReactJS}
+React JS is an open-source javascript library created by Facebook in 2013 that
+simplifies the development of complex and dynamic user interfaces. Its the most widely
+used library of its kind.
+React applications are build using components. Components are reusable pieces of
+code that represent a part of the UI, e.g. a button, a form or an entire section.
+Each component has its own logic and styling and its declarative i.e. the
+component defines what the UI should look like for a given state.
+Components can be nested inside other components to build more complex UIs.
+The components are developed using JavaScript for scripting and JavScript XML(JSX),
+which is similar to HTML for markup.
+
+A component can be written in two ways and therefore be of two types:
+\begin{itemize}
+	\item Functional component
+	\item Class component
+\end{itemize}
+
+React uses a virtual Document Object Model (DOM) to optimize performance. A virtual
+DOM is a lightweight in-memory representation of the real DOM, which is a
+representation of the HTML structure in a tree-like structure. When a change
+occur, it updates the virtual DOM first, then calculates the minimal changes needed
+and then apply these changes to the real DOM\cite{bawane2022review}.
+
+\subsubsection{NextJS}
+NextJS is a full-stack framework built on top of reactJS by vercel. This means
+that NextJS can be used to develop both the frontend and backend parts of the
+web application. Besides that, NextJS has several more advantages on ReactJS
+adding features such as file-system based routing, server-side rendering (SSR)
+and automatic code splitting.
+
+One of Reactjs problems is that it doesn\'t have built-in support for routing,
+meaning that the page routing needed to be handled using third party libraries
+like react-router-dom. NextJS solves this issue by having a file-system based
+routing. This works by automatically mapping every page file (a JSX/JS/TSX/TS
+file named page) to an URL. This url is defined by the path of that file
+relative to the app folder, which means that a file in app/report/test/page.tsx
+is mapped to the endpoint report/test.
+
+Another improvement of NextJS relative to ReactJS is that it allows SSR. In
+Client Side Rendering, used by react, the server sends to the server a small
+html document and a link to the javascript which the client needs to download
+and run. On the other side, with SSR, the server sends to the browser the
+full HTML document which it just needs to render\cite{Salanke_A.R_G.S_Dalali_2022}.
+
+Apart from the clear performance increase, the SSR also improves the Search
+Engine Optimization. This happens because the search engine scans the static
+html page, and doesn\'t have into account the dynamic html created after by
+the script. SEO can also be improved in another way, through the website
+metadata (title, description, keyworks etc..) which NextJS also makes easier to
+manage because of its ready-to-use Head component.
+
+Another feature that improves the performance of projects using this framework
+is the automatic code splitting. The automatic code splitting consists in
+the separation of the javascript bundle into small parts that can be loaded
+separately. This reduces significantly the page load time, by loading only the
+parts that are needed to display the requested page.
+
+\subsubsection{Angular}
+Angular is a typescript based framework used for building user interfaces.
+
+\subsubsection{VueJS}
+
+\subsubsection{NuxtJS}
+
+\subsection{Real-time Event Handling}
+
+\subsection{Ui for IoT Event Monitoring}
+
+\subsection{State Management}
+
+\section{Mobile Development}
+
+\subsection{Native}
+\subsubsection{Android}
+\subsubsection{Swift}
+
+\subsection{Cross-Platform}
+\subsubsection{React Native}
+\subsubsection{Flutter}
+
+\subsection{Offline Mode \& Sync Strategies}
+
