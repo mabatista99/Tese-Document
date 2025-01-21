@@ -222,7 +222,105 @@ adopting tools like message brokers or event streaming platforms.
 
 
 \subsection{Event-Driven Architecture}
-\subsection{Applications and Use-Cases}
+The event-driven architecture is a system design patter where the components
+are loosed coupled, communicating by events. Events are messages that are sent
+by a system in reaction to a change in its state. This communication is made
+between an event producer, and an event subscriber. Event Producers generate the
+events and send the messages to a broker, Event Subscribers subscribe to
+events and react to them. Both these parts are agnostic to each other, meaning
+that the producers send the events not knowing who will receive them and the
+subscribers receive the events not knowing who sent them. This is possible
+because of the broker. Event Brokers, like Apache Kafka or RabbitMQ are
+responsible for routing the events from the producers to the subscribers through
+features like message queuing and topic-based routing.
+
+\subsubsection{Advantages}
+\begin{itemize}
+	\item \textbf{Loosed Coupling}
+
+	      The communication is done indirectly, reducing the interdependencies which
+	      are a significant point of failure.
+
+	\item \textbf{Scaling}
+
+	      Since the communication can be done asynchronously and through event brokers,
+	      the events don't need to be processed in real-time and are instead added to
+	      a queue allowing these systems to support an high volume of events. This
+	      reduces the needing for scaling, which is already an easier process because
+	      of the modularity present in this architecture.
+
+	\item \textbf{Fault Tolerance}
+
+	      Components of an event-driven architecture operate independently, meaning
+	      that if a component fails the system can continue functioning. In this
+	      case, due to the existence of an event broker, the messages are stored in
+	      this intermediary until they are processed, reducing the probability of
+	      loosing data.
+
+	\item \textbf{Flexibility in adding features}
+
+	      By decoupling producers from subscribers, a new consumer can be added
+	      and subscribe to existing events. This doesn't require any change in the
+	      producer in order to work, which facilitates the extension of the
+	      system.
+
+	\item \textbf{Real-Time capabilities}
+
+	      Despite what was said above that the events don't need to be processed
+	      in real-time, they can be configured to process and respond to events
+	      as they occur, making it ideal for applications which require real-time
+	      responsiveness.
+\end{itemize}
+
+\subsubsection{Challenges}
+\begin{itemize}
+	\item \textbf{Event Ordering and Duplication}
+
+	      Making sure that events are queued in the correct order and that they are
+	      processed only once can be a difficult task because of the concurrency
+	      that is characteristic of these systems.
+
+	\item \textbf{Debugging}
+
+	      The assynchronous communication complicates the debugging process.
+	      Observability tool are essencial to diagnose problems.
+
+	\item \textbf{Infrastructure Overhead}
+
+	      The process of setting up and maintaining the event brokers, monitoring
+	      systems introduce complexity on the operational side.
+\end{itemize}
+
+\subsection{Applications and Use Cases}
+Every architecture has its own advantages and disadvantages, but they all have
+their place in the software industry.
+
+Monolithic systems are a great choice for simpler and smaller applications.
+Startups and small businesses usually start by implementing this solution as
+its infrastructure is very simple, and it's relatively fast to have an initial
+functional product. This architecture is often used as a starting point, and
+eventually, as the application grows, it's migrated to more complex architectures.
+Examples of real-world applications are basic e-commerce platforms, content
+management systems and small desktop applications.
+
+The client-side architecture is popular among web applications. Most of the
+websites use this architecture where browsers act as clients that interact with
+centralized web servers. Another wide applicatios for this structures are email
+systems and database applications. In email systems, the servers communicate
+with clients like Microsoft Outlook or Gmail using protocols like IMAP or SMTP.
+In database applications, clients access centralized database servers using
+SQL queries for data retrieval and manipulation.
+
+Microservices architectures have become the go-to solution for more complex
+systems. It's widely used in bigger e-commerce applications where the application
+is divided into several microservices like user authentication, payment processing,
+shipping processing, etc. Streaming platforms like Netflix also tend to use this
+solution, dividing the application into services for content recommendation, user
+preferences, subscription handling, etc.
+
+Lastly, the event-driven architecture shines in products where real-time
+responsiveness is crucial. It's widely used in Internet of Things systems,
+where IoT devices send events to be processed in real-time.
 
 \section{Backend Development}
 Managing the underlying logic, data storage, and communication processes that
