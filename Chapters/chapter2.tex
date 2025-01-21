@@ -24,7 +24,7 @@ along with its technologies.
 Finally we will look on how we can connect a IoT device with our platform and
 how its being already done in other solutions.
 
-\section{Software Architecture Patterns}
+\section{System Architecture Patterns}
 
 \subsection{Monolithic Architecture}
 A monolithic architecture is a software design pattern in which all parts ---
@@ -114,8 +114,115 @@ Examples include email systems, where clients(e.g. email software) interact with
 a centralized server that is responsible for sending and storing the emails.
 
 \subsubsection{Advantages}
-\subsubsection{Challenges}
+The client-side architecture has several benefits:
+\begin{itemize}
+	\item \textbf{Modularity}
 
+	      A separation between clients and servers allows for independent development,
+	      testing and maintenance, improving flexibility in application design.
+
+	\item \textbf{Data Consistency}
+
+	      Multiple clients can access a single server, and since this server is the
+	      only thing managing the resources it ensures that the data received by the
+	      clients is consistent between them. This also ensures that clients can access
+	      the most recent and accurate information.
+
+	\item \textbf{Scalability}
+
+	      Horizontal scaling, where additional servers can be added, altought limited
+	      by replication of the entire server, enables the system to handle increased
+	      demand.
+\end{itemize}
+\subsubsection{Challenges}
+The Client-Server Architecture has also its disadvantages:
+\begin{itemize}
+	\item \textbf{Single Point of Failure}
+
+	      All the resources are managed in a centralized server, which means that if
+	      the server fails, all connected clients are affected. Despite this being a
+	      serious concern, there are techniques like load balancing that help
+	      mitigating this risk.
+
+	\item \textbf{Scalability Constraints}
+
+	      Although scalability was mentioned above as an advantage, the scalability
+	      of client-server achitectures is very limited. Even with the decoupling of
+	      clients from servers, horizontal scaling can only happen by deploying the
+	      same server to several machines and vertical scaling can only happen by
+	      increasing the hardware for the whole server. This is limited in modularity
+	      and it also increases the complexity by adding the necessity of having
+	      load balancers and data synchronization across servers.
+
+	\item \textbf{Latency}
+
+	      Communication between clients and servers over a network introduce delays,
+	      which can be a problem for applications that require real-time
+	      responses.
+
+\end{itemize}
+
+\subsection{Microservices Architecture}
+The microservices architecture is a system design pattern that divides an
+application into several other independently deployed applications called
+microservices.
+In this solution, the modules communicate between each other through
+synchronous communications using APIs based on technologies like like
+\gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
+adopting tools like message brokers or event streaming platforms.
+
+\subsubsection{Advantages}
+
+\begin{itemize}
+	\item \textbf{Scalability}
+
+	      Microservices are independent applications with its own codebase, deployed
+	      separately and in most cases with their individual database. For this reason
+	      each service can be scaled independently based on demand. A service with
+	      high demand like for example user authentication can scale separately from
+	      services with less workload.
+
+	\item \textbf{Fault Isolation}
+
+	      Another benefit of having the logic separated into services is that when
+	      a failure occurs in a service, the others will unlikely be affected. For
+	      example, when a store website has a problem with its payment service, the
+	      users might not be able to pay but they can still browse the website and
+	      do other things like managing the profile or adding products to the cart.
+
+	\item \textbf{Technology Diversity}
+
+	      Each service is an independent application, which means that each service
+	      can be developed using different technologies. This allows the service to
+	      be developed using technologies that are more suitable for its own purpose.
+
+\end{itemize}
+
+\subsubsection{Challenges}
+\begin{itemize}
+	\item \textbf{Complexity}
+
+	      Managing multiple services is much more complex than managing a single
+	      application. Deployment and maintanance efforts are multiplied, which can
+	      lead to operational overhead. The heavy use of monitoring tools can be
+	      helpful, or even required in this kind of solutions.
+
+	\item \textbf{Dependency Management}
+
+	      In these architectures, services often depend on each other, and despite
+	      fault isolation being pointed as an advantage, if the dependencies are not
+	      properly managed a failure can lead to successive failures on other modules.
+	      When there are two services that need to be change in order to add or update
+	      a feature, the first service to be deployed need to be compatible with the
+	      previous version of the other, otherwise there will be problems while they
+	      are not both properly deployed.
+	      Observability tools like tracing and logging are essencial to prevent and
+	      diagnose this king of issues.
+\end{itemize}
+
+
+\subsection{Event-Driven Architecture}
+\subsection{Applications and Use-Cases}
 
 \section{Backend Development}
 Managing the underlying logic, data storage, and communication processes that
