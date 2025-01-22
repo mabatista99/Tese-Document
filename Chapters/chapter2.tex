@@ -319,21 +319,37 @@ solution, dividing the application into services for content recommendation, use
 preferences, subscription handling, etc.
 
 Lastly, the event-driven architecture shines in products where real-time
-responsiveness is crucial. It's widely used in Internet of Things systems,
-where IoT devices send events to be processed in real-time.
+responsiveness is crucial. It's widely used in Internet of Things systems,in
+applications like industrial monitoring, home automation, and environmental
+sensing where IoT devices send events to be processed in real-time.
+
+It's also common to mix different architectures in the same system using
+hybrid solutions. E-commerce platforms, for example, where referenced above in
+multiple architectures as these platforms can use microsservices for processing
+payments or user authentication and event-driven architecture to process orders.
 
 \section{Backend Development}
 Managing the underlying logic, data storage, and communication processes that
 allow the web application to operate is the responsibility of the backend.
 The backend operates behind the scenes managing data, processes requests, and
 responding to them, while the frontend gives users a visual and interactive
-experience.
+experience. E-commerce platforms can also use event-driven architecture for
+features like processing orders or updating inventory.
 
 \subsection{Backend Frameworks}
+\subsubsection{Express}
+ExpressJS is a minimalist and flexible web application framework for Node.js,
+designed to simplify server-side development. It's characterized by being
+fast and unopinionated.
 \subsubsection{Nestjs}
 Nest JS is a node.js framework\cite{nestJS}
-\subsubsection{ExpressJS}
 \subsubsection{JAVA Spring}
+
+\subsubsection{Flask}
+
+\subsubsection{ASP.NET Core}
+
+\subsubsection{Laravel}
 
 \subsection{Receiving IoT Events}
 
@@ -401,6 +417,13 @@ representation of the HTML structure in a tree-like structure. When a change
 occur, it updates the virtual DOM first, then calculates the minimal changes needed
 and then apply these changes to the real DOM\cite{bawane2022review}.
 
+
+\subsubsection{Angular}
+Angular is a typescript based framework used for building user interfaces.
+
+\subsubsection{VueJS}
+
+\subsection{Fullstack Frameworks}
 \subsubsection{NextJS}
 NextJS is a full-stack framework built on top of reactJS by vercel. This means
 that NextJS can be used to develop both the frontend and backend parts of the
@@ -435,13 +458,8 @@ the separation of the javascript bundle into small parts that can be loaded
 separately. This reduces significantly the page load time, by loading only the
 parts that are needed to display the requested page.
 
-\subsubsection{Angular}
-Angular is a typescript based framework used for building user interfaces.
-
-\subsubsection{VueJS}
-
 \subsubsection{NuxtJS}
-
+\subsubsection{Django}
 \subsection{Real-time Event Handling}
 
 \subsection{Ui for IoT Event Monitoring}
