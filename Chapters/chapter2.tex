@@ -338,9 +338,30 @@ features like processing orders or updating inventory.
 
 \subsection{Backend Frameworks}
 \subsubsection{Express}
-ExpressJS is a minimalist and flexible web application framework for Node.js,
+Express is a minimalist and lightweight web application framework for Node.js,
 designed to simplify server-side development. It's characterized by being
-fast and unopinionated.
+fast and unopinionated, which means that it is flexible in the way you implement
+things.
+In Express, it's possible to stack functions (middlewares) to handle \gls{HTTP}
+requests sequentially, allowing custom logic to be easily integrated.
+Routing using this framework is straightforward. It's very simple to define
+paths and associate handlers. On top of that, Express allows the grouping of
+routes into distinct modules, improving code organization.
+Although this framework is mostly seen as a backend solution, it supports
+integration with various template engines like EJS, Pug, and Handlebars,
+providing a way to render dynamic HTML pages.
+Despite having a simple and clean approach to the development of RESTful APIs,
+this framework lacks built-in features. Express doen't provide features like
+dependency injection, user authentication, database integration or input
+validation which all need to be implemented using third-party libraries.
+By being an unopinionated solution, it lacks structure, increasing the effort
+of the developers on manually configuring middlewares, and maintaing the code
+organized, specially for more complex projects.
+Express is a popular framework, being adopted by many developers. Resources
+about this technology, like documentation or tutorials are easy to find
+everywhere, due to its vast community, which might be an advantage for
+developers less experienced.
+
 \subsubsection{Nestjs}
 Nest JS is a node.js framework\cite{nestJS}
 \subsubsection{JAVA Spring}
