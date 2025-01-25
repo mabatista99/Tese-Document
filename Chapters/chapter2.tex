@@ -363,13 +363,123 @@ everywhere, due to its vast community, which might be an advantage for
 developers less experienced.
 
 \subsubsection{Nestjs}
-Nest JS is a node.js framework\cite{nestJS}
-\subsubsection{JAVA Spring}
+Nest JS is an opinionated Node.js framework with a highly structured
+development environment. It has a very rich environment providing many built-in
+features.
+
+With Typescript support, NestJS ensures strong typing, reducing the risk of
+having runtime errors.
+
+This framework simplifies the process of building applications with
+microservices or event-driven architectures by providing native support for
+communication technologies like GraphQL, and websockets, and easy configuration
+for technologies like RabitMQ, MQTT, Kafka and \gls{gRPC}.
+
+NestJS integrates a powerful dependency injection system, which, apart from the
+increase in performance, also helps the developers writing clean code, testing,
+and maintaining it.
+
+Applications in Nestjs are divided into
+self-contained modules, making large applications easier to scale and maintain.
+
+On the other side, due to the structured and opinionated approach, the learning
+curve might be steeper than other simple solutions like Express.
+It has also the disadvantage of being a heavier framework, slightly loosing
+performance. This performance overhead is usually imperceptible in most
+applications.
+
+Due to its structured approach, it can be a great choice for more complex
+applications, specially applications with microservices or event-driven
+architectures.
+\subsubsection{Java Spring}
+Spring is a the most popular framework for building complex and robust
+applications using Java. It's a great solution for developing scalable and secure
+applications. It's one of the most complete backend frameworks having features
+like dependency injection, and extensions for developing REST APIs and
+microservices.
+
+A popular extension for Spring is called Spring Boot and its job is to
+simplify configuration and deployment. It provides opinionated defaults,
+reducing boilerplate code and improving development speed.
+
+Another popular extensions include Spring MVC for building RESTful APIs, Spring
+Cloud for building microservices and Spring Security for implemenenting
+security features like authentication and authorization.
+
+Spring also includes suport for testing tools like JUnit and Mockito.
+
+Applications developed in spring are easily scalable due to Spring's modular
+design.
+It's a very flexible solution handling every type of architectures, from
+monoliths to microservices.
+
+On the other side, just like NestJS, Spring has a steeper learning curve when
+compared to more simple and straightforward solutions. Learging concepts like
+dependency injection or Inversion of Control can be overwhelming for less
+experienced developers.
+On top of that, configuring Spring is a complex task that requires significant
+boilerplade code and XML configuration. This effort can be reduced with Spring
+Boot.
+Another downside of this framework, is that it's an heavy framework and
+requires higher resources to run when compared with other lightweight solutions.
 
 \subsubsection{Flask}
+Flask is a simple, lightweight and flexible framework for Python. It's a
+minimalist framework, providing only the essencial features needed for
+web development, leaving the more complex ones for extensions. It has the basic
+features like a straightforward routing process, request handling and Jinja2,
+a built-in template engine. Apart from this essencial structure, Flask has a
+rich ecossystem of extensions, providing features like authentication,
+database access and input validation.
+
+Although the advantages are clear, there are also some challenges. Scaling
+Flask applications for high traffic usually requires additional tools like load
+balancers and asynchronous task queues. As refered above, another clear
+drawback is the lack of built-in features. Lastly, the unopinionated nature and
+flexibility provided by this framework can lead to inconsistent implementations
+of the same features across a single project, with different developers using
+different tools or patterns.
+
+Despite this possible disadvantages, Flask is still a good choice for small to
+medium sized applications.
 
 \subsubsection{ASP.NET Core}
+ASP.NET Core is an open-source framework developed and maintained by Microsoft.
+It's a high-performance framework designed for scalability and modularity and
+widely used for developing complex web applications.
 
+Contrary to all the other frameworks mentioned above, this framework can be
+used with more than one programming language. C# is the most used language, but
+the developers can also choose between F# and Visual Basic, the last with some
+limitations.
+
+This framework was designed with performance in mind, and some benchmarks show
+it as one of the fastest backend frameworks available.
+
+ASP.NET Core provides features like dependency injection and includes tools for
+authentication and authorization, supporting common protocols like JWT or OAuth.
+It also includes other security features like prevention against cross-site
+scripting attacks or data protection.
+
+Despite being mainly a backend framework, its also possible to develop the
+frontend using this framework. Features like Razor Pages, MVC or Blazor allow
+some limited frontend capabilities.
+
+ASP.NET Core implements a modular midleware pipeline that processes HTTP
+requests which developers can configure to include middlewares for tasks like
+authentication, authorization, logging and error handling.
+
+Despite all the good things about this framework, there are also some drawbacks.
+
+Like another frameworks already mentioned, developers that are new to this
+technology may also face a steep learning curve, mainly regarding advanced
+features like dependency injection and middleware pipelines.
+
+Setting up the middleware pipeline and dependency injection can be a complex
+process.
+
+This framework can be a great choice for large-scale systems, but overwhelming
+for smaller projects.
 \subsubsection{Laravel}
 
 \subsection{Receiving IoT Events}
