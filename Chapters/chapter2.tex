@@ -449,8 +449,8 @@ It's a high-performance framework designed for scalability and modularity and
 widely used for developing complex web applications.
 
 Contrary to all the other frameworks mentioned above, this framework can be
-used with more than one programming language. C# is the most used language, but
-the developers can also choose between F# and Visual Basic, the last with some
+used with more than one programming language. C\# is the most used language, but
+the developers can also choose between F\# and Visual Basic, the last with some
 limitations.
 
 This framework was designed with performance in mind, and some benchmarks show
@@ -481,23 +481,169 @@ process.
 This framework can be a great choice for large-scale systems, but overwhelming
 for smaller projects.
 \subsubsection{Laravel}
+Laravel is a popular PHP framework built using the Model-View-Controller
+pattern. It's a simple but complete framework offering a great set of built-in
+tools. It includes an Object-Relational Mapping tool called Eloquent, and a
+template engine called Blade. It also provides built-in tools for tasks like
+authentication, authorization, task scheduling, and testing. Lastly, it
+provides protection against security vulnerabilities such as SQL injection,
+cross-site scripting and cross-site request forgery attacks.
 
-\subsection{Receiving IoT Events}
+Some advantages of this framework include an increase in development
+productivity, a rich ecosystem, scalability, and security.
+By having an expressive syntax and great documentation, Laravel enhances
+development productivity, reducing development time.
+Laravel has an extensive ecosystem, having tools like Laravel Forge for server
+management, Laravel Nova for admin panel development and Laravel Vapor for
+serverless deployment.
+Applications written with this technology can usually scale both horizontally
+and vertically with ease, using tools like queues and caching, making this
+framework suitable for both small and large projects.
 
-\subsection{Processing \& Routing Events}
+On the downside, Laravel trades its completeness by performance, having a
+lower performance when compared with more lightweight frameworks.
+Altought this framework can suite large projects, it requires complex
+optimization with tools like caching, load balancing and database tuning.
+Despite being a simple framework it has a steep learning curve because of its
+specific tools and it's also a framework that's very dependent on its plugins,
+which can be a problem, since the developers can't control the quality of the
+plugins, and its issues may become issues for the application.
 
-\subsection{Security \& Authentication}
+\section{Communication}
+Communication is a very important part of any system. Deciding which protocols
+should be used or how to address security concerns are important parts of
+designing a software system. In the context of this dissertation, we need to
+address both communication between IoT systems and Backend, and Frontend and
+Backend.
 
 
-\section{APIs \& Real-Time Data Exposure}
-The frontend and backend are two separate parts of the web application and are
-usually running on two different servers. In order for them to communicate with
-each other an Application Programming Interface (API) is needed. The API is the
-part of the backend that its exposed to the outside and its the gateway to all
-of the backend logic.
-\subsection{REST vs GraphQL}
-\subsection{WebSockets \& Server-Sent Events(SSE)}
-\subsection{API Gateway \& Load Balancing}
+\subsection{Communication between IoT systems and backend}
+IoT devices collect data that is then sent to backend services to be processed
+and analyzed. This often requires low-latency and reliable communication.
+\subsubsection{Communication Protocols and Standards}
+There are many protocols that address the necessities of IoT systems:
+
+\begin{itemize}
+
+	\item \textbf{MQTT}
+
+	      MQTT is a lightweight bi-directional message protocol created in 1999.
+	      It follows the publisher-subscriber architecture decoupling the message
+	      sender from the receiver. This protocol is composed by two parts, the
+	      broker, and the clients. The broker is the system responsible for providing
+	      a safe transmittion between clients implementing authentication and
+	      authorization features and routing the messages from the publishers to
+	      the respective subscribers. The clients are every application that
+	      communicates with the broker, being either a publisher or a subscriber.
+	      It's commonly used in resource-constrained systems like IoT systems because
+	      it's easy to implement and requires low bandwidth.
+
+	\item \textbf{AMQP}
+
+	      AMQP is another message protocol just like MQTT.
+	      Despite being similar this protocols have some differences. While MQTT is
+	      focused on simplicity and low-bandwidth communication, AMQP is optimized for
+	      more complex systems, providing robust and reliable message queuing and
+	      routing introducing concepts like exchanges and queues.
+
+
+	\item \textbf{CoAP}
+
+	      CoAP is a HTTP based protocol optimized for resource-constrained
+	      environments, such as IoT systems. It's built on UDP instead of TCP,
+	      resulting in a lightweight and faster solution.
+	      This protocol follows the RESTful design providing resources under a URL
+	      using methods like GET, POST, PUT, and DELETE. Due to its similarity with
+	      HTTP, one of the most widely used protocols, CoAP can be easily integrated
+	      with HTTP using proxys.
+
+\end{itemize}
+\subsection{Communication between Frontend and Backend}
+Backend is where all the business logic relies and it's what provides frontend
+the data for it to display to the end user. An effective communication between
+these two parts is crucial for a well designed system.
+\subsubsection{APIs}
+An API is an interface of an application that defines a set of rules and
+protocols that allows other applications to communicate with it. There are many
+protocols that can be used to transmit data, some examples are:
+
+\begin{itemize}
+
+	\item \textbf{HTTP/HTTPS}
+
+	      HTTP is the most widely used protocol for APIs. It works on a
+	      request-response model, where the client sends the request and the server
+	      responds. It's a stateless, meaning each request is independent and doesn't
+	      affect the others. It's commonly used for fetching HTML, images, videos
+	      and other resources over the internet. HTTPS is the same as HTTP but the
+	      data is encrypted using TLS or SSL.
+
+
+	\item \textbf{WebSocket}
+
+	      WebSocket is a protocol designed for real-time bi-directional communication.
+	      It operates over TCP and starts as an HTTP connect and then changes to a
+	      WebSocket connection. Unlike HTTP it doesn't rely on requests, and both
+	      parts can communicate at any time.
+
+
+	\item \textbf{UDP/TCP}
+
+	      TCP is a connection-oriented protocol that ensures reliability by
+	      estabilishing a connection via a three-way handshake, retrying lost
+	      packets and ensuring data is received in the correct order.
+	      On the other side UDP is a connectionless protocol which sends data in
+	      independent packets. It doesn't guarantee delivery, order or error
+	      correction. Because of this, UDP is faster but less reliable.
+
+
+\end{itemize}
+
+These protocols define rules for communication between systems, focusing on the
+technical implementation. On a higher level are the architectural styles.
+This styles define how APIs are designed and structure and focus on
+concepts and patterns. These styles define how data is requested, sent and
+consumed.
+
+\begin{itemize}
+	\item \textbf{REST}
+
+	      RESTful APIs are APIs that follow the REST principles. This APIs'
+	      communication are stateless, meaning that each request must have all
+	      the information required for being processed.
+	      REST APIs provide resources through unique URLs associated to them, and
+	      each resource idependent meaning that it doesn't depend on other
+	      requests. The transport protocol used by these APIs is HTTP or HTTPS.
+
+	\item \textbf{GraphQL}
+
+	      GraphQL allows clients to specify exactly the data they need. This
+	      flexibility avoids over-fetching(getting more data than necessary) and
+	      under-fetching (not getting enough data in a single request).
+	      Just like RESTful APIs, GraphQL works with HTTP or HTTPS but GraphQL APIs
+	      usually expose a single HTTP endpoing for all requests.
+	      GraphQL supports subscriptions, which allows the client to receive
+	      real-time updates.
+
+	\item \textbf{gRPC}
+
+	      gRPC was developed by google and can be seen as both a protocol and an
+	      API style. With this protocol, both clients and servers can call
+	      functions on each other, just like if it was its own code.
+	      It's commonly used in microservices architectures and real-time applications.
+
+	\item \textbf{SOAP}
+
+	      Despite SOAP being defined as a protocol, it's more comparable to API
+	      types since it runs on top of transport protocols like HTTP, TCP or
+	      SMTP(email).
+	      SOAP is a lightweight protocol for exchanging structured data. It uses XML
+	      to format messages in its own standards. These strict standards ensure
+	      reliability and compatibility between systems.
+
+\end{itemize}
+\subsection{Security in Communication}
+
 
 \section{Database \& Storage}
 \subsection{SQL}
