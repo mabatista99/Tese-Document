@@ -558,6 +558,27 @@ There are many protocols that address the necessities of IoT systems:
 	      with HTTP using proxys.
 
 \end{itemize}
+
+\subsubsection{Middlewares and Gateways}
+Middleware platforms and gateways can be used in IoT-to-backend
+communication to simplify the device integration and improving scalability:
+
+\begin{itemize}
+
+	\item \textbf{Middlewares}
+
+	      Platforms like AWS IoT Core or Google Cloud IoT have features like
+	      device management, protocol translation, and analytics in real-time that
+	      can be usefull when integrating IoT systems with backend services.
+
+	\item \textbf{Gateways}
+
+	      Gateways are platforms that can aggregate, preprocess and filter data
+	      from IoT systems. This way, only usefull data is sent to the backend server,
+	      removing useless,resource consuming interactions.
+
+\end{itemize}
+
 \subsection{Communication between Frontend and Backend}
 Backend is where all the business logic relies and it's what provides frontend
 the data for it to display to the end user. An effective communication between
@@ -643,6 +664,56 @@ consumed.
 
 \end{itemize}
 \subsection{Security in Communication}
+
+Security is a crucial part of any system, it ensures the integrity of both
+the data and the system. When projecting the security in a system some
+aspects need to be addressed:
+
+\begin{itemize}
+
+	\item \textbf{Authentication}
+
+	      It's important that the component that does the request identifies itself
+	      in a way that the other part can authenticate.
+	      In the case of IoT to backend communication, IoT devices must authenticate
+	      using approachs like token-based or certificate-based authentication.
+
+	      In frontend to backend communication the most common approachs to
+	      authentication are sessions and token-based authentication using JWT.
+
+	\item \textbf{Data Encryption}
+
+	      The data can be encrypted during transmission with protocols like TLS/SSL.
+	      These protocols ensure that data is only readable by the intended parts.
+	      For frontend-backend communication, this can be achieved using the HTTPS
+	      protocol.
+
+	      For more sensitive applications, end-to-end ecryption can be used.
+
+	\item \textbf{Data Integrity}
+
+	      To ensure that data isn't changed during transmition, techniques like
+	      HMAC can be used.
+
+	\item \textbf{Access Control}
+
+	      Some data may be restricted to a specific group of users, therefore the
+	      system needs to check if the user that requests the data has
+	      authorization to get that data. Techniques like RBAC can be used to
+	      prevent access to sensitive data from users that can't access it.
+
+	      In the frontend-backend communication, CORS policies can be used to
+	      restrict which origins can access the backend API.
+
+	\item \textbf{Preventing Attacks}
+
+	      Lastly, attacks like XSS, SQL Injection or DoS need to be prevented.
+	      In IoT systems, the firmware must be updated regularly to prevent this
+	      attacks.
+	      CSP can be used to prevent XSS attacks. For DoS, it's possible to enforce
+	      rate limits and API quotas. To prevent SQL Injection, strategies like
+	      input sanitization or the use of an ORM are essencial.
+\end{itemize}
 
 
 \section{Database \& Storage}
