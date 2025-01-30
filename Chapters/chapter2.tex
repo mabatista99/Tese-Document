@@ -291,6 +291,13 @@ features like message queuing and topic-based routing.
 	      systems introduce complexity on the operational side.
 \end{itemize}
 
+\subsection{Serverless Architecture}
+
+\subsubsection{Advantages}
+\subsubsection{Challenges}
+
+\subsection{Edge Architectures}
+
 \subsection{Applications and Use Cases}
 Every architecture has its own advantages and disadvantages, but they all have
 their place in the software industry.
@@ -509,12 +516,12 @@ specific tools and it's also a framework that's very dependent on its plugins,
 which can be a problem, since the developers can't control the quality of the
 plugins, and its issues may become issues for the application.
 
-\section{Communication}
-Communication is a very important part of any system. Deciding which protocols
-should be used or how to address security concerns are important parts of
-designing a software system. In the context of this dissertation, we need to
-address both communication between IoT systems and Backend, and Frontend and
-Backend.
+\section{Communication and Security}
+Both communication and security are very important parts of any system.
+Deciding which protocols should be used or how to address security concerns are
+important parts of designing a software system. In the context of this
+dissertation, we need to address both communication between IoT systems and
+Backend, and Frontend and Backend.
 
 
 \subsection{Communication between IoT systems and backend}
@@ -583,7 +590,7 @@ communication to simplify the device integration and improving scalability:
 Backend is where all the business logic relies and it's what provides frontend
 the data for it to display to the end user. An effective communication between
 these two parts is crucial for a well designed system.
-\subsubsection{APIs}
+\subsubsection{Protocols}
 An API is an interface of an application that defines a set of rules and
 protocols that allows other applications to communicate with it. There are many
 protocols that can be used to transmit data, some examples are:
@@ -620,11 +627,10 @@ protocols that can be used to transmit data, some examples are:
 
 \end{itemize}
 
+
 These protocols define rules for communication between systems, focusing on the
-technical implementation. On a higher level are the architectural styles.
-This styles define how APIs are designed and structure and focus on
-concepts and patterns. These styles define how data is requested, sent and
-consumed.
+technical implementation. On a higher level are the APIs.
+The APIs define how data is requested, sent and consumed.
 
 \begin{itemize}
 	\item \textbf{REST}
@@ -663,7 +669,7 @@ consumed.
 	      reliability and compatibility between systems.
 
 \end{itemize}
-\subsection{Security in Communication}
+\subsection{Security}
 
 Security is a crucial part of any system, it ensures the integrity of both
 the data and the system. When projecting the security in a system some
@@ -715,12 +721,14 @@ aspects need to be addressed:
 	      input sanitization or the use of an ORM are essencial.
 \end{itemize}
 
+\subsubsection{GDPR/LGPD compliance}
 
-\section{Database \& Storage}
-\subsection{SQL}
-\subsection{noSQL}
+
+\section{Database}
+\subsection{Relational Databases}
+\subsection{noSQL Databases}
 \subsection{Time-Series Databases}
-\subsection{Data Caching}
+\subsection{Applications and Use Cases}
 
 \section{Frontend Development}
 The frontend is the part of the web application that runs in the user's
@@ -765,13 +773,6 @@ representation of the HTML structure in a tree-like structure. When a change
 occur, it updates the virtual DOM first, then calculates the minimal changes needed
 and then apply these changes to the real DOM\cite{bawane2022review}.
 
-
-\subsubsection{Angular}
-Angular is a typescript based framework used for building user interfaces.
-
-\subsubsection{VueJS}
-
-\subsection{Fullstack Frameworks}
 \subsubsection{NextJS}
 NextJS is a full-stack framework built on top of reactJS by vercel. This means
 that NextJS can be used to develop both the frontend and backend parts of the
@@ -806,23 +807,22 @@ the separation of the javascript bundle into small parts that can be loaded
 separately. This reduces significantly the page load time, by loading only the
 parts that are needed to display the requested page.
 
-\subsubsection{NuxtJS}
-\subsubsection{Django}
-\subsection{Real-time Event Handling}
+\subsubsection{Angular}
+Angular is a typescript based framework used for building user interfaces.
 
-\subsection{Ui for IoT Event Monitoring}
 
 \subsection{State Management}
 
-\section{Mobile Development}
+\subsubsection{Redux}
+\subsubsection{Jotai}
 
-\subsection{Native}
-\subsubsection{Android}
-\subsubsection{Swift}
+\section{Data Processing Pipelines}
+\subsection{ETL for IoT}
+\subsection{Business Intelligence}
+\subsection{Big Data Analytics}
 
-\subsection{Cross-Platform}
-\subsubsection{React Native}
-\subsubsection{Flutter}
+\section{AI/ML for Anomaly Detection}
+\subsection{Frameworks}
+\subsection{Deployment}
 
-\subsection{Offline Mode \& Sync Strategies}
-
+\section{Related Work}
