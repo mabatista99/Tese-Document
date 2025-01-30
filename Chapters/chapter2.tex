@@ -725,8 +725,74 @@ aspects need to be addressed:
 
 
 \section{Database}
-\subsection{Relational Databases}
-\subsection{noSQL Databases}
+The storage and management of data, is an essencial part of IoT platforms.
+Due to the high volume of data, the high frequency and the diversity of the
+data, the effective design of a database is essencial to ensure query efficiency
+and scalability.
+IoT platforms generate diverse data types:
+\begin{itemize}
+	\item transactional metadata (e.g. device  IDs, user permissions)
+	\item logs (e.g. event triggers)
+	\item high-frequency time-series data (e.g. sensor measurements).
+\end{itemize}
+
+This section addresses the different types of databases, its advantages and
+challenges in the context of IoT systems.
+
+\subsection{Relational Databases (SQL)}
+Relational databases organize data into tables with predefined schemas.
+This tables can have relationships of one to one, one to many, or many to many,
+defined using primary and foreign keys. Their transactions follow the ACID
+(Atomicity, Consistency, Isolation, Durability) properties, ensuring data
+consistency, integrity and reliability. Additionally, they provide a way of
+doing complex querying, through a query language called \gls{SQL}, making them
+a realiable choice for structured data requiring ACID compliance.
+
+\subsubsection{Advantages}
+
+\begin{itemize}
+	\item \textbf{Data integrity}
+
+	      It allows the use of constraints (e.g. unique values, not null values,
+	      foreign keys) to force strict rules, preventing anomalies and ensuring
+	      reliability.
+
+	\item \textbf{Complex Queries}
+
+	      The use of SQL as a standard language allows complex queries with JOIN
+	      operations and nested queries for relational data analysis.
+
+	\item \textbf{Maturity}
+
+	      There are already robust tools for backup, replication and access
+	      control(e.g. PostgreSQL, MySQL).
+
+\end{itemize}
+
+\subsubsection{Challenges}
+\begin{itemize}
+
+	\item \textbf{Scalability}
+
+	      Since IoT systems can generate a high amount of data, vertical scaling can
+	      be costly.
+
+	      In terms of horizontal scaling, traditional relational databases generally
+	      struggle with adding more servers. Sharding is a popular approach to
+	      solve this problem by spliting large tables into smaller segments(shards)
+	      and store them in different servers, but it adds complexity to joins
+	      across multiple shards.
+
+	\item \textbf{Schema Rigidity}
+
+	      In relational databases, tables follow a strict predefined schema, which
+	      difficults the process of integrating new data types, like unstructured
+	      data or new IoT devices.
+
+\end{itemize}
+
+
+\subsection{NoSQL Databases}
 \subsection{Time-Series Databases}
 \subsection{Applications and Use Cases}
 
