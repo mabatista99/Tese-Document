@@ -793,6 +793,82 @@ a realiable choice for structured data requiring ACID compliance.
 
 
 \subsection{NoSQL Databases}
+Not Only SQL (NoSQL) databases provide flexible schemas, making them suitable
+for storing unstructured and semi-structured data. Following the CAP theorem,
+NoSQL databases, unlike relational ones, prioritize availability and partition
+tolerance over consistency. There are several types of NoSQL databases:
+
+\begin{description}
+
+	\item[Document Databases: ]Store data as JSON, BSON, or XML documents (e.g.
+	      MongoDB, CouchDB, Firebase Firestore)
+	\item[Column Oriented Databases: ]Store data in columns instead of rows (e.g.
+	      Apache Cassandra, HBase, ScyllaDB).
+	\item[Key-value Databases: ]Store data as key-value pairs, similar to
+	      a hash table, providing fast access to data. Mainly used as cache. Some
+	      examples include Redis and Amazon DynamoDB.
+	\item[Graph Databases: ]Store relationships between entities as nodes and
+	      edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
+
+\end{description}
+
+\subsubsection{Advantages}
+\begin{itemize}
+
+	\item \textbf{scalability}
+
+	      NoSQL Databases scale easily horizontally by spliting data across
+	      multiple servers or clusters.
+
+	\item \textbf{Performance}
+
+	      NoSQL databases are optimized for speed and its transactions typically have
+	      low latency. Due to its data being stored in an unstructured and simpler,
+	      without constraints or relations, NoSQL databases operations are generally
+	      faster when compared to relational databases. On top of this, many non
+	      relational solutions implement in-memory storage, caching and efficient
+	      indexing techniques, improving the performance even more.
+
+	\item \textbf{Flexibility}
+
+	      Unlike SQL databases that restrict the data to predefined rigid schemas,
+	      NoSQL databases allow for dynamic schema changes, meaning that fields can
+	      be added or removed to the schema on the fly without requiring database
+	      migrations or even downtime.
+
+	\item \textbf{Availability}
+
+	      Many NoSQL solutions offer built-in replication and fault tolerance
+	      technologies to ensure availability and fault tolerance. Typically data is
+	      replicated across multiple nodes, so in case one node fails, the others
+	      are up and have the data required.
+
+\end{itemize}
+
+\subsubsection{Challenges}
+
+\begin{itemize}
+	\item \textbf{Consistency}
+
+	      According to the CAP theorem, database systems can only guarantee two out of
+	      Consistency, Availability and Partition Tolerance. NoSQL Databases focus on
+	      Availability and Partition Tolerance, leaving consistency to second plan.
+	      This results in eventual consistency, meaning that data takes time to update
+	      between nodes, leading to inconsistency in the meantime and leading to
+	      consistency in the end.
+
+	\item \textbf{Limited Query Capabilities}
+
+	      NoSQL databases don't support complex queries with features like JOINs,
+	      aggregations etc. making querying less flexible. Some databases have query
+	      languages like SQL but even those are not as powerful as SQL queries.
+
+	\item \textbf{Data Duplication}
+
+	      In order to improve reading performance, some data is replicated across
+	      multiple documents or collections, increasing storage requirements, and
+	      making consistency harder to maintain.
+\end{itemize}
 \subsection{Time-Series Databases}
 \subsection{Applications and Use Cases}
 
