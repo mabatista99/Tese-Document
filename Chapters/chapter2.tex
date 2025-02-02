@@ -870,6 +870,48 @@ tolerance over consistency. There are several types of NoSQL databases:
 	      making consistency harder to maintain.
 \end{itemize}
 \subsection{Time-Series Databases}
+Time-series databases (TSDBs) are focused on storing time-stamped data. The
+data is indexed by timestamp, making time-based queries very efficient. They are
+optimized for high-velocity writes, making these databases a reliable solution
+for storing sensor data on IoT systems. Popular time-series databases include
+InfluxDB, TimescaleDB, and Prometheus.
+
+\subsubsection{Advantages}
+\begin{itemize}
+	\item \textbf{High Write Throughput}
+
+	      These databases are optimized for receiving millions of timestamped data
+	      per second.
+
+	\item \textbf{Efficient Querying}
+
+	      TSDBs are optimized for querying and aggregating based on timestamps. This
+	      makes real-time analytics efficient.
+
+	\item \textbf{Edge computing compatibility}
+
+	      Some lighter TSDBs like QuestDB can run on resource-constrained environments,
+	      making possible to use this databases to store sensor data on the devices,
+	      to be processed on the edger and then sent to the backend service.
+
+\end{itemize}
+\subsubsection{Challenges}
+
+\begin{itemize}
+
+	\item \textbf{Flexibility}
+
+	      Despite being efficient with time-series data, it struggles with non
+	      time-stamped data (e.g. user metadata). It is also not suitable for applications requiring
+	      complex joins or relational data models.
+
+	\item \textbf{High Storage Requirements}
+
+	      Due to the high-speed of incoming data, it requires a high volume of storage
+	      capacity. Strategies like data compression, prunning or retention policies
+	      are essencial to the reduction of this problem.
+
+\end{itemize}
 \subsection{Applications and Use Cases}
 
 \section{Frontend Development}
