@@ -913,11 +913,44 @@ InfluxDB, TimescaleDB, and Prometheus.
 
 \end{itemize}
 \subsection{Applications and Use Cases}
+Choosing the right databases to use is an important part of system design. This
+choice must have into account the system requirements. Relational databases are
+ideal when the system requires ACID compliance. It's also a good choice for
+data that requires a rigid structure, constraints or relies heavily on
+relationships between data. NoSQL databases are mostly used for unstructured
+data, where flexibility is a crucial requirement.
+
+In many cases, the best choice is an hybrid approach with different databases
+being used for different types of data.
+
+IoT systems rely on several kinds of data that differs a lot from each other.
+
+Structure data like device metadata, or user metadata for accessing the
+frontend pages would be better stored in relational databases for assuring
+consistency. The constraints possible in SQL also ensures that the data is valid,
+and structured. Lastly, queries that rely on relationships, for example finding
+which sensors a user has access to are also easier on relational databases.
+
+For data like sensor readings, which is unstructured and deeply associated with
+the sensor reading time, time-series databases are a better choice. This data
+is usually generated at a very high frequency, and time-series databases are
+optimized for high-speed writing. Real-time data processing is also better with
+this databases, because despite time-based queries being possible and common in
+relational databases, they are optimized in time-series databases, making
+real-time analytics more efficient.
+
+NoSQL, more precisely, document or column oriented databases, in IoT systems
+context, can also be a great choice for storing unstructured data that isn't
+time-based, for example events spoted from analyzing sensor data.
+
+Lastly, for the web application, key-value databases like redis can be usefull
+for caching, and relational databases can be used for handling for example
+role-based access.
 
 \section{Frontend Development}
-The frontend is the part of the web application that runs in the user's
-browser and it's the part that the user can see and interact with.
-It is divided into three parts: The markup, the styling and the scripting.
+Frontend is the part of a web application that runs in the user's browser and
+the part that the user can see and interact with. It is divided into three
+parts: Markup, styling and scripting.
 The markup defines the structure of the website, the styling is the part that
 defines all of the styling of the page including colors fonts and empty spaces
 (margins/paddings) and the scripting is the part that enables the interaction
@@ -927,12 +960,11 @@ It can be developed in many languages but all of them are in the end transpiled
 to the languages that the browsers can understand which are: Hypertext markup
 Language (HTML) for markup, Cascading Stylesheets (CSS) for styling and
 Javascript (JS) for scripting.
+
+\subsection{Frameworks and Libraries}
 With the advance of technology many libraries were created to facilitate the
-development experience. In the following sections we will address the most
-popular ones.
-
-\subsection{Frameworks}
-
+frontend development experience. This section addresses the most popular
+frotend web development javascript libraries and frameworks.
 \subsubsection{ReactJS}
 React JS is an open-source javascript library created by Facebook in 2013 that
 simplifies the development of complex and dynamic user interfaces. Its the most widely
@@ -944,12 +976,6 @@ component defines what the UI should look like for a given state.
 Components can be nested inside other components to build more complex UIs.
 The components are developed using JavaScript for scripting and JavScript XML(JSX),
 which is similar to HTML for markup.
-
-A component can be written in two ways and therefore be of two types:
-\begin{itemize}
-	\item Functional component
-	\item Class component
-\end{itemize}
 
 React uses a virtual Document Object Model (DOM) to optimize performance. A virtual
 DOM is a lightweight in-memory representation of the real DOM, which is a
@@ -992,13 +1018,36 @@ separately. This reduces significantly the page load time, by loading only the
 parts that are needed to display the requested page.
 
 \subsubsection{Angular}
-Angular is a typescript based framework used for building user interfaces.
-
+Angular is a typescript based, open-source framework used for building user
+interfaces. It was developed by Google in 2016 as a new, restructured version
+of AngularJS. Angular is a strongly structured and opinionated framework,
+organizing the code into feature modules. It also follows a component-based
+design, but introduces features like dependency injection ensuring efficient
+state sharing and improving testability.
+It includes built-in features like routing, HTTP client and form validation.
 
 \subsection{State Management}
+State management is a fundamental aspect of frontend development. It enhances
+the user experience providing data consistency and an improved performance.
+State represents the dynamic data of an application an can be of three types:
 
-\subsubsection{Redux}
-\subsubsection{Jotai}
+\begin{description}
+
+	\item[Local state:] The state managed within a single component. It can
+	      represent data from UI elements like forms or button states.
+
+	\item[Shared state:] When multiple components need access to the same data,
+	      that data can be shared between them using solutions like context APIs or
+	      external libraries.
+
+	\item[Global state:] Usually used for user authentication, notifications and
+	      data persistance, the global state is application-wide, meaning that
+	      every component has access to it.
+\end{description}
+
+Handling global state is a complex proccess and requires the use of state
+management solutions like Redux, Recoil, Zustand, or Jotai for ReactJS and
+NgRx, Elf or NGXS for Angular.
 
 \section{Data Processing Pipelines}
 \subsection{ETL for IoT}
