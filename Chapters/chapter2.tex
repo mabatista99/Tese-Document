@@ -292,11 +292,67 @@ features like message queuing and topic-based routing.
 \end{itemize}
 
 \subsection{Serverless Architecture}
+Serverless architecture is a solution where the cloud provider manages all the
+server infrastructure, scaling, and maintaining it automatically as needed.
+Serverless applications are made of event-driven stateless functions that run
+only when needed. This functions are triggered through events like API calls,
+database changes, message queues or IoT events and shutdown after execution,
+making this a highly efficient solution.
 
 \subsubsection{Advantages}
+\begin{itemize}
+
+	\item \textbf{Scalability}
+
+	      The application automatically scales horizontally as needed, creating or
+	      deleting function instances in response to demand. This is a great
+	      advantage for applications with peek times where the demand is
+	      significantly bigger than normal.
+
+	\item \textbf{Cost Effective}
+
+	      Unlike servers, that are usually paid by uptime, serverless functions are
+	      tipically paid per execution, reducing costs when the application is idle.
+
+	\item \textbf{Focus on Development}
+
+	      Since the developers don't need to handle all the infrastructure management,
+	      they can focus entirely on the code, usually resulting in improvements in
+	      produtivity and code quality.
+
+
+\end{itemize}
+
 \subsubsection{Challenges}
+\begin{itemize}
+	\item \textbf{Cold Start}
+
+	      After a long period of inactivity, functions take longer to execute, which
+	      can be a problem for applications that require real-time responsiveness.
+
+	\item \textbf{Execution limits}
+
+	      Serverless cloud providers usually have execution time limits. AWS lambda,
+	      for example, has a 15 minute execution time limit, making this solution
+	      not reliable for long running functions.
+
+	\item \textbf{Testing and Debugging}
+
+	      Testing and debugging in serverless architectures are harder due to the
+	      decentralized nature of this systems.
+
+	\item \textbf{Statelessness}
+
+	      Functions can not store data between executions and due to that, some
+	      applications will require external storage solutions.
+\end{itemize}
 
 \subsection{Edge Architectures}
+
+
+\subsubsection{Advantages}
+
+\subsubsection{Disadvantages}
 
 \subsection{Applications and Use Cases}
 Every architecture has its own advantages and disadvantages, but they all have
