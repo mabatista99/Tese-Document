@@ -347,12 +347,49 @@ making this a highly efficient solution.
 	      applications will require external storage solutions.
 \end{itemize}
 
-\subsection{Edge Architectures}
-
+\subsection{Edge Architecture}
+Edge architecture is a system design pattern in where the data is processed
+closer to where it is generated. This practice is called edge computing and
+is commonly used in IoT systems, with data being process in the device
+before being sent to a server.
 
 \subsubsection{Advantages}
 
-\subsubsection{Disadvantages}
+\begin{itemize}
+
+
+	\item \textbf{Low Latency and Bandwidth}
+
+	      Since there's no need to access a server, it allows for real-time decisions
+	      in systems like self-driving cars or industrial automation. When there's
+	      still data being sent to a server, the data can be processed and filtered
+	      locally before being sent, reducing bandwidth usage.
+
+
+	\item \textbf{Reliability}
+
+	      It can operate offline by storing data locally until the connection is
+	      restored.
+
+	\item \textbf{Data Privacy}
+
+	      Sensitive data, like someone's biometric data can be kept in the device,
+	      instead of being transmitted to the cloud.
+
+\end{itemize}
+
+\subsubsection{Challenges}
+\begin{itemize}
+
+	\item \textbf{Limited Resources}
+
+	      Edge devices are usually constrained in processing power and storage capacity.
+
+	\item \textbf{Security Risks}
+
+	      Edge devices are more vulnerable to attacks, both physical and cyberattacks.
+
+\end{itemize}
 
 \subsection{Applications and Use Cases}
 Every architecture has its own advantages and disadvantages, but they all have
@@ -574,7 +611,17 @@ plugins, and its issues may become issues for the application.
 
 \section{Communication and Security}
 Both communication and security are very important parts of any system.
-Deciding which protocols should be used or how to address security concerns are
+Deciding which protocols should be used or how tA data processing pipeline is a structured workflow that transforms raw data
+into usefull insights. These pipelines are essential for handling an high-volume
+of data in real-time. Data pipelines must ensure scalability, fault tolerance,
+efficiency, data quality and real-time processing.
+
+ETL for IoT
+ETL is a workflow that transforms raw data into data that is ready for
+store. IoT systems use ETL pipelines to process and store data from sensors,
+smart devices, and edge computing nodes.
+
+I think that this is enough.o address security concerns are
 important parts of designing a software system. In the context of this
 dissertation, we need to address both communication between IoT systems and
 Backend, and Frontend and Backend.
@@ -1106,8 +1153,41 @@ management solutions like Redux, Recoil, Zustand, or Jotai for ReactJS and
 NgRx, Elf or NGXS for Angular.
 
 \section{Data Processing Pipelines}
+A data processing pipeline is a structured workflow that transforms raw data
+into usefull insights. These pipelines are essential for handling an high-volume
+of data in real-time. Data pipelines must ensure scalability, fault tolerance,
+efficiency, data quality and real-time processing.
+
 \subsection{ETL for IoT}
+\gls{ETL} is a workflow that transforms raw data into data that is ready for
+store. IoT systems use ETL pipelines to process and store data from sensors,
+smart devices, and edge computing nodes.
+
+\subsubsection{Extract}
+The first step is the extraction. In this step, the raw data is collected from
+IoT devices, APIs, cloud platforms or edge systems. This can be done through
+MQTT brokers, HTTP or CoAP endpoints, Apache Kafka streams or IoT gateways.
+
+\subsubsection{Transform}
+The extracted data is then transformed through a sequence of processes. These
+processes, among others, include cleaning, filtering, and enriching.
+In the first, the data is cleaned, filtering noise, removing duplicates, and
+null values. In the filtering, the data is filtered, discarding irrelevant data
+for the purpose. For example, if the purpose is to use a temperature sensor to
+check for high temperatures, this process discards all the data that is
+considered a normal temperature. The data can also be enriched with metadata
+like timestamps, device location, etc. This stage can be done on the edge, on
+the cloud or using an hybrid approach. There are cloud tools like Apache NiFi
+and AWS IoT Analytics designed for transforming data.
+
+\subsubsection{Load}
+Load is the stage in which the transformed data is stored in databases.
+
 \subsection{Business Intelligence}
+\gls{BI} refers to the strategies, technologies and tools used to process and
+analyze stored data for decision-making, monitoring and strategic planning.
+This data can be shown through dashboards, reports and analytics.
+
 \subsection{Big Data Analytics}
 
 \section{AI/ML for Anomaly Detection}
