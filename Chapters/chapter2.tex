@@ -33,6 +33,13 @@ coupled and deployed together as a single unit\cite{7436659,10031648}. This
 was the most popular approach for decades due to how simple it is, specially in
 the early stages of software development\cite{Garlan2018}.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Monolith.pdf}
+	\caption{Monolithic architecture structure}
+	\label{fig:architectures:monolithic}
+\end{figure}
+
 \subsubsection{Advantages}
 Despite some problems, monoliths have some advantages on the other architectures,
 specially for smaller applications or early-stage development:
@@ -80,7 +87,7 @@ challenges appear as applications grow in size and complexity.
 	      Monoliths are prone to tech debt accumulation over time. The lack
 	      of modularity present in these systems frequently results in what is known as a
 	      "big ball of mud", meaning that dependencies between the system's elements are
-	      unclear, slowing the development process and making maintanance an
+	      unclear, slowing the development process and making maintenance an
 	      hard and continuous process\cite{7333476}.
 
 	\item \textbf{Deployment Risk}
@@ -112,6 +119,13 @@ adequate responses. This separation of concerns allows one server to provide
 consistent data to multiple clients.
 Examples include email systems, where clients(e.g. email software) interact with
 a centralized server that is responsible for sending and storing the emails.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Client-server.pdf}
+	\caption{Client-Server architecture structure}
+	\label{fig:architectures:client-server}
+\end{figure}
 
 \subsubsection{Advantages}
 The client-side architecture has several benefits:
@@ -171,6 +185,13 @@ synchronous communications using APIs based on technologies like like
 \gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
 adopting tools like message brokers or event streaming platforms.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/microservices.pdf}
+	\caption{Microservices architecture structure}
+	\label{fig:architectures:microservices}
+\end{figure}
+
 \subsubsection{Advantages}
 
 \begin{itemize}
@@ -203,7 +224,7 @@ adopting tools like message brokers or event streaming platforms.
 	\item \textbf{Complexity}
 
 	      Managing multiple services is much more complex than managing a single
-	      application. Deployment and maintanance efforts are multiplied, which can
+	      application. Deployment and maintenance efforts are multiplied, which can
 	      lead to operational overhead. The heavy use of monitoring tools can be
 	      helpful, or even required in this kind of solutions.
 
@@ -234,9 +255,16 @@ because of the broker. Event Brokers, like Apache Kafka or RabbitMQ are
 responsible for routing the events from the producers to the subscribers through
 features like message queuing and topic-based routing.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Event-driven.pdf}
+	\caption{Event-driven architecture structure}
+	\label{fig:architectures:event-driven}
+\end{figure}
+
 \subsubsection{Advantages}
 \begin{itemize}
-	\item \textbf{Loosed Coupling}
+	\item \textbf{Loose Coupling}
 
 	      The communication is done indirectly, reducing the interdependencies which
 	      are a significant point of failure.
@@ -299,6 +327,13 @@ only when needed. This functions are triggered through events like API calls,
 database changes, message queues or IoT events and shutdown after execution,
 making this a highly efficient solution.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Serverless.pdf}
+	\caption{Serverless architecture structure}
+	\label{fig:architectures:serverless}
+\end{figure}
+
 \subsubsection{Advantages}
 \begin{itemize}
 
@@ -306,7 +341,7 @@ making this a highly efficient solution.
 
 	      The application automatically scales horizontally as needed, creating or
 	      deleting function instances in response to demand. This is a great
-	      advantage for applications with peek times where the demand is
+	      advantage for applications with peak times where the demand is
 	      significantly bigger than normal.
 
 	\item \textbf{Cost Effective}
@@ -348,10 +383,17 @@ making this a highly efficient solution.
 \end{itemize}
 
 \subsection{Edge Architecture}
-Edge architecture is a system design pattern in where the data is processed
+Edge architectur is a system design pattern in where the data is processed
 closer to where it is generated. This practice is called edge computing and
 is commonly used in IoT systems, with data being process in the device
 before being sent to a server.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Edge.pdf}
+	\caption{Edge architecture structure}
+	\label{fig:architectures:edge}
+\end{figure}
 
 \subsubsection{Advantages}
 
@@ -455,7 +497,7 @@ this framework lacks built-in features. Express doen't provide features like
 dependency injection, user authentication, database integration or input
 validation which all need to be implemented using third-party libraries.
 By being an unopinionated solution, it lacks structure, increasing the effort
-of the developers on manually configuring middlewares, and maintaing the code
+of the developers on manually configuring middlewares, and maintaining the code
 organized, specially for more complex projects.
 Express is a popular framework, being adopted by many developers. Resources
 about this technology, like documentation or tutorials are easy to find
@@ -611,17 +653,7 @@ plugins, and its issues may become issues for the application.
 
 \section{Communication and Security}
 Both communication and security are very important parts of any system.
-Deciding which protocols should be used or how tA data processing pipeline is a structured workflow that transforms raw data
-into usefull insights. These pipelines are essential for handling an high-volume
-of data in real-time. Data pipelines must ensure scalability, fault tolerance,
-efficiency, data quality and real-time processing.
-
-ETL for IoT
-ETL is a workflow that transforms raw data into data that is ready for
-store. IoT systems use ETL pipelines to process and store data from sensors,
-smart devices, and edge computing nodes.
-
-I think that this is enough.o address security concerns are
+Deciding which protocols should be used or how to address security concerns are
 important parts of designing a software system. In the context of this
 dissertation, we need to address both communication between IoT systems and
 Backend, and Frontend and Backend.
@@ -778,6 +810,13 @@ Security is a crucial part of any system, it ensures the integrity of both
 the data and the system. When projecting the security in a system some
 aspects need to be addressed:
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=0.6\textheight, keepaspectratio]{Chapters/Figures/Security/JWT.pdf}
+	\caption{Authentication process using JWT}
+	\label{fig:security:JWT}
+\end{figure}
+
 \begin{itemize}
 
 	\item \textbf{Authentication}
@@ -789,6 +828,15 @@ aspects need to be addressed:
 
 	      In frontend to backend communication the most common approachs to
 	      authentication are sessions and token-based authentication using JWT.
+	      Figure \ref{} is a flow chart of the authentication process using JWT.
+	      Firstly the server verifies the credentials, if the credentials are
+	      correct, the server issues two tokens, an access token and a refresh
+	      token. These tokens are stored in the client and send in all of the
+	      following request to the server. The access token is used to validate
+	      the access and has a short life span (usually around 15 minutes). When
+	      the access token expires, the refresh token is used to generate a new
+	      access token. The refresh token is valid for a longer period of time (
+	      tipically one week).
 
 	\item \textbf{Data Encryption}
 
@@ -849,8 +897,20 @@ defined using primary and foreign keys. Their transactions follow the ACID
 (Atomicity, Consistency, Isolation, Durability) properties, ensuring data
 consistency, integrity and reliability. Additionally, they provide a way of
 doing complex querying, through a query language called \gls{SQL}, making them
-a realiable choice for structured data requiring ACID compliance.
+a realiable choice for structured data requiring ACID compliance. The figure
+\ref{fig:databases:sql}
+is an example of an entity relationship diagram for a simple SQL database structure.
+This diagram has a customer table, an order table, a product table, a product
+category table and an additional table that handles the many-to-many
+relationship between orders and products.
 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Databases/SQL.pdf}
+	\caption{Example of a simple relational database entity relationship diagram. }
+	\label{fig:databases:sql}
+\end{figure}
 \subsubsection{Advantages}
 
 \begin{itemize}
@@ -904,7 +964,8 @@ tolerance over consistency. There are several types of NoSQL databases:
 \begin{description}
 
 	\item[Document Databases: ]Store data as JSON, BSON, or XML documents (e.g.
-	      MongoDB, CouchDB, Firebase Firestore)
+	      MongoDB, CouchDB, Firebase Firestore). Figure \ref{fig:databases:NoSQL}
+	      shows an example of a JSON-like document that represents an order's data.
 	\item[Column Oriented Databases: ]Store data in columns instead of rows (e.g.
 	      Apache Cassandra, HBase, ScyllaDB).
 	\item[Key-value Databases: ]Store data as key-value pairs, similar to
@@ -914,6 +975,13 @@ tolerance over consistency. There are several types of NoSQL databases:
 	      edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
 
 \end{description}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Databases/NoSQL.png}
+	\caption{Example of a document-based database's JSON-like order document.}
+	\label{fig:databases:NoSQL}
+\end{figure}
 
 \subsubsection{Advantages}
 \begin{itemize}
@@ -1160,8 +1228,17 @@ efficiency, data quality and real-time processing.
 
 \subsection{ETL for IoT}
 \gls{ETL} is a workflow that transforms raw data into data that is ready for
-store. IoT systems use ETL pipelines to process and store data from sensors,
-smart devices, and edge computing nodes.
+store. IoT systems use \gls{ETL} pipelines to process and store data from sensors,
+smart devices, and edge computing nodes. Figure \ref{fig:etl:pipeline}
+ilustrates the \gls{ETL} pipeline, with the data being extracted from de devices,
+transformed and then loaded to the database.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/ETL/ETL.pdf}
+	\caption{ETL Pipeline.}
+	\label{fig:etl:pipeline}
+\end{figure}
 
 \subsubsection{Extract}
 The first step is the extraction. In this step, the raw data is collected from
@@ -1227,7 +1304,50 @@ TensorFlow and ElasticSearch.
 
 
 \section{AI/ML for Anomaly Detection}
+Anomaly detection is the process of identifying data that deviates from the norm.
+In IoT systems, anomalies can represent equipment failures, traffic violations,
+security breaches etc. Machine learning and artificial intelligence techniques
+can be integrated in the data process pipeline to detect anomalies.
+
+
+
 \subsection{Frameworks}
+\begin{table}[ht]
+	\centering
+	\caption{Comparison of AI/ML Frameworks for Anomaly Detection}
+	\label{tab:ai-ml:frameworks}
+	\begin{tabular}{p{2cm}p{4cm}cp{3cm}}
+		\toprule
+		\textbf{Framework} & \textbf{Key Features}                  & \textbf{Edge Support} & \textbf{Use Cases}             \\
+		\midrule
+		TensorFlow         & Deep learning, TF Lite for edge        & Yes                   & Time-series, Image recognition \\
+		PyTorch            & Dynamic graphs, research-friendly      & Partial               & Custom models, Research        \\
+		Scikit-learn       & Classical ML (e.g., SVM)               & No                    & Structured data analysis       \\
+		Prophet            & Time-series forecasting                & No                    & Predictive maintenance         \\
+		Edge Impulse       & Edge-first ML, microcontroller support & Yes                   & Real-time edge inference       \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Machine learning frameworks are essential for designing and training machine
+learning models. The table \ref{tab:ai-ml:frameworks}
+compares some of the most popular frameworks in IoT context.
+
 \subsection{Deployment}
+
+\subsection{Challenges}
+
+\begin{itemize}
+	\item \textbf{Data Imbalance}
+
+	      Anomalies are rare, and synthetic data generation may be needed to train
+	      the model.
+	\item \textbf{Cold Start}
+
+	      In the beginning, there's a low amount of data to train the model.
+	\item \textbf{Model Drift}
+
+	      Sensor behaviour changes over time.
+\end{itemize}
 
 \section{Related Work}
