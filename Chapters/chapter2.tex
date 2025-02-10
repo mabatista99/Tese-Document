@@ -11,18 +11,18 @@
 \chapter{State-Of-The-Art}
 \label{cha:State-Of-The-Art}
 
-This chapter provides a view of the state-of-the-art of web development as well
-as event management platforms and connection with iot devices.
-Firstly, it presents an overview on how the web development is structured and
-explains the concept of software architecture and some of its patterns. Then the
-main two parts of web development, the frontend (both for web and mobile) and
-backend, are discussed along with its frameworks.
+This chapter provides a view of the state-of-the-art of IoT platforms as well
+as well as web development technologies and connection with iot devices.
+Firstly, it presents an overview on system architectures and compares common
+architecture patterns. Then the backend development is addressed along with
+its frameworks, followed by a section dedicated to communication and security.
+After that, Database solutions are detailed and compared in context of IoT
+systems. A briefly overview on frontend development, libraries and frameworks is
+also given.
+Then, in the following two sections, data processing pipelines are explained as
+well as AI/ML integration with the system.
 
-In a second part, some event management platform solutions will be reviewed
-along with its technologies.
-
-Finally we will look on how we can connect a IoT device with our platform and
-how its being already done in other solutions.
+Lastly, some similar solutions previously developed are addressed and compared.
 
 \section{System Architecture Patterns}
 
@@ -46,23 +46,23 @@ specially for smaller applications or early-stage development:
 \begin{itemize}
 	\item \textbf{Simplicity}
 
-	      The monolithic architecture is probably the simplest way of structuring a
+	      The monolithic architecture is the simplest way of structuring a
 	      project and monolithic solutions are easier to design, develop and deploy
 	      than other solutions.
 	      Having the code in a single codebase removes the need for complex
 	      integration, making it more attractive for smaller teams with limited
-	      resources or expertise.
+	      resources or expertise\cite{IBMMonolith}.
 	\item \textbf{Efficiency}
 
 	      Since there is a single application in monolithic systems, there are no
 	      services integrations and developers can debug without dealing with
 	      inter-service communications. Testing is also easier because all of the
-	      components are located in the same codebase and run in the same environment.
+	      components are located in the same codebase and run in the same environment\cite{newman2019monolith}.
 	\item \textbf{Straightforward Deployment}
 
 	      Deploying a monolithic application involves managing a single artifact. This
 	      reduces operational complexity compared to systems where deployment
-	      pipelines must coordinate multiple services.
+	      pipelines must coordinate multiple services\cite{AWSMonolithMicroservices}.
 \end{itemize}
 \subsubsection{Challenges}
 For bigger architectures, this solution might not be adequate as several
@@ -80,8 +80,8 @@ challenges appear as applications grow in size and complexity.
 	      efficient and we can scale up the first service and scale down the third.
 	      However, in a monolith, we can only scale everything as one, meaning there
 	      can be modules that force the scaling of unrelated components unnecesarily.
-	      In the example above, we would need to scale the whole system, including
-	      the third module that is already wasting more resources that it needs.
+	      In the example above, we would need to scamicroservicesle the whole system, including
+	      the third module that is already wasting more resources that it needs\cite{7333476,AWSMonolithMicroservices}.
 	\item \textbf{Maintenance}
 
 	      Monoliths are prone to tech debt accumulation over time. The lack
@@ -97,7 +97,7 @@ challenges appear as applications grow in size and complexity.
 	      is deployed to the public environment, it can cause the whole system to go
 	      down while in modular systems, if a problem is deployed in one of the
 	      modules, the others are independent and can still run even if the one with
-	      the problem is down, meaning that only part of the system is unavailable.
+	      the problem is down, meaning that only part of the system is unavailable\cite{7333476,AWSMonolithMicroservices}.
 
 	\item \textbf{Lack of Flexibility}
 
@@ -106,7 +106,7 @@ challenges appear as applications grow in size and complexity.
 	      technology stack. In architectures that have the application divided in
 	      modules is possible for each module to have its own technology stack,
 	      which can facilitate the development of some specific features that are
-	      easier to do with specific technologies.
+	      easier to do with specific technologies\cite{IBMMonolith}.
 \end{itemize}
 
 \subsection{Client-Server Architecture}
@@ -118,7 +118,7 @@ side, servers process that requests, access the data if needed and return the
 adequate responses. This separation of concerns allows one server to provide
 consistent data to multiple clients.
 Examples include email systems, where clients(e.g. email software) interact with
-a centralized server that is responsible for sending and storing the emails.
+a centralized server that is responsible for sending and storing the emails\cite{Sulyman}.
 
 \begin{figure}[htbp]
 	\centering
@@ -179,11 +179,11 @@ The Client-Server Architecture has also its disadvantages:
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
 application into several other independently deployed applications called
-microservices.
+microservices\cite{7436659}.
 In this solution, the modules communicate between each other through
 synchronous communications using APIs based on technologies like like
 \gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
-adopting tools like message brokers or event streaming platforms.
+adopting tools like message brokers or event streaming platforms\cite{7436659}.
 
 \begin{figure}[htbp]
 	\centering
@@ -201,7 +201,7 @@ adopting tools like message brokers or event streaming platforms.
 	      separately and in most cases with their individual database. For this reason
 	      each service can be scaled independently based on demand. A service with
 	      high demand like for example user authentication can scale separately from
-	      services with less workload.
+	      services with less workload\cite{8990350}.
 
 	\item \textbf{Fault Isolation}
 
@@ -209,12 +209,12 @@ adopting tools like message brokers or event streaming platforms.
 	      a failure occurs in a service, the others will unlikely be affected. For
 	      example, when a store website has a problem with its payment service, the
 	      users might not be able to pay but they can still browse the website and
-	      do other things like managing the profile or adding products to the cart.
+	      do other things like managing the profile or adding products to the cart\cite{8990350}.
 
 	\item \textbf{Technology Diversity}
 
 	      Each service is an independent application, which means that each service
-	      can be developed using different technologies. This allows the service to
+	      can be developed using different technologies\cite{7436659}. This allows the service to
 	      be developed using technologies that are more suitable for its own purpose.
 
 \end{itemize}
@@ -224,7 +224,7 @@ adopting tools like message brokers or event streaming platforms.
 	\item \textbf{Complexity}
 
 	      Managing multiple services is much more complex than managing a single
-	      application. Deployment and maintenance efforts are multiplied, which can
+	      application\cite{newman2019monolith}. Deployment and maintenance efforts are multiplied, which can
 	      lead to operational overhead. The heavy use of monitoring tools can be
 	      helpful, or even required in this kind of solutions.
 
@@ -323,7 +323,7 @@ features like message queuing and topic-based routing.
 Serverless architecture is a solution where the cloud provider manages all the
 server infrastructure, scaling, and maintaining it automatically as needed.
 Serverless applications are made of event-driven stateless functions that run
-only when needed. This functions are triggered through events like API calls,
+only when needed\cite{marcelino2024goldfish}. This functions are triggered through events like API calls,
 database changes, message queues or IoT events and shutdown after execution,
 making this a highly efficient solution.
 
@@ -386,7 +386,7 @@ making this a highly efficient solution.
 Edge architectur is a system design pattern in where the data is processed
 closer to where it is generated. This practice is called edge computing and
 is commonly used in IoT systems, with data being process in the device
-before being sent to a server.
+before being sent to a server \cite{s20226441}.
 
 \begin{figure}[H]
 	\centering
@@ -711,12 +711,12 @@ communication to simplify the device integration and improving scalability:
 
 	      Platforms like AWS IoT Core or Google Cloud IoT have features like
 	      device management, protocol translation, and analytics in real-time that
-	      can be usefull when integrating IoT systems with backend services.
+	      can be useful when integrating IoT systems with backend services.
 
 	\item \textbf{Gateways}
 
 	      Gateways are platforms that can aggregate, preprocess and filter data
-	      from IoT systems. This way, only usefull data is sent to the backend server,
+	      from IoT systems. This way, only useful data is sent to the backend server,
 	      removing useless,resource consuming interactions.
 
 \end{itemize}
@@ -1114,7 +1114,7 @@ NoSQL, more precisely, document or column oriented databases, in IoT systems
 context, can also be a great choice for storing unstructured data that isn't
 time-based, for example events spoted from analyzing sensor data.
 
-Lastly, for the web application, key-value databases like redis can be usefull
+Lastly, for the web application, key-value databases like redis can be useful
 for caching, and relational databases can be used for handling for example
 role-based access.
 
@@ -1222,7 +1222,7 @@ NgRx, Elf or NGXS for Angular.
 
 \section{Data Processing Pipelines}
 A data processing pipeline is a structured workflow that transforms raw data
-into usefull insights. These pipelines are essential for handling an high-volume
+into useful insights. These pipelines are essential for handling an high-volume
 of data in real-time. Data pipelines must ensure scalability, fault tolerance,
 efficiency, data quality and real-time processing.
 
@@ -1309,7 +1309,22 @@ In IoT systems, anomalies can represent equipment failures, traffic violations,
 security breaches etc. Machine learning and artificial intelligence techniques
 can be integrated in the data process pipeline to detect anomalies.
 
+The model development process start by the cleaning, normalizing and adding
+timestamps to the raw sensor data. Then, the data is used to train the model.
+The learning process can be of three types:
 
+\begin{description}
+	\item[Supervised Learning: ] Uses labeled anomalies, like historical equipment
+	      failures, to train the model.
+
+
+	\item[Unsupervised Learning: ] This type of training is used for unknown
+	      anomaly patterns, when there's no labeled historical anomalies.
+
+
+	\item[Hybrid Approaches: ] Use both labeled and unlabeled data to train the
+	      model.
+\end{description}
 
 \subsection{Frameworks}
 \begin{table}[ht]
@@ -1334,6 +1349,13 @@ learning models. The table \ref{tab:ai-ml:frameworks}
 compares some of the most popular frameworks in IoT context.
 
 \subsection{Deployment}
+
+The deployment can be done on the edge device using light tools optimized for
+low resource hardware like TensorFlow lite or Edge Impulse. This can be useful
+for real-time inference and tasks that require low-latency.
+On the other side, the models can also be deployed on the cloud, processing
+sensor readings in batch, and retraining the models. This can handle more
+complex analytics.
 
 \subsection{Challenges}
 
