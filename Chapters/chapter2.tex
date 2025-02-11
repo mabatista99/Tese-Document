@@ -109,73 +109,6 @@ challenges appear as applications grow in size and complexity.
 	      easier to do with specific technologies\cite{IBMMonolith}.
 \end{itemize}
 
-\subsection{Client-Server Architecture}
-The client-server architecture is a software design paradigm that devides the
-system into two types, the clients and the servers. The clients are service
-requesters responsible for initiating requests tipically as consequence of user
-interaction, and can be for example a website or a mobile app. On the other
-side, servers process that requests, access the data if needed and return the
-adequate responses. This separation of concerns allows one server to provide
-consistent data to multiple clients.
-Examples include email systems, where clients(e.g. email software) interact with
-a centralized server that is responsible for sending and storing the emails\cite{Sulyman}.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Client-server.pdf}
-	\caption{Client-Server architecture structure}
-	\label{fig:architectures:client-server}
-\end{figure}
-
-\subsubsection{Advantages}
-The client-side architecture has several benefits:
-\begin{itemize}
-	\item \textbf{Modularity}
-
-	      A separation between clients and servers allows for independent development,
-	      testing and maintenance, improving flexibility in application design.
-
-	\item \textbf{Data Consistency}
-
-	      Multiple clients can access a single server, and since this server is the
-	      only thing managing the resources it ensures that the data received by the
-	      clients is consistent between them. This also ensures that clients can access
-	      the most recent and accurate information.
-
-	\item \textbf{Scalability}
-
-	      Horizontal scaling, where additional servers can be added, altought limited
-	      by replication of the entire server, enables the system to handle increased
-	      demand.
-\end{itemize}
-\subsubsection{Challenges}
-The Client-Server Architecture has also its disadvantages:
-\begin{itemize}
-	\item \textbf{Single Point of Failure}
-
-	      All the resources are managed in a centralized server, which means that if
-	      the server fails, all connected clients are affected. Despite this being a
-	      serious concern, there are techniques like load balancing that help
-	      mitigating this risk.
-
-	\item \textbf{Scalability Constraints}
-
-	      Although scalability was mentioned above as an advantage, the scalability
-	      of client-server achitectures is very limited. Even with the decoupling of
-	      clients from servers, horizontal scaling can only happen by deploying the
-	      same server to several machines and vertical scaling can only happen by
-	      increasing the hardware for the whole server. This is limited in modularity
-	      and it also increases the complexity by adding the necessity of having
-	      load balancers and data synchronization across servers.
-
-	\item \textbf{Latency}
-
-	      Communication between clients and servers over a network introduce delays,
-	      which can be a problem for applications that require real-time
-	      responses.
-
-\end{itemize}
-
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
 application into several other independently deployed applications called
@@ -238,22 +171,22 @@ adopting tools like message brokers or event streaming platforms\cite{7436659}.
 	      previous version of the other, otherwise there will be problems while they
 	      are not both properly deployed.
 	      Observability tools like tracing and logging are essencial to prevent and
-	      diagnose this king of issues.
+	      diagnose this king of issues\cite{richards2015software}.
 \end{itemize}
 
 
 \subsection{Event-Driven Architecture}
 The event-driven architecture is a system design patter where the components
-are loosed coupled, communicating by events. Events are messages that are sent
-by a system in reaction to a change in its state. This communication is made
-between an event producer, and an event subscriber. Event Producers generate the
-events and send the messages to a broker, Event Subscribers subscribe to
-events and react to them. Both these parts are agnostic to each other, meaning
-that the producers send the events not knowing who will receive them and the
-subscribers receive the events not knowing who sent them. This is possible
-because of the broker. Event Brokers, like Apache Kafka or RabbitMQ are
-responsible for routing the events from the producers to the subscribers through
-features like message queuing and topic-based routing.
+are loosed coupled, and communicate through events. Events are predefined
+messages that are sent by a system in reaction to a change in its state.
+This communication is made between an event producer, and an event subscriber.
+Event producers generate the events and send the messages to a broker, Event
+subscribers subscribe to events and react to them. Both these parts are agnostic
+to each other, meaning that the producers send the events not knowing who will
+receive them and the subscribers receive the events not knowing who sent them.
+This is possible because of the broker. Event Brokers, like Apache Kafka or
+RabbitMQ are responsible for routing the events from the producers to the
+subscribers through features like message queuing and topic-based routing\cite{9226286,manchana2021event,AWSEventDriven}.
 
 \begin{figure}[htbp]
 	\centering
@@ -264,18 +197,6 @@ features like message queuing and topic-based routing.
 
 \subsubsection{Advantages}
 \begin{itemize}
-	\item \textbf{Loose Coupling}
-
-	      The communication is done indirectly, reducing the interdependencies which
-	      are a significant point of failure.
-
-	\item \textbf{Scaling}
-
-	      Since the communication can be done asynchronously and through event brokers,
-	      the events don't need to be processed in real-time and are instead added to
-	      a queue allowing these systems to support an high volume of events. This
-	      reduces the needing for scaling, which is already an easier process because
-	      of the modularity present in this architecture.
 
 	\item \textbf{Fault Tolerance}
 
@@ -283,21 +204,21 @@ features like message queuing and topic-based routing.
 	      that if a component fails the system can continue functioning. In this
 	      case, due to the existence of an event broker, the messages are stored in
 	      this intermediary until they are processed, reducing the probability of
-	      loosing data.
+	      loosing data\cite{AWSEventDriven}.
 
 	\item \textbf{Flexibility in adding features}
 
 	      By decoupling producers from subscribers, a new consumer can be added
 	      and subscribe to existing events. This doesn't require any change in the
 	      producer in order to work, which facilitates the extension of the
-	      system.
+	      system\cite{MicrosoftEventDriven}.
 
 	\item \textbf{Real-Time capabilities}
 
 	      Despite what was said above that the events don't need to be processed
 	      in real-time, they can be configured to process and respond to events
 	      as they occur, making it ideal for applications which require real-time
-	      responsiveness.
+	      responsiveness\cite{manchana2021event}.
 \end{itemize}
 
 \subsubsection{Challenges}
@@ -306,17 +227,13 @@ features like message queuing and topic-based routing.
 
 	      Making sure that events are queued in the correct order and that they are
 	      processed only once can be a difficult task because of the concurrency
-	      that is characteristic of these systems.
+	      that is characteristic of these systems\cite{MicrosoftEventDriven}.
 
 	\item \textbf{Debugging}
 
 	      The assynchronous communication complicates the debugging process.
-	      Observability tool are essencial to diagnose problems.
+	      Observability tool are essencial to diagnose problems\cite{manchana2021event}.
 
-	\item \textbf{Infrastructure Overhead}
-
-	      The process of setting up and maintaining the event brokers, monitoring
-	      systems introduce complexity on the operational side.
 \end{itemize}
 
 \subsection{Serverless Architecture}
@@ -326,7 +243,7 @@ Serverless applications are made of event-driven stateless functions that run
 only when needed\cite{marcelino2024goldfish}. This functions are triggered
 through events like \gls{API} calls, database changes, message queues or
 \gls{IoT} events and shutdown after execution, making this a highly efficient
-solution.
+solution\cite{s21030928}.
 
 \begin{figure}[htbp]
 	\centering
@@ -343,18 +260,18 @@ solution.
 	      The application automatically scales horizontally as needed, creating or
 	      deleting function instances in response to demand. This is a great
 	      advantage for applications with peak times where the demand is
-	      significantly bigger than normal.
+	      significantly bigger than normal\cite{GoogleServerless}.
 
 	\item \textbf{Cost Effective}
 
 	      Unlike servers, that are usually paid by uptime, serverless functions are
-	      tipically paid per execution, reducing costs when the application is idle.
+	      tipically paid per execution, reducing costs when the application is idle\cite{s23104868}.
 
 	\item \textbf{Focus on Development}
 
 	      Since the developers don't need to handle all the infrastructure management,
 	      they can focus entirely on the code, usually resulting in improvements in
-	      produtivity and code quality.
+	      produtivity and code quality\cite{GoogleServerless}.
 
 
 \end{itemize}
@@ -364,23 +281,17 @@ solution.
 	\item \textbf{Cold Start}
 
 	      After a long period of inactivity, functions take longer to execute, which
-	      can be a problem for applications that require real-time responsiveness.
-
-	\item \textbf{Execution limits}
-
-	      Serverless cloud providers usually have execution time limits. \gls{AWS} lambda,
-	      for example, has a 15 minute execution time limit, making this solution
-	      not reliable for long running functions.
+	      can be a problem for applications that require real-time responsiveness\cite{s21030928}.
 
 	\item \textbf{Testing and Debugging}
 
 	      Testing and debugging in serverless architectures are harder due to the
-	      decentralized nature of this systems.
+	      decentralized nature of this systems\cite{meghla2023testing}.
 
 	\item \textbf{Statelessness}
 
 	      Functions can not store data between executions and due to that, some
-	      applications will require external storage solutions.
+	      applications will require external storage solutions\cite{meghla2023testing}.
 \end{itemize}
 
 \subsection{Edge Architecture}
@@ -406,18 +317,18 @@ before being sent to a server \cite{s20226441}.
 	      Since there's no need to access a server, it allows for real-time decisions
 	      in systems like self-driving cars or industrial automation. When there's
 	      still data being sent to a server, the data can be processed and filtered
-	      locally before being sent, reducing bandwidth usage.
+	      locally before being sent, reducing bandwidth usage\cite{s20226441}.
 
 
 	\item \textbf{Reliability}
 
 	      It can operate offline by storing data locally until the connection is
-	      restored.
+	      restored\cite{MicrosoftEdgeComputing}.
 
 	\item \textbf{Data Privacy}
 
 	      Sensitive data, like someone's biometric data can be kept in the device,
-	      instead of being transmitted to the cloud.
+	      instead of being transmitted to the cloud\cite{MicrosoftEdgeComputing}.
 
 \end{itemize}
 
@@ -426,11 +337,11 @@ before being sent to a server \cite{s20226441}.
 
 	\item \textbf{Limited Resources}
 
-	      Edge devices are usually constrained in processing power and storage capacity.
+	      Edge devices are usually constrained in processing power and storage capacity\cite{s20226441}.
 
 	\item \textbf{Security Risks}
 
-	      Edge devices are more vulnerable to attacks, both physical and cyberattacks.
+	      Edge devices are more vulnerable to attacks, both physical and cyberattacks\cite{s20226441}.
 
 \end{itemize}
 
@@ -445,14 +356,6 @@ functional product. This architecture is often used as a starting point, and
 eventually, as the application grows, it's migrated to more complex architectures.
 Examples of real-world applications are basic e-commerce platforms, content
 management systems and small desktop applications.
-
-The client-side architecture is popular among web applications. Most of the
-websites use this architecture where browsers act as clients that interact with
-centralized web servers. Another wide applicatios for this structures are email
-systems and database applications. In email systems, the servers communicate
-with clients like Microsoft Outlook or Gmail using protocols like \gls{IMAP} or \gls{SMTP}.
-In database applications, clients access centralized database servers using
-\gls{SQL} queries for data retrieval and manipulation.
 
 Microservices architectures have become the go-to solution for more complex
 systems. It's widely used in bigger e-commerce applications where the application
