@@ -49,74 +49,60 @@ the early stages of software development\cite{Garlan2018}.
 	\label{fig:architectures:monolithic}
 \end{figure}
 
-\subsubsection{Advantages}
 Despite some problems, monoliths have some advantages on the other architectures,
-specially for smaller applications or early-stage development:
-\begin{itemize}
-	\item \textbf{Simplicity}
+specially for smaller applications or early-stage development.
 
-	      The monolithic architecture is the simplest way of structuring a
-	      project and monolithic solutions are easier to design, develop and deploy
-	      than other solutions.
-	      Having the code in a single codebase removes the need for complex
-	      integration, making it more attractive for smaller teams with limited
-	      resources or expertise\cite{IBMMonolith}.
-	\item \textbf{Efficiency}
+The monolithic architecture is the simplest way of structuring a
+project and monolithic solutions are easier to design, develop and deploy
+than other solutions.
+Having the code in a single codebase removes the need for complex
+integration, making it more attractive for smaller teams with limited
+resources or expertise\cite{IBMMonolith}.
 
-	      Since there is a single application in monolithic systems, there are no
-	      services integrations and developers can debug without dealing with
-	      inter-service communications. Testing is also easier because all of the
-	      components are located in the same codebase and run in the same environment\cite{newman2019monolith}.
-	\item \textbf{Straightforward Deployment}
+Another advantage is that since there is a single application in monolithic
+systems, there are no services integrations and developers can debug without
+dealing with inter-service communications. Testing is also easier because all
+of the components are located in the same codebase and run in the same
+environment\cite{newman2019monolith}.
 
-	      Deploying a monolithic application involves managing a single artifact. This
-	      reduces operational complexity compared to systems where deployment
-	      pipelines must coordinate multiple services\cite{AWSMonolithMicroservices}.
-\end{itemize}
-\subsubsection{Challenges}
+Lastly, deploying a monolithic application involves managing a single artifact. This
+reduces operational complexity compared to systems where deployment
+pipelines must coordinate multiple services\cite{AWSMonolithMicroservices}.
+
 For bigger architectures, this solution might not be adequate as several
 challenges appear as applications grow in size and complexity.
-\begin{itemize}
-	\item \textbf{Scalability Constraints}
+Scaling a monolithic system can be much harder when
+compared with other modular architectures. Let's say that hipotetically,
+an application is composed of three modules. One is in constant
+overload and needs to be scaled with urgency, the second has some peaks of
+usage but doesn't require to be scaled, and the third is barely used and
+could be ajusted to use less resources. In an architecture where this
+modules are separated for example in three services, scaling publishers
+efficient and we can scale up the first service and scale down the third.
+However, in a monolith, we can only scale everything as one, meaning there
+can be modules that force the scaling of unrelated components unnecesarily.
+In the example above, we would need to scamicroservicesle the whole system, including
+the third module that is already wasting more resources that it needs\cite{7333476,AWSMonolithMicroservices}.
 
-	      As mentioned above, Scaling a monolithic system can be much harder when
-	      compared with other modular architectures. Let's say that hipotetically,
-	      an application is composed of three modules. One is in constant
-	      overload and needs to be scaled with urgency, the second has some peaks of
-	      usage but doesn't require to be scaled, and the third is barely used and
-	      could be ajusted to use less resources. In an architecture where this
-	      modules are separated for example in three services, scaling publishers
-	      efficient and we can scale up the first service and scale down the third.
-	      However, in a monolith, we can only scale everything as one, meaning there
-	      can be modules that force the scaling of unrelated components unnecesarily.
-	      In the example above, we would need to scamicroservicesle the whole system, including
-	      the third module that is already wasting more resources that it needs\cite{7333476,AWSMonolithMicroservices}.
-	\item \textbf{Maintenance}
+Another disadvantage is that monoliths are prone to tech debt accumulation over
+time. The lack of modularity present in these systems frequently results in
+an architecture where dependencies between the system's elements are unclear,
+slowing the development process and making maintenance an hard and continuous
+process\cite{7333476}.
 
-	      Monoliths are prone to tech debt accumulation over time. The lack
-	      of modularity present in these systems frequently results in what is known as a
-	      "big ball of mud", meaning that dependencies between the system's elements are
-	      unclear, slowing the development process and making maintenance an
-	      hard and continuous process\cite{7333476}.
+Additionally, every change in the codebase requires all the application to be
+redeployed, increasing the risk of downtime and complicating release cycles. If
+an error is deployed to the public environment, it can cause the whole system
+to go down while in modular systems, if a problem is deployed in one of the
+modules, the others are independent and can still run even if the one with
+the problem is down, meaning that only part of the system is unavailable\cite{7333476,AWSMonolithMicroservices}.
 
-	\item \textbf{Deployment Risk}
-
-	      Every change in the codebase requires all the application to be redeployed,
-	      increasing the risk of downtime and complicating release cycles. If an error
-	      is deployed to the public environment, it can cause the whole system to go
-	      down while in modular systems, if a problem is deployed in one of the
-	      modules, the others are independent and can still run even if the one with
-	      the problem is down, meaning that only part of the system is unavailable\cite{7333476,AWSMonolithMicroservices}.
-
-	\item \textbf{Lack of Flexibility}
-
-	      Since all of the application's logic resides in a single codebase, it will
-	      likely be enforced that everything should be developed using an uniform
-	      technology stack. In architectures that have the application divided in
-	      modules is possible for each module to have its own technology stack,
-	      which can facilitate the development of some specific features that are
-	      easier to do with specific technologies\cite{IBMMonolith}.
-\end{itemize}
+Monoliths also suffer from lack of flexibility. Since all of the application's
+logic resides in a single codebase, it will likely be enforced that everything
+should be developed using an uniform technology stack. In architectures that
+have the application divided in modules is possible for each module to have
+its own technology stack, which can facilitate the development of some specific
+features that are easier to do with specific technologies\cite{IBMMonolith}.
 
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
@@ -134,55 +120,36 @@ adopting tools like message brokers or event streaming platforms\cite{7436659}.
 	\label{fig:architectures:microservices}
 \end{figure}
 
-\subsubsection{Advantages}
+Microservices are independent applications with its own codebase, deployed
+separately and in most cases with their individual database. For this reason
+microservices have the advatage that each service can be scaled independently based on demand. A service with
+high demand like for example user authentication can scale separately from
+services with less workload\cite{8990350}.
 
-\begin{itemize}
-	\item \textbf{Scalability}
+Another benefit of having the logic separated into services is that when
+a failure occurs in a service, the others will unlikely be affected. For
+example, when a store website has a problem with its payment service, the
+users might not be able to pay but they can still browse the website and
+do other things like managing the profile or adding products to the cart\cite{8990350}.
 
-	      Microservices are independent applications with its own codebase, deployed
-	      separately and in most cases with their individual database. For this reason
-	      each service can be scaled independently based on demand. A service with
-	      high demand like for example user authentication can scale separately from
-	      services with less workload\cite{8990350}.
+In addition, each service is an independent application, which means that each service
+can be developed using different technologies\cite{7436659}. This allows the service to
+be developed using technologies that are more suitable for its own purpose.
 
-	\item \textbf{Fault Isolation}
+Despite the advantages, managing multiple services is much more complex than managing a single
+application\cite{newman2019monolith}. Deployment and maintenance efforts are multiplied, which can
+lead to operational overhead. The heavy use of monitoring tools can be
+helpful, or even required in this kind of solutions.
 
-	      Another benefit of having the logic separated into services is that when
-	      a failure occurs in a service, the others will unlikely be affected. For
-	      example, when a store website has a problem with its payment service, the
-	      users might not be able to pay but they can still browse the website and
-	      do other things like managing the profile or adding products to the cart\cite{8990350}.
-
-	\item \textbf{Technology Diversity}
-
-	      Each service is an independent application, which means that each service
-	      can be developed using different technologies\cite{7436659}. This allows the service to
-	      be developed using technologies that are more suitable for its own purpose.
-
-\end{itemize}
-
-\subsubsection{Challenges}
-\begin{itemize}
-	\item \textbf{Complexity}
-
-	      Managing multiple services is much more complex than managing a single
-	      application\cite{newman2019monolith}. Deployment and maintenance efforts are multiplied, which can
-	      lead to operational overhead. The heavy use of monitoring tools can be
-	      helpful, or even required in this kind of solutions.
-
-	\item \textbf{Dependency Management}
-
-	      In these architectures, services often depend on each other, and despite
-	      fault isolation being pointed as an advantage, if the dependencies are not
-	      properly managed a failure can lead to successive failures on other modules.
-	      When there are two services that need to be change in order to add or update
-	      a feature, the first service to be deployed need to be compatible with the
-	      previous version of the other, otherwise there will be problems while they
-	      are not both properly deployed.
-	      Observability tools like tracing and logging are essencial to prevent and
-	      diagnose this king of issues\cite{richards2015software}.
-\end{itemize}
-
+Another challenge is that in these architectures, services often depend on each other,
+and despite fault isolation being an advantage, if the dependencies are not
+properly managed a failure can lead to successive failures on other modules.
+When there are two services that need to be change in order to add or update
+a feature, the first service to be deployed need to be compatible with the
+previous version of the other, otherwise there will be problems while they
+are not both properly deployed.
+Observability tools like tracing and logging are essencial to prevent and
+diagnose this king of issues\cite{richards2015software}.
 
 \subsection{Event-Driven Architecture}
 The event-driven architecture is a system design patter where the components
@@ -204,46 +171,32 @@ subscribers through features like message queuing and topic-based routing\cite{9
 	\label{fig:architectures:event-driven}
 \end{figure}
 
-\subsubsection{Advantages}
-\begin{itemize}
+One benefit of this architecture is the fault tolerance.
+Components of an event-driven architecture operate independently, meaning
+that if a component fails the system can continue functioning. In this
+case, due to the existence of an event broker, the messages are stored in
+this intermediary until they are processed, reducing the probability of
+loosing data\cite{AWSEventDriven}.
 
-	\item \textbf{Fault Tolerance}
+Another advantage is that, by decoupling producers from subscribers, a new
+consumer can be added and subscribe to existing events. This doesn't require
+any change in the producer in order to work, which facilitates the extension of
+the system\cite{MicrosoftEventDriven}.
 
-	      Components of an event-driven architecture operate independently, meaning
-	      that if a component fails the system can continue functioning. In this
-	      case, due to the existence of an event broker, the messages are stored in
-	      this intermediary until they are processed, reducing the probability of
-	      loosing data\cite{AWSEventDriven}.
+Lastly, despite what was said above about the events not needing to be processed
+in real-time, they can be configured to process and respond to events
+as they occur, making it ideal for applications which require real-time
+responsiveness\cite{manchana2021event}.
 
-	\item \textbf{Flexibility in adding features}
+On the other side, there are some challenges like handling the events order and
+duplication.
+Making sure that events are queued in the correct order and that they are
+processed only once can be a difficult task because of the concurrency
+that is characteristic of these systems\cite{MicrosoftEventDriven}.
 
-	      By decoupling producers from subscribers, a new consumer can be added
-	      and subscribe to existing events. This doesn't require any change in the
-	      producer in order to work, which facilitates the extension of the
-	      system\cite{MicrosoftEventDriven}.
-
-	\item \textbf{Real-Time capabilities}
-
-	      Despite what was said above that the events don't need to be processed
-	      in real-time, they can be configured to process and respond to events
-	      as they occur, making it ideal for applications which require real-time
-	      responsiveness\cite{manchana2021event}.
-\end{itemize}
-
-\subsubsection{Challenges}
-\begin{itemize}
-	\item \textbf{Event Ordering and Duplication}
-
-	      Making sure that events are queued in the correct order and that they are
-	      processed only once can be a difficult task because of the concurrency
-	      that is characteristic of these systems\cite{MicrosoftEventDriven}.
-
-	\item \textbf{Debugging}
-
-	      The assynchronous communication complicates the debugging process.
-	      Observability tool are essencial to diagnose problems\cite{manchana2021event}.
-
-\end{itemize}
+The debugging process is also harder due to the assynchronous nature of the
+communication process.
+Observability tool are essencial to diagnose problems\cite{manchana2021event}.
 
 \subsection{Serverless Architecture}
 Serverless architecture is a solution where the cloud provider manages all the
@@ -1283,3 +1236,5 @@ complex analytics.
 \end{itemize}
 
 \section{Related Work}
+
+
