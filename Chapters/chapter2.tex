@@ -214,47 +214,29 @@ solution\cite{s21030928}.
 	\label{fig:architectures:serverless}
 \end{figure}
 
-\subsubsection{Advantages}
-\begin{itemize}
+Serverless architectures benefit from high scalability. With this
+architecture, the applications automatically scale horizontally as needed, creating or
+deleting function instances in response to demand. This is a great
+advantage for applications with peak times where the demand is
+significantly bigger than normal\cite{GoogleServerless}.
 
-	\item \textbf{Scalability}
+On top of that, unlike servers, that are usually paid by uptime, serverless functions are
+tipically paid per execution, reducing costs when the application is idle\cite{s23104868}.
 
-	      The application automatically scales horizontally as needed, creating or
-	      deleting function instances in response to demand. This is a great
-	      advantage for applications with peak times where the demand is
-	      significantly bigger than normal\cite{GoogleServerless}.
+Another advantage is that since the developers don't need to handle all the infrastructure management,
+they can focus entirely on the code, usually resulting in improvements in
+produtivity and code quality\cite{GoogleServerless}.
 
-	\item \textbf{Cost Effective}
+On the other side, serverless functions suffer from cold start. After a long
+period of inactivity, functions take longer to execute, which
+can be a problem for applications that require real-time responsiveness\cite{s21030928}.
 
-	      Unlike servers, that are usually paid by uptime, serverless functions are
-	      tipically paid per execution, reducing costs when the application is idle\cite{s23104868}.
+Testing and debugging in serverless architectures are harder due to the
+decentralized nature of this systems\cite{meghla2023testing}.
 
-	\item \textbf{Focus on Development}
-
-	      Since the developers don't need to handle all the infrastructure management,
-	      they can focus entirely on the code, usually resulting in improvements in
-	      produtivity and code quality\cite{GoogleServerless}.
-
-
-\end{itemize}
-
-\subsubsection{Challenges}
-\begin{itemize}
-	\item \textbf{Cold Start}
-
-	      After a long period of inactivity, functions take longer to execute, which
-	      can be a problem for applications that require real-time responsiveness\cite{s21030928}.
-
-	\item \textbf{Testing and Debugging}
-
-	      Testing and debugging in serverless architectures are harder due to the
-	      decentralized nature of this systems\cite{meghla2023testing}.
-
-	\item \textbf{Statelessness}
-
-	      Functions can not store data between executions and due to that, some
-	      applications will require external storage solutions\cite{meghla2023testing}.
-\end{itemize}
+Another drawback is that serverless functions are stateless meaning they
+can not store data between executions and due to that, some
+applications will require external storage solutions\cite{meghla2023testing}.
 
 \subsection{Edge Architecture}
 Edge architectur is a system design pattern in where the data is processed
@@ -269,43 +251,23 @@ before being sent to a server \cite{s20226441}.
 	\label{fig:architectures:edge}
 \end{figure}
 
-\subsubsection{Advantages}
+Edge architectures have some advantages specially in the context of IoT systems.
+Since there's no need to access a server, it allows for real-time decisions
+in systems like self-driving cars or industrial automation. When there's
+still data being sent to a server, the data can be processed and filtered
+locally before being sent, reducing bandwidth usage\cite{s20226441}.
 
-\begin{itemize}
+It's also a reliable choice because it can operate offline by storing data
+locally until the connection is restored\cite{MicrosoftEdgeComputing}.
 
+Additionally, it enhances data privacy, as sensitive information, such as biometric data,
+can be kept on the device rather than being transmitted to the cloud\cite{MicrosoftEdgeComputing}.
 
-	\item \textbf{Low Latency and Bandwidth}
+Despite the advantages, edge devices are usually constrained in processing power
+and storage capacity, which can be a drawback\cite{s20226441}.
 
-	      Since there's no need to access a server, it allows for real-time decisions
-	      in systems like self-driving cars or industrial automation. When there's
-	      still data being sent to a server, the data can be processed and filtered
-	      locally before being sent, reducing bandwidth usage\cite{s20226441}.
-
-
-	\item \textbf{Reliability}
-
-	      It can operate offline by storing data locally until the connection is
-	      restored\cite{MicrosoftEdgeComputing}.
-
-	\item \textbf{Data Privacy}
-
-	      Sensitive data, like someone's biometric data can be kept in the device,
-	      instead of being transmitted to the cloud\cite{MicrosoftEdgeComputing}.
-
-\end{itemize}
-
-\subsubsection{Challenges}
-\begin{itemize}
-
-	\item \textbf{Limited Resources}
-
-	      Edge devices are usually constrained in processing power and storage capacity\cite{s20226441}.
-
-	\item \textbf{Security Risks}
-
-	      Edge devices are more vulnerable to attacks, both physical and cyberattacks\cite{s20226441}.
-
-\end{itemize}
+Another challenge is that edge devices are more vulnerable to attacks, both
+physical and cyberattacks\cite{s20226441}.
 
 \subsection{Applications and Use Cases}
 Every architecture has its own advantages and disadvantages, but they all have
@@ -326,10 +288,21 @@ shipping processing, etc. Streaming platforms like Netflix also tend to use this
 solution, dividing the application into services for content recommendation, user
 preferences, subscription handling, etc.
 
-Lastly, the event-driven architecture shines in products where real-time
+The event-driven architecture shines in products where real-time
 responsiveness is crucial. It's widely used in Internet of Things systems,in
 applications like industrial monitoring, home automation, and environmental
 sensing where \gls{IoT} devices send events to be processed in real-time.
+E-commerce platforms can also use event-driven architecture for
+features like processing orders or updating inventory.
+
+Serverless architectures are useful in cases where scalability and cost-efficiency
+are required. They are often used in applications that have a variable workload
+like backend application, real-time data processing and \gls{IoT} event handling, where
+there are periods with spikes and others with low usage.
+
+Lastly, edge architectures are great for applications that require low-latency
+real-time processing. It's widely used in \gls{IoT} systems in industrial
+automation, or autonomous vehicles where real-time decisions are crucial.
 
 It's also common to mix different architectures in the same system using
 hybrid solutions. E-commerce platforms, for example, where referenced above in
@@ -341,10 +314,11 @@ Managing the underlying logic, data storage, and communication processes that
 allow the web application to operate is the responsibility of the backend.
 The backend operates behind the scenes managing data, processes requests, and
 responding to them, while the frontend gives users a visual and interactive
-experience. E-commerce platforms can also use event-driven architecture for
-features like processing orders or updating inventory.
-
+experience.
 \subsection{Backend Frameworks}
+The development of backend applications can be done using many frameworks with
+a variety of languages. In the following sections, some of the most used
+frameworks will be discussed.
 \subsubsection{Express}
 Express is a minimalist and lightweight web application framework for Node.js,
 designed to simplify server-side development. It's characterized by being
@@ -528,153 +502,112 @@ Backend, and Frontend and Backend.
 \subsection{Communication between IoT systems and backend}
 \gls{IoT} devices collect data that is then sent to backend services to be processed
 and analyzed. This often requires low-latency and reliable communication.
-\subsubsection{Communication Protocols and Standards}
-There are many protocols that address the necessities of \gls{IoT} systems:
+\subsubsection{Protocols}
+There are many protocols that address the necessities of \gls{IoT} systems.
+MQTT is a lightweight bi-directional message protocol created in 1999.
+It follows the publisher-subscriber architecture decoupling the message
+sender from the receiver. This protocol is composed by two parts, the
+broker, and the clients. The broker is the system responsible for providing
+a safe transmittion between clients implementing authentication and
+authorization features and routing the messages from the publishers to
+the respective subscribers. The clients are every application that
+communicates with the broker, being either a publisher or a subscriber.
+It's commonly used in resource-constrained systems like IoT systems because
+it's easy to implement and requires low bandwidth.
 
-\begin{itemize}
+\gls{AMQP} is another message protocol just like \gls{MQTT}.
+Despite being similar this protocols have some differences. While \gls{MQTT} is
+focused on simplicity and low-bandwidth communication, \gls{AMQP} is optimized for
+more complex systems, providing robust and reliable message queuing and
+routing introducing concepts like exchanges and queues.
 
-	\item \textbf{MQTT}
-
-	      MQTT is a lightweight bi-directional message protocol created in 1999.
-	      It follows the publisher-subscriber architecture decoupling the message
-	      sender from the receiver. This protocol is composed by two parts, the
-	      broker, and the clients. The broker is the system responsible for providing
-	      a safe transmittion between clients implementing authentication and
-	      authorization features and routing the messages from the publishers to
-	      the respective subscribers. The clients are every application that
-	      communicates with the broker, being either a publisher or a subscriber.
-	      It's commonly used in resource-constrained systems like IoT systems because
-	      it's easy to implement and requires low bandwidth.
-
-	\item \textbf{AMQP}
-
-	      \gls{AMQP} is another message protocol just like \gls{MQTT}.
-	      Despite being similar this protocols have some differences. While \gls{MQTT} is
-	      focused on simplicity and low-bandwidth communication, \gls{AMQP} is optimized for
-	      more complex systems, providing robust and reliable message queuing and
-	      routing introducing concepts like exchanges and queues.
-
-
-	\item \textbf{\gls{CoAP}}
-
-	      \gls{CoAP} is a \gls{HTTP} based protocol optimized for resource-constrained
-	      environments, such as \gls{IoT} systems. It's built on \gls{UDP} instead of \gls{TCP},
-	      resulting in a lightweight and faster solution.
-	      This protocol follows the \gls{REST}ful design providing resources under a \gls{URL}
-	      using methods like GET, POST, PUT, and DELETE. Due to its similarity with
-	      \gls{HTTP}, one of the most widely used protocols, \gls{CoAP} can be easily integrated
-	      with \gls{HTTP} using proxys.
-
-\end{itemize}
+\gls{CoAP} is a \gls{HTTP} based protocol optimized for resource-constrained
+environments, such as \gls{IoT} systems. It's built on \gls{UDP} instead of \gls{TCP},
+resulting in a lightweight and faster solution.
+This protocol follows the \gls{REST}ful design providing resources under a \gls{URL}
+using methods like GET, POST, PUT, and DELETE. Due to its similarity with
+\gls{HTTP}, one of the most widely used protocols, \gls{CoAP} can be easily integrated
+with \gls{HTTP} using proxys.
 
 \subsubsection{Middlewares and Gateways}
 Middleware platforms and gateways can be used in \gls{IoT}-to-backend
 communication to simplify the device integration and improving scalability:
 
-\begin{itemize}
+Middlewares are platforms like \gls{AWS} \gls{IoT} Core or Google Cloud \gls{IoT}.
+These platforms have features like device management, protocol translation, and
+analytics in real-time that can be useful when integrating \gls{IoT} systems
+with backend services.
 
-	\item \textbf{Middlewares}
-
-	      Platforms like \gls{AWS} \gls{IoT} Core or Google Cloud \gls{IoT} have features like
-	      device management, protocol translation, and analytics in real-time that
-	      can be useful when integrating \gls{IoT} systems with backend services.
-
-	\item \textbf{Gateways}
-
-	      Gateways are platforms that can aggregate, preprocess and filter data
-	      from \gls{IoT} systems. This way, only useful data is sent to the backend server,
-	      removing useless, resource consuming interactions.
-
-\end{itemize}
+Gateways are platforms that can aggregate, preprocess and filter data
+from \gls{IoT} systems. This way, only useful data is sent to the backend server,
+removing useless, resource consuming interactions.
 
 \subsection{Communication between Frontend and Backend}
 Backend is where all the business logic relies and it's what provides frontend
 the data for it to display to the end user. An effective communication between
 these two parts is crucial for a well designed system.
 \subsubsection{Protocols}
+There are many protocols that can be used to transmit data between the frontend
+and the backend.
+
+\gls{HTTP} is the most widely used protocol. It works on a
+request-response model, where the client sends the request and the server
+responds. It's a stateless, meaning each request is independent and doesn't
+affect the others. It's commonly used for fetching \gls{HTML}, images, videos
+and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTPS} but the
+data is encrypted using \gls{TLS} or \gls{SSL}.
+
+WebSocket is a protocol designed for real-time bi-directional communication.
+It operates over \gls{TCP} and starts as an \gls{HTTP} connection and then changes to a
+WebSocket connection. Unlike \gls{HTTP} it doesn't rely on requests, and both
+parts can communicate at any time.
+
+\gls{TCP} is a connection-oriented protocol that ensures reliability by
+estabilishing a connection via a three-way handshake, retrying lost
+packets and ensuring data is received in the correct order.
+On the other side \gls{UDP} is a connectionless protocol which sends data in
+independent packets. It doesn't guarantee delivery, order or error
+correction. Because of this, \gls{UDP} is faster but less reliable.
+
+\subsection{APIs}
 An \gls{API} is an interface of an application that defines a set of rules and
-protocols that allows other applications to communicate with it. There are many
-protocols that can be used to transmit data, some examples are:
-
-\begin{itemize}
-
-	\item \textbf{\gls{HTTP}/\gls{HTTP}S}
-
-	      \gls{HTTP} is the most widely used protocol for \gls{API}s. It works on a
-	      request-response model, where the client sends the request and the server
-	      responds. It's a stateless, meaning each request is independent and doesn't
-	      affect the others. It's commonly used for fetching \gls{HTML}, images, videos
-	      and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTPS} but the
-	      data is encrypted using \gls{TLS} or \gls{SSL}.
-
-
-	\item \textbf{WebSocket}
-
-	      WebSocket is a protocol designed for real-time bi-directional communication.
-	      It operates over \gls{TCP} and starts as an \gls{HTTP} connection and then changes to a
-	      WebSocket connection. Unlike \gls{HTTP} it doesn't rely on requests, and both
-	      parts can communicate at any time.
-
-
-	\item \textbf{\gls{UDP}/\gls{TCP}}
-
-	      \gls{TCP} is a connection-oriented protocol that ensures reliability by
-	      estabilishing a connection via a three-way handshake, retrying lost
-	      packets and ensuring data is received in the correct order.
-	      On the other side \gls{UDP} is a connectionless protocol which sends data in
-	      independent packets. It doesn't guarantee delivery, order or error
-	      correction. Because of this, \gls{UDP} is faster but less reliable.
-
-
-\end{itemize}
-
-
+protocols that allows other applications to communicate with it.
 These protocols define rules for communication between systems, focusing on the
-technical implementation. On a higher level are the \gls{API}s.
-The \gls{API}s define how data is requested, sent and consumed.
+technical implementation. \gls{API}s define how data is requested, sent and
+consumed using these protocols.
 
-\begin{itemize}
-	\item \textbf{\gls{REST}}
+\gls{REST}ful \gls{API}s are \gls{API}s that follow the \gls{REST} principles.
+This \gls{API}s' communication are stateless, meaning that each request must
+have all the information required for being processed.
+\gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated to them, and
+each resource idependent meaning that it doesn't depend on other
+requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}.
 
-	      \gls{REST}ful \gls{API}s are \gls{API}s that follow the \gls{REST} principles. This \gls{API}s'
-	      communication are stateless, meaning that each request must have all
-	      the information required for being processed.
-	      \gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated to them, and
-	      each resource idependent meaning that it doesn't depend on other
-	      requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}.
+Another widely used API type is GraphQL.
+GraphQL allows clients to specify exactly the data they need. This
+flexibility avoids over-fetching(getting more data than necessary) and
+under-fetching (not getting enough data in a single request).
+Just like \gls{REST}ful \gls{API}s, GraphQL works with \gls{HTTP} or \gls{HTTPS}
+but GraphQL \gls{API}s usually expose a single \gls{HTTP} endpoing for all
+requests. GraphQL supports subscriptions, which allows the client to receive
+real-time updates.
 
-	\item \textbf{GraphQL}
+\gls{gRPC} was developed by google and can be seen as both a protocol and an
+\gls{API} type. With this protocol, both clients and servers can call
+functions on each other, just like if it was its own code.
+It's commonly used in microservices architectures and real-time applications.
 
-	      GraphQL allows clients to specify exactly the data they need. This
-	      flexibility avoids over-fetching(getting more data than necessary) and
-	      under-fetching (not getting enough data in a single request).
-	      Just like \gls{REST}ful \gls{API}s, GraphQL works with \gls{HTTP} or \gls{HTTPS} but GraphQL \gls{API}s
-	      usually expose a single \gls{HTTP} endpoing for all requests.
-	      GraphQL supports subscriptions, which allows the client to receive
-	      real-time updates.
+Despite \gls{SOAP} being defined as a protocol, it's more comparable to \gls{API}
+types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP} or
+\gls{SMTP}(email).
+\gls{SOAP} is a lightweight protocol for exchanging structured data. It uses \gls{XML}
+to format messages in its own standards. These strict standards ensure
+reliability and compatibility between systems.
 
-	\item \textbf{gRPC}
-
-	      \gls{gRPC} was developed by google and can be seen as both a protocol and an
-	      \gls{API} style. With this protocol, both clients and servers can call
-	      functions on each other, just like if it was its own code.
-	      It's commonly used in microservices architectures and real-time applications.
-
-	\item \textbf{\gls{SOAP}}
-
-	      Despite \gls{SOAP} being defined as a protocol, it's more comparable to \gls{API}
-	      types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP} or
-	      \gls{SMTP}(email).
-	      \gls{SOAP} is a lightweight protocol for exchanging structured data. It uses \gls{XML}
-	      to format messages in its own standards. These strict standards ensure
-	      reliability and compatibility between systems.
-
-\end{itemize}
 \subsection{Security}
 
 Security is a crucial part of any system, it ensures the integrity of both
-the data and the system. When projecting the security in a system some
-aspects need to be addressed:
+the data and the system.
 
 \begin{figure}[htbp]
 	\centering
@@ -683,61 +616,54 @@ aspects need to be addressed:
 	\label{fig:security:JWT}
 \end{figure}
 
-\begin{itemize}
+When projecting the security in a system some
+aspects need to be addressed.
 
-	\item \textbf{Authentication}
+One very common example is the
+authentication process.
+It's important that the component that does the request identifies itself
+in a way that the other part can authenticate.
+In the case of \gls{IoT} to backend communication, \gls{IoT} devices must authenticate
+using approachs like token-based or certificate-based authentication.
 
-	      It's important that the component that does the request identifies itself
-	      in a way that the other part can authenticate.
-	      In the case of \gls{IoT} to backend communication, \gls{IoT} devices must authenticate
-	      using approachs like token-based or certificate-based authentication.
+In frontend to backend communication the most common approachs to
+authentication are sessions and token-based authentication using \gls{JWT}.
+Figure \ref{fig:security:JWT}
+is a flow chart of the authentication process using \gls{JWT}.
+Firstly the server verifies the credentials, if the credentials are
+correct, the server issues two tokens, an access token and a refresh
+token. These tokens are stored in the client and send in all of the
+following request to the server. The access token is used to validate
+the access and has a short life span (usually around 15 minutes). When
+the access token expires, the refresh token is used to generate a new
+access token. The refresh token is valid for a longer period of time (
+tipically one week).
 
-	      In frontend to backend communication the most common approachs to
-	      authentication are sessions and token-based authentication using \gls{JWT}.
-	      Figure \ref{fig:security:JWT}
-	      is a flow chart of the authentication process using \gls{JWT}.
-	      Firstly the server verifies the credentials, if the credentials are
-	      correct, the server issues two tokens, an access token and a refresh
-	      token. These tokens are stored in the client and send in all of the
-	      following request to the server. The access token is used to validate
-	      the access and has a short life span (usually around 15 minutes). When
-	      the access token expires, the refresh token is used to generate a new
-	      access token. The refresh token is valid for a longer period of time (
-	      tipically one week).
+Another important element to consider is data encryption.
+The data can be encrypted during transmission with protocols like \gls{TLS}/\gls{SSL}.
+These protocols ensure that data is only readable by the intended parts.
+For frontend-backend communication, this can be achieved using the \gls{HTTPS}
+protocol.
+For more sensitive applications, end-to-end ecryption can be used.
 
-	\item \textbf{Data Encryption}
+Besides data encryption, it's also important to check data integrity.
+To ensure that data isn't changed during transmition, techniques like
+\gls{HMAC} can be used.
 
-	      The data can be encrypted during transmission with protocols like \gls{TLS}/\gls{SSL}.
-	      These protocols ensure that data is only readable by the intended parts.
-	      For frontend-backend communication, this can be achieved using the \gls{HTTPS}
-	      protocol.
+It's also important to control who can access each data.
+Some data may be restricted to a specific group of users, therefore the
+system needs to check if the user that requests the data has
+authorization to get that data. Techniques like \gls{RBAC} can be used to
+prevent access to sensitive data from users that can't access it.
+In the frontend-backend communication, \gls{CORS} policies can be used to
+restrict which origins can access the backend \gls{API}.
 
-	      For more sensitive applications, end-to-end ecryption can be used.
-
-	\item \textbf{Data Integrity}
-
-	      To ensure that data isn't changed during transmition, techniques like
-	      \gls{HMAC} can be used.
-
-	\item \textbf{Access Control}
-
-	      Some data may be restricted to a specific group of users, therefore the
-	      system needs to check if the user that requests the data has
-	      authorization to get that data. Techniques like \gls{RBAC} can be used to
-	      prevent access to sensitive data from users that can't access it.
-
-	      In the frontend-backend communication, \gls{CORS} policies can be used to
-	      restrict which origins can access the backend \gls{API}.
-
-	\item \textbf{Preventing Attacks}
-
-	      Lastly, attacks like \gls{XSS}, \gls{SQL} Injection or \gls{DoS} need to be prevented.
-	      In \gls{IoT} systems, the firmware must be updated regularly to prevent this
-	      attacks.
-	      \gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it's possible to enforce
-	      rate limits and \gls{API} quotas. To prevent \gls{SQL} Injection, strategies like
-	      input sanitization or the use of an \gls{ORM} are essencial.
-\end{itemize}
+Lastly, attacks like \gls{XSS}, \gls{SQL} Injection or \gls{DoS} need to be prevented.
+In \gls{IoT} systems, the firmware must be updated regularly to prevent this
+attacks.
+\gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it's possible to enforce
+rate limits and \gls{API} quotas. To prevent \gls{SQL} Injection, strategies like
+input sanitization or the use of an \gls{ORM} are essencial.
 
 \section{Database}
 The storage and management of data, is an essencial part of \gls{IoT} platforms.
@@ -764,7 +690,7 @@ doing complex querying, through a query language called \gls{SQL}, making them
 a realiable choice for structured data requiring \gls{ACID} compliance. The figure
 \ref{fig:databases:sql}
 is an example of an entity relationship diagram for a simple \gls{SQL} database structure.
-This diagram has a customer table, an order table, a product table, a product
+This diagram represents a relational database with a customer table, an order table, a product table, a product
 category table and an additional table that handles the many-to-many
 relationship between orders and products.
 
@@ -775,70 +701,53 @@ relationship between orders and products.
 	\caption{Example of a simple relational database entity relationship diagram. }
 	\label{fig:databases:sql}
 \end{figure}
-\subsubsection{Advantages}
 
-\begin{itemize}
-	\item \textbf{Data integrity}
+Relational databases offer several advantages.
+They ensure data integrity by allowing the use of constraints (e.g. unique values, not null values,
+foreign keys) to force strict rules, preventing anomalies and ensuring
+reliability.
 
-	      It allows the use of constraints (e.g. unique values, not null values,
-	      foreign keys) to force strict rules, preventing anomalies and ensuring
-	      reliability.
+They also support complex queries, as the use of \gls{SQL} as a standard
+language allows complex queries with JOIN operations and nested queries for relational data analysis.
 
-	\item \textbf{Complex Queries}
+Additionally, relational databases benefit from maturity, with robust tools being
+available for backup, replication, and access control, such as PostgreSQL and MySQL.
 
-	      The use of \gls{SQL} as a standard language allows complex queries with JOIN
-	      operations and nested queries for relational data analysis.
+However, relational databases also present some challenges.
 
-	\item \textbf{Maturity}
+One of them is scalability, as \gls{IoT} systems can generate a large volume of
+data, vertical scaling can be costly.
 
-	      There are already robust tools for backup, replication and access
-	      control(e.g. PostgreSQL, MySQL).
+In terms of horizontal scaling, traditional relational databases generally
+struggle with adding more servers. Sharding is a popular approach to
+solve this problem by spliting large tables into smaller segments(shards)
+and store them in different servers, but it adds complexity to joins
+across multiple shards.
 
-\end{itemize}
+Another disadvantage is schema rigidity.
+In relational databases, tables follow a strict predefined schema, which
+difficults the process of integrating new data types, like unstructured
+data or new \gls{IoT} devices.
 
-\subsubsection{Challenges}
-\begin{itemize}
-
-	\item \textbf{Scalability}
-
-	      Since \gls{IoT} systems can generate a high amount of data, vertical scaling can
-	      be costly.
-
-	      In terms of horizontal scaling, traditional relational databases generally
-	      struggle with adding more servers. Sharding is a popular approach to
-	      solve this problem by spliting large tables into smaller segments(shards)
-	      and store them in different servers, but it adds complexity to joins
-	      across multiple shards.
-
-	\item \textbf{Schema Rigidity}
-
-	      In relational databases, tables follow a strict predefined schema, which
-	      difficults the process of integrating new data types, like unstructured
-	      data or new \gls{IoT} devices.
-
-\end{itemize}
 
 
 \subsection{NoSQL Databases}
 \gls{NoSQL} databases provide flexible schemas, making them suitable
 for storing unstructured and semi-structured data. Following the \gls{CAP} theorem,
 \gls{NoSQL} databases, unlike relational ones, prioritize availability and partition
-tolerance over consistency. There are several types of \gls{NoSQL} databases:
+tolerance over consistency. There are several types of \gls{NoSQL} databases,
+each optimized for different use cases.
 
-\begin{description}
-
-	\item[Document Databases: ]Store data as \gls{JSON}, \gls{BSON}, or \gls{XML} documents (e.g.
-	      MongoDB, CouchDB, Firebase Firestore). Figure \ref{fig:databases:NoSQL}
-	      shows an example of a \gls{JSON}-like document that represents an order's data.
-	\item[Column Oriented Databases: ]Store data in columns instead of rows (e.g.
-	      Apache Cassandra, HBase, ScyllaDB).
-	\item[Key-value Databases: ]Store data as key-value pairs, similar to
-	      a hash table, providing fast access to data. Mainly used as cache. Some
-	      examples include Redis and Amazon DynamoDB.
-	\item[Graph Databases: ]Store relationships between entities as nodes and
-	      edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
-
-\end{description}
+Document Databases store data as \gls{JSON}, \gls{BSON}, or \gls{XML} documents (e.g.
+MongoDB, CouchDB, Firebase Firestore). Figure \ref{fig:databases:NoSQL}
+shows an example of a \gls{JSON}-like document that represents an order's data.
+Column Oriented Databases store data in columns instead of rows (e.g.
+Apache Cassandra, HBase, ScyllaDB).
+Key-value Databases store data as key-value pairs, similar to
+a hash table, providing fast access to data. Mainly used as cache. Some
+examples include Redis and Amazon DynamoDB.
+Graph Databases store relationships between entities as nodes and
+edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
 
 \begin{figure}[htbp]
 	\centering
@@ -847,63 +756,48 @@ tolerance over consistency. There are several types of \gls{NoSQL} databases:
 	\label{fig:databases:NoSQL}
 \end{figure}
 
-\subsubsection{Advantages}
-\begin{itemize}
+\gls{NoSQL} databases offer several advantages. One of its strenghts is scalability
+as they can easily scale horizontally by spliting data across
+multiple servers or clusters.
 
-	\item \textbf{scalability}
+Another advantage is performance. \gls{NoSQL} databases are optimized for speed
+and its transactions typically have low latency. Due to its data being stored
+in an unstructured and simpler, without constraints or relations, \gls{NoSQL}
+databases operations are generally faster when compared to relational databases.
+On top of this, many non relational solutions implement in-memory storage,
+caching and efficient indexing techniques, improving the performance even more.
 
-	      \gls{NoSQL} Databases scale easily horizontally by spliting data across
-	      multiple servers or clusters.
+Flexibility is another crucial benefit.
+Unlike \gls{SQL} databases that restrict the data to predefined rigid schemas,
+\gls{NoSQL} databases allow for dynamic schema changes, meaning that fields can
+be added or removed to the schema on the fly without requiring database
+migrations or even downtime.
 
-	\item \textbf{Performance}
+Lastly, availability is a big advantage of \gls{NoSQL} databases.
+Many solutions offer built-in replication and fault tolerance
+technologies to ensure availability and fault tolerance. Typically data is
+replicated across multiple nodes, so in case one node fails, the others
+are up and have the data required.
 
-	      \gls{NoSQL} databases are optimized for speed and its transactions typically have
-	      low latency. Due to its data being stored in an unstructured and simpler,
-	      without constraints or relations, \gls{NoSQL} databases operations are generally
-	      faster when compared to relational databases. On top of this, many non
-	      relational solutions implement in-memory storage, caching and efficient
-	      indexing techniques, improving the performance even more.
+Despite their advantages, \gls{NoSQL} databases also come with some challenges.
 
-	\item \textbf{Flexibility}
+One of the main issues is consistency.
+According to the \gls{CAP} theorem, database systems can only guarantee two out of
+Consistency, Availability and Partition Tolerance. \gls{NoSQL} Databases focus on
+Availability and Partition Tolerance, leaving consistency to second plan.
+This results in eventual consistency, meaning that data takes time to update
+between nodes, leading to inconsistency in the meantime and leading to
+consistency in the end.
 
-	      Unlike \gls{SQL} databases that restrict the data to predefined rigid schemas,
-	      \gls{NoSQL} databases allow for dynamic schema changes, meaning that fields can
-	      be added or removed to the schema on the fly without requiring database
-	      migrations or even downtime.
+Another challenge is having limited query capabilities.
+\gls{NoSQL} databases don't support complex queries with features like JOINs,
+aggregations etc. making querying less flexible. Some databases have query
+languages like \gls{SQL} but even those are not as powerful as \gls{SQL} queries.
 
-	\item \textbf{Availability}
-
-	      Many \gls{NoSQL} solutions offer built-in replication and fault tolerance
-	      technologies to ensure availability and fault tolerance. Typically data is
-	      replicated across multiple nodes, so in case one node fails, the others
-	      are up and have the data required.
-
-\end{itemize}
-
-\subsubsection{Challenges}
-
-\begin{itemize}
-	\item \textbf{Consistency}
-
-	      According to the \gls{CAP} theorem, database systems can only guarantee two out of
-	      Consistency, Availability and Partition Tolerance. \gls{NoSQL} Databases focus on
-	      Availability and Partition Tolerance, leaving consistency to second plan.
-	      This results in eventual consistency, meaning that data takes time to update
-	      between nodes, leading to inconsistency in the meantime and leading to
-	      consistency in the end.
-
-	\item \textbf{Limited Query Capabilities}
-
-	      \gls{NoSQL} databases don't support complex queries with features like JOINs,
-	      aggregations etc. making querying less flexible. Some databases have query
-	      languages like \gls{SQL} but even those are not as powerful as \gls{SQL} queries.
-
-	\item \textbf{Data Duplication}
-
-	      In order to improve reading performance, some data is replicated across
-	      multiple documents or collections, increasing storage requirements, and
-	      making consistency harder to maintain.
-\end{itemize}
+Additionally, there's also the problem of data duplication.
+In order to improve reading performance, some data is replicated across
+multiple documents or collections, increasing storage requirements, and
+making consistency harder to maintain.
 \subsection{Time-Series Databases}
 \gls{TSDB}s are focused on storing time-stamped data. The
 data is indexed by timestamp, making time-based queries very efficient. They are
@@ -911,42 +805,31 @@ optimized for high-velocity writes, making these databases a reliable solution
 for storing sensor data on \gls{IoT} systems. Popular time-series databases include
 InfluxDB, TimescaleDB, and Prometheus.
 
-\subsubsection{Advantages}
-\begin{itemize}
-	\item \textbf{High Write Throughput}
+\gls{TSDB}s offer several advantages, particularly in handling large volumes
+of timestamped data efficiently. These databases are optimized for receiving
+millions of timestamped data per second, having an high write throughput.
 
-	      These databases are optimized for receiving millions of timestamped data
-	      per second.
+Another major advantage is having efficient querying. \gls{TSDB}s are optimized
+for querying and aggregating based on timestamps. This makes real-time analytics
+efficient.
 
-	\item \textbf{Efficient Querying}
+Additionally, is also compatible with edge computing.
+Some lighter \gls{TSDB}s like QuestDB can run on resource-constrained environments,
+making possible to use this databases to store sensor data on the devices,
+to be processed on the edger and then sent to the backend service.
 
-	      \gls{TSDB}s are optimized for querying and aggregating based on timestamps. This
-	      makes real-time analytics efficient.
 
-	\item \textbf{Edge computing compatibility}
+On the other side, \gls{TSDB}s have also some drawbacks, like lacking flexibility
+with data structures.
+Despite being efficient with time-series data, it struggles with non
+time-stamped data (e.g. user metadata). It is also not suitable for applications requiring
+complex joins or relational data models.
 
-	      Some lighter \gls{TSDB}s like QuestDB can run on resource-constrained environments,
-	      making possible to use this databases to store sensor data on the devices,
-	      to be processed on the edger and then sent to the backend service.
+Another significant challenge is requiring high storage capacity due to the
+high-speed of incoming data.
+Strategies like data compression, prunning or retention policies
+are essencial to the reduction of this problem.
 
-\end{itemize}
-\subsubsection{Challenges}
-
-\begin{itemize}
-
-	\item \textbf{Flexibility}
-
-	      Despite being efficient with time-series data, it struggles with non
-	      time-stamped data (e.g. user metadata). It is also not suitable for applications requiring
-	      complex joins or relational data models.
-
-	\item \textbf{High Storage Requirements}
-
-	      Due to the high-speed of incoming data, it requires a high volume of storage
-	      capacity. Strategies like data compression, prunning or retention policies
-	      are essencial to the reduction of this problem.
-
-\end{itemize}
 \subsection{Applications and Use Cases}
 Choosing the right databases to use is an important part of system design. This
 choice must have into account the system requirements. Relational databases are
@@ -1063,21 +946,19 @@ It includes built-in features like routing, \gls{HTTP} client and form validatio
 \subsection{State Management}
 State management is a fundamental aspect of frontend development. It enhances
 the user experience providing data consistency and an improved performance.
-State represents the dynamic data of an application an can be of three types:
+State represents the dynamic data of an application and can be local, shared,
+or global.
 
-\begin{description}
+ocal state is the state managed within a single component. It can
+represent data from \gls{UI} elements like forms or button states.
 
-	\item[Local state:] The state managed within a single component. It can
-	      represent data from \gls{UI} elements like forms or button states.
+When multiple components need access to the same data, that data can be shared
+between them using solutions like context \gls{API}s or external libraries which
+handle the shared state.
 
-	\item[Shared state:] When multiple components need access to the same data,
-	      that data can be shared between them using solutions like context \gls{API}s or
-	      external libraries.
-
-	\item[Global state:] Usually used for user authentication, notifications and
-	      data persistance, the global state is application-wide, meaning that
-	      every component has access to it.
-\end{description}
+Usually used for user authentication, notifications and
+data persistance, the global state is application-wide, meaning that
+every component has access to it.
 
 Handling global state is a complex proccess and requires the use of state
 management solutions like Redux, Recoil, Zustand, or Jotai for ReactJS and
@@ -1147,23 +1028,17 @@ Tableau, Microsoft PowerBI, Looker and Grafana are some of the most popular ones
 To make analytics easier, there are several ready-to-use tools for generating
 analytics from raw data. Examples include Apache Flink, Apache Spark,
 TensorFlow and ElasticSearch.
-\subsubsection{Challenges}
 
-\begin{itemize}
-	\item \textbf{High Cost}
+\gls{BI} in \gls{IoT} systems comes with several challenges.
+One major challenge is high cost associated with processing and storing
+high volume of data. An high-performance and high-capacity storage
+solution is required, which increases the cost significantly. On top of this,
+licences for \gls{BI} tools are expensive and free tools are usually very
+limited in terms of features.
 
-	      Due to the high volume of data, an high-performance and high capacity storage
-	      solution is required, which increases the cost significantly. On top of this,
-	      licences for \gls{BI} tools are expensive and free tools are usually very
-	      limited in terms of features.
-
-	\item \textbf{Data Consistency}
-
-	      Ensuring consistency between data from different sources can be difficult.
-	      The data preparation can be a complex process and an efficient \gls{ETL} is
-	      essencial to prevent inconsistencies.
-
-\end{itemize}
+Ensuring consistency between data from different sources can also be difficult.
+The data preparation can be a complex process and an efficient \gls{ETL} is
+essencial to prevent inconsistencies.
 
 
 \section{AI/ML for Anomaly Detection}
@@ -1220,20 +1095,16 @@ On the other side, the models can also be deployed on the cloud, processing
 sensor readings in batch, and retraining the models. This can handle more
 complex analytics.
 
-\subsection{Challenges}
+Integrating \gls{AI}/\gls{ML} with \gls{IoT} systems for anomaly detection
+have some challenges associated.
 
-\begin{itemize}
-	\item \textbf{Data Imbalance}
-
-	      Anomalies are rare, and synthetic data generation may be needed to train
-	      the model.
-	\item \textbf{Cold Start}
-
-	      In the beginning, there's a low amount of data to train the model.
-	\item \textbf{Model Drift}
-
-	      Sensor behaviour changes over time.
-\end{itemize}
+One challenge is the data imbalance.
+Anomalies are rare, and synthetic data generation may be needed to train
+the model.
+Another problem is that in the beginning, there's a low amount of data to
+train the model.
+And lastly, there's the need to adapt to model drift as sensors behaviour
+changes over time.
 
 \section{Related Work}
 
