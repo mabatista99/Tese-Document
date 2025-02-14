@@ -13,7 +13,8 @@
 
 This chapter provides a view of the state-of-the-art of \gls{IoT} platforms as well
 as well as web development technologies and connection with iot devices.
-Firstly, it presents an overview on system architectures and compares common
+It starts by addressing how \gls{IoT} impacts monitoring and surveillance and how it's
+possible to detect alarm situations with \gls{IoT} systems, and then it presents an overview on system architectures and compares common
 architecture patterns. Then the backend development is addressed along with
 its frameworks, followed by a section dedicated to communication and security.
 After that, Database solutions are detailed and compared in context of IoT
@@ -23,6 +24,137 @@ Then, in the following two sections, data processing pipelines are explained as
 well as \gls{AI}/\gls{ML} integration with the system.
 
 Lastly, some similar solutions previously developed are addressed and compared.
+
+\section{Monitoring and Surveillance in the Digitalization Era}
+The digital transformation of the world has resulted in an increased adoption
+of \gls{IoT} systems for monitoring and surveillance. Smart cities are an
+example of how interconnected \gls{IoT} devices can help with challenges
+like traffic management, public safety and environmental monitoring. Figure
+\ref{fig:monitoring:smartcities}
+illustrates how \gls{IoT} systems can be applied to smart cities, from public
+security to entretainment.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartCities.png}
+	\caption{IoT applications in smart cities\cite{sharma2024}}
+	\label{fig:monitoring:smartcities}
+\end{figure}
+
+Agriculture can also benefit from these systems. Figure \ref{fig:monitoring:smartagriculture}
+shows an example on how \gls{IoT} can be used to monitor information like
+temperature, humidity, soil analysis and ilumination. At the same time, the
+agriculture area is being surveilled through a camera.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartAgriculture.png}
+	\caption{\gls{IoT} application in smart agriculture\cite{hengko_smart_agriculture}}
+	\label{fig:monitoring:smartagriculture}
+\end{figure}
+
+Figure \ref{fig:monitoring:smartagriculturearchitecture}
+shows an example of an architecture of a system applied to smart agriculture.
+In this example, an arduino board receives data from the sensors, process it
+and if needed it can actuate to solve problems. It's possible to see a water
+pump connected to the arduino board through a relay, which means that if the
+system detects that the soil needs water it can activate the water pump
+autonomously.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartAgricultureArchitecture.png}
+	\caption{Architecture of an \gls{IoT} based system for smart agriculture\cite{hengko_smart_agriculture}}
+	\label{fig:monitoring:smartagriculturearchitecture}
+\end{figure}
+
+There are many other examples on how \gls{IoT} can be an helpful tool. Some
+examples include fire detection, equipment failures or  smart buildings, where
+sensors can detect smoke, or gas leaks.
+
+\section{Anomaly Detection}
+Anomaly detection is the process of identifying data that deviates from the norm.
+In \gls{IoT} systems, anomalies can represent equipment failures, traffic violations,
+security breaches etc. \gls{ML} and \gls{AI} techniques
+can be integrated in the data process pipeline to detect anomalies.
+
+
+\subsection{Statistical and AI/ML Approaches}
+Integrating \gls{ML} and \gls{AI} techniques improves the anomaly detection
+process efficiency.
+The model development process start by the cleaning, normalizing and adding
+timestamps to the raw sensor data. Then, the data is used to train the model.
+The learning process can be of three types: supervised learning, which uses
+labeled anomalies, like historical equipment failures, to train the model;
+Unsupervised learning which is used for unknown anomaly patterns, when there's
+no labeled historical anomalies; and Hybrid approaches which use both labeled
+and unlabeled data to train the model.
+
+\subsubsection{Modeling Techniques}
+Several \gls{AI}/\gls{ML} models can be used for anomaly detection.
+
+Bayesian networks are probabilistic models that represent variables and their
+conditional dependencies through a graph. They are adequate for anomaly
+detection on complex data, as they can model complex interactions between
+variables \cite{BayesServerIntro, BayesServerAnomaly}.
+
+Decision trees are tree-like structures of decision which split the data
+hierarchically to classify anomalies using rules inferred from features.
+Random forests are composed by multiple decision trees, and use their data
+for ensemble learning, where multiple models work together to improve the
+overall performance. \cite{Zhang2022}
+
+Lastly, deep learning models, utilize neural networks with multiple layers
+to detect complext patterns in data. Techniques such as Autoencoders, \gls{RNN}s,
+\gls{LSTM} networks and \gls{CNN}s are effective in detecting anomalies\cite{BHAROT2024574}.
+
+\subsubsection{Frameworks}
+Selecting the appropriate framework is crucial for implementing these models
+effectively. The table \ref{tab:ai-ml:frameworks}
+compares some of the most popular frameworks in \gls{IoT} context.
+
+\begin{table}[ht]
+	\centering
+	\caption{Comparison of \gls{AI}/\gls{ML} Frameworks for Anomaly Detection}
+	\label{tab:ai-ml:frameworks}
+	\begin{tabular}{p{3cm}p{4cm}cp{4cm}}
+		\toprule
+		\textbf{Framework} & \textbf{Key Features}                        & \textbf{Edge Support} & \textbf{Use Cases}             \\
+		\midrule
+		TensorFlow         & Deep learning, TensorFlow Lite for edge      & Yes                   & Time-series, Image recognition \\
+		\midrule
+		PyTorch            & Dynamic graphs, research-friendly            & Partial               & Custom models, Research        \\
+		\midrule
+		Scikit-learn       & Classical \gls{ML}                           & No                    & Structured data analysis       \\
+		\midrule
+		Prophet            & Time-series forecasting                      & No                    & Predictive maintenance         \\
+		\midrule
+		Edge Impulse       & Edge-first \gls{ML}, microcontroller support & Yes                   & Real-time edge inference       \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection{Deployment}
+
+The deployment can be done on the edge device using light tools optimized for
+low resource hardware like TensorFlow lite or Edge Impulse. This can be useful
+for real-time inference and tasks that require low-latency.
+On the other side, the models can also be deployed on the cloud, processing
+sensor readings in batch, and retraining the models. This can handle more
+complex analytics.
+
+\subsubsection{Challenges}
+
+Integrating \gls{AI}/\gls{ML} with \gls{IoT} systems for anomaly detection
+have some challenges associated.
+
+One challenge is the data imbalance.
+Anomalies are rare, and synthetic data generation may be needed to train
+the model.
+Another problem is that in the beginning, there's a low amount of data to
+train the model.
+And lastly, there's the need to adapt to model drift as sensors behaviour
+changes over time.
 
 \section{System Architecture Patterns}
 Designing an IoT event management platform relies heavily on the underlying
@@ -41,7 +173,10 @@ such as the \gls{UI}, business logic and data access layers --- are tightly
 coupled and deployed together as a single unit\cite{7436659,10031648}. This
 was the most popular approach for decades due to how simple it is, specially in
 the early stages of software development\cite{Garlan2018}.
-
+Figure \ref{fig:architectures:monolithic}
+illustrates the structure of a monolith. The whole application is represented
+as a unique block that communicates with the database using the data access
+layer. The user interacts with the application through an \gls{UI}.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Monolith.pdf}
@@ -103,7 +238,6 @@ should be developed using an uniform technology stack. In architectures that
 have the application divided in modules is possible for each module to have
 its own technology stack, which can facilitate the development of some specific
 features that are easier to do with specific technologies\cite{IBMMonolith}.
-
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
 application into several other independently deployed applications called
@@ -112,6 +246,11 @@ In this solution, the modules communicate between each other through
 synchronous communications using \gls{API}s based on technologies like like
 \gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
 adopting tools like message brokers or event streaming platforms\cite{7436659}.
+The structure of a microservices application is depicted in \ref{fig:architectures:microservices}.
+In this example, the architecture is composed by an \gls{UI}, on the left,
+that communicates with the three different microservices via their \gls{API}s.
+Each microservice (the three blocks on the middle), in this case, communicates
+with a different database through the data access layer.
 
 \begin{figure}[htbp]
 	\centering
@@ -155,7 +294,8 @@ diagnose this king of issues\cite{richards2015software}.
 The event-driven architecture is a system design patter where the components
 are loosed coupled, and communicate through events. Events are predefined
 messages that are sent by a system in reaction to a change in its state.
-This communication is made between an event producer, and an event subscriber.
+As shown in figure \ref{fig:architectures:event-driven}
+, the communication is made between an event producer, and an event subscriber.
 Event producers generate the events and send the messages to a broker, Event
 subscribers subscribe to events and react to them. Both these parts are agnostic
 to each other, meaning that the producers send the events not knowing who will
@@ -206,6 +346,10 @@ only when needed\cite{marcelino2024goldfish}. This functions are triggered
 through events like \gls{API} calls, database changes, message queues or
 \gls{IoT} events and shutdown after execution, making this a highly efficient
 solution\cite{s21030928}.
+Figure \ref{fig:architectures:serverless}
+shows an example structure of a serverless architecture. The user interacts
+with the application through the \gls{UI} that communicates with an \gls{API}
+gateway which then calls the respective serverless function.
 
 \begin{figure}[htbp]
 	\centering
@@ -243,6 +387,9 @@ Edge architectur is a system design pattern in where the data is processed
 closer to where it is generated. This practice is called edge computing and
 is commonly used in \gls{IoT} systems, with data being process in the device
 before being sent to a server \cite{s20226441}.
+The processing can be done in the device itself or, as figure \ref{fig:architectures:edge}
+shows, can be done in a separate node close to the devices. These nodes
+pre-process the data and after that, send the data to a cloud server.
 
 \begin{figure}[H]
 	\centering
@@ -1041,71 +1188,5 @@ The data preparation can be a complex process and an efficient \gls{ETL} is
 essencial to prevent inconsistencies.
 
 
-\section{AI/ML for Anomaly Detection}
-Anomaly detection is the process of identifying data that deviates from the norm.
-In \gls{IoT} systems, anomalies can represent equipment failures, traffic violations,
-security breaches etc. \gls{ML} and \gls{AI} techniques
-can be integrated in the data process pipeline to detect anomalies.
-
-The model development process start by the cleaning, normalizing and adding
-timestamps to the raw sensor data. Then, the data is used to train the model.
-The learning process can be of three types:
-
-\begin{description}
-	\item[Supervised Learning: ] Uses labeled anomalies, like historical equipment
-	      failures, to train the model.
-
-
-	\item[Unsupervised Learning: ] This type of training is used for unknown
-	      anomaly patterns, when there's no labeled historical anomalies.
-
-
-	\item[Hybrid Approaches: ] Use both labeled and unlabeled data to train the
-	      model.
-\end{description}
-
-\subsection{Frameworks}
-\begin{table}[ht]
-	\centering
-	\caption{Comparison of \gls{AI}/\gls{ML} Frameworks for Anomaly Detection}
-	\label{tab:ai-ml:frameworks}
-	\begin{tabular}{p{2cm}p{4cm}cp{3cm}}
-		\toprule
-		\textbf{Framework} & \textbf{Key Features}                        & \textbf{Edge Support} & \textbf{Use Cases}             \\
-		\midrule
-		TensorFlow         & Deep learning, TensorFlow Lite for edge      & Yes                   & Time-series, Image recognition \\
-		PyTorch            & Dynamic graphs, research-friendly            & Partial               & Custom models, Research        \\
-		Scikit-learn       & Classical \gls{ML}                           & No                    & Structured data analysis       \\
-		Prophet            & Time-series forecasting                      & No                    & Predictive maintenance         \\
-		Edge Impulse       & Edge-first \gls{ML}, microcontroller support & Yes                   & Real-time edge inference       \\
-		\bottomrule
-	\end{tabular}
-\end{table}
-
-Machine learning frameworks are essential for designing and training machine
-learning models. The table \ref{tab:ai-ml:frameworks}
-compares some of the most popular frameworks in \gls{IoT} context.
-
-\subsection{Deployment}
-
-The deployment can be done on the edge device using light tools optimized for
-low resource hardware like TensorFlow lite or Edge Impulse. This can be useful
-for real-time inference and tasks that require low-latency.
-On the other side, the models can also be deployed on the cloud, processing
-sensor readings in batch, and retraining the models. This can handle more
-complex analytics.
-
-Integrating \gls{AI}/\gls{ML} with \gls{IoT} systems for anomaly detection
-have some challenges associated.
-
-One challenge is the data imbalance.
-Anomalies are rare, and synthetic data generation may be needed to train
-the model.
-Another problem is that in the beginning, there's a low amount of data to
-train the model.
-And lastly, there's the need to adapt to model drift as sensors behaviour
-changes over time.
-
-\section{Related Work}
 
 
