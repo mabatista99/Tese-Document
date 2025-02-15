@@ -3,7 +3,7 @@
 %% chapter2.tex
 %% NOVA thesis document file
 %%
-%% Chapter with the template manual
+%% Chapter with the state-of-the-art
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \typeout{NT FILE chapter2.tex}%
@@ -29,7 +29,7 @@ Lastly, some similar solutions previously developed are addressed and compared.
 The digital transformation of the world has resulted in an increased adoption
 of \gls{IoT} systems for monitoring and surveillance. Smart cities are an
 example of how interconnected \gls{IoT} devices can help with challenges
-like traffic management, public safety and environmental monitoring. Figure
+like traffic management, public safety and environmental monitoring\cite{sharma2024}. Figure
 \ref{fig:monitoring:smartcities}
 illustrates how \gls{IoT} systems can be applied to smart cities, from public
 security to entretainment.
@@ -44,28 +44,13 @@ security to entretainment.
 Agriculture can also benefit from these systems. Figure \ref{fig:monitoring:smartagriculture}
 shows an example on how \gls{IoT} can be used to monitor information like
 temperature, humidity, soil analysis and ilumination. At the same time, the
-agriculture area is being surveilled through a camera.
+agriculture area is being surveilled through a camera\cite{hengko_smart_agriculture}.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartAgriculture.png}
 	\caption{\gls{IoT} application in smart agriculture\cite{hengko_smart_agriculture}}
 	\label{fig:monitoring:smartagriculture}
-\end{figure}
-
-Figure \ref{fig:monitoring:smartagriculturearchitecture}
-shows an example of an architecture of a system applied to smart agriculture.
-In this example, an arduino board receives data from the sensors, process it
-and if needed it can actuate to solve problems. It's possible to see a water
-pump connected to the arduino board through a relay, which means that if the
-system detects that the soil needs water it can activate the water pump
-autonomously.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartAgricultureArchitecture.png}
-	\caption{Architecture of an \gls{IoT} based system for smart agriculture\cite{hengko_smart_agriculture}}
-	\label{fig:monitoring:smartagriculturearchitecture}
 \end{figure}
 
 There are many other examples on how \gls{IoT} can be an helpful tool. Some
@@ -77,6 +62,27 @@ Anomaly detection is the process of identifying data that deviates from the norm
 In \gls{IoT} systems, anomalies can represent equipment failures, traffic violations,
 security breaches etc. \gls{ML} and \gls{AI} techniques
 can be integrated in the data process pipeline to detect anomalies.
+
+\subsection{Traditional Approaches}
+\gls{FTA} is a top-down approach used to determine the root cause of an failure.
+It uses boolean logic to find which events can cause potential failures. It
+starts with a failure and maps events hierarchically in a tree-like structure
+(fault tree) that leads to that failure, spliting complex events into simpler
+events until reaching the root causes, called basic events\cite{IBMFTA}.
+
+\gls{FMEA} is a method that, unlike \gls{FTA}, uses a bottom-up approach.
+It starts by finding how each component of the system can fail, then analysis
+the potential effects of each failure and then its causes. Each failure is
+then rated based on how serious it impact would be (severity), how likely it is
+to happen (occurrence), and how likely is the failure to be addressed before
+it impacts the system (Detection). Then this ratings are multiplied to get
+the \gls{RPN} that is then used to define priorities \cite{CambridgeFMEA}.
+
+Boolean logic and rule-based systems detect anomalies through a series of
+predefined rules, by comparing the current state of the system with each
+rule's requirements. An example would be a rule that states that a temperature
+above 90\textdegree C reflects an overheat anomaly. These are objective rules
+that the system can use to map failures directly.
 
 
 \subsection{Statistical and AI/ML Approaches}
@@ -291,8 +297,8 @@ Observability tools like tracing and logging are essencial to prevent and
 diagnose this king of issues\cite{richards2015software}.
 
 \subsection{Event-Driven Architecture}
-The event-driven architecture is a system design patter where the components
-are loosed coupled, and communicate through events. Events are predefined
+The event-driven architecture is a system design pattern where the components
+are loosely coupled, and communicate through events. Events are predefined
 messages that are sent by a system in reaction to a change in its state.
 As shown in figure \ref{fig:architectures:event-driven}
 , the communication is made between an event producer, and an event subscriber.
@@ -489,12 +495,12 @@ organized, specially for more complex projects.
 Express is a popular framework, being adopted by many developers. Resources
 about this technology, like documentation or tutorials are easy to find
 everywhere, due to its vast community, which might be an advantage for
-developers less experienced.
+developers less experienced\cite{expressJSMDN}.
 
 \subsubsection{Nestjs}
 Nest JS is an opinionated Node.js framework with a highly structured
 development environment. It has a very rich environment providing many built-in
-features.
+features\cite{nestJS}.
 
 With Typescript support, NestJS ensures strong typing, reducing the risk of
 having runtime errors.
@@ -502,11 +508,11 @@ having runtime errors.
 This framework simplifies the process of building applications with
 microservices or event-driven architectures by providing native support for
 communication technologies like GraphQL, and websockets, and easy configuration
-for technologies like RabitMQ, \gls{MQTT}, Kafka and \gls{gRPC}.
+for technologies like RabitMQ, \gls{MQTT}, Kafka and \gls{gRPC}\cite{nestJS}.
 
 NestJS integrates a powerful dependency injection system, which, apart from the
 increase in performance, also helps the developers writing clean code, testing,
-and maintaining it.
+and maintaining it\cite{nestJS}.
 
 Applications in Nestjs are divided into
 self-contained modules, making large applications easier to scale and maintain.
@@ -525,15 +531,15 @@ Spring is a the most popular framework for building complex and robust
 applications using Java. It's a great solution for developing scalable and secure
 applications. It's one of the most complete backend frameworks having features
 like dependency injection, and extensions for developing \gls{REST} \gls{API}s and
-microservices.
+microservices\cite{GFGJava}.
 
 A popular extension for Spring is called Spring Boot and its job is to
 simplify configuration and deployment. It provides opinionated defaults,
-reducing boilerplate code and improving development speed.
+reducing boilerplate code and improving development speed\cite{GFGJava}.
 
 Another popular extensions include Spring \gls{MVC} for building \gls{REST}ful \gls{API}s, Spring
 Cloud for building microservices and Spring Security for implemenenting
-security features like authentication and authorization.
+security features like authentication and authorization\cite{GFGJava}.
 
 Spring also includes suport for testing tools like JUnit and Mockito.
 
@@ -552,30 +558,10 @@ Boot.
 Another downside of this framework, is that it's an heavy framework and
 requires higher resources to run when compared with other lightweight solutions.
 
-\subsubsection{Flask}
-Flask is a simple, lightweight and flexible framework for Python. It's a
-minimalist framework, providing only the essencial features needed for
-web development, leaving the more complex ones for extensions. It has the basic
-features like a straightforward routing process, request handling and Jinja2,
-a built-in template engine. Apart from this essencial structure, Flask has a
-rich ecossystem of extensions, providing features like authentication,
-database access and input validation.
-
-Although the advantages are clear, there are also some challenges. Scaling
-Flask applications for high traffic usually requires additional tools like load
-balancers and asynchronous task queues. As refered above, another clear
-drawback is the lack of built-in features. Lastly, the unopinionated nature and
-flexibility provided by this framework can lead to inconsistent implementations
-of the same features across a single project, with different developers using
-different tools or patterns.
-
-Despite this possible disadvantages, Flask is still a good choice for small to
-medium sized applications.
-
 \subsubsection{ASP.NET Core}
 ASP.NET Core is an open-source framework developed and maintained by Microsoft.
 It's a high-performance framework designed for scalability and modularity and
-widely used for developing complex web applications.
+widely used for developing complex web applications\cite{ASPMicrosoft}.
 
 Contrary to all the other frameworks mentioned above, this framework can be
 used with more than one programming language. C\# is the most used language, but
@@ -588,11 +574,11 @@ it as one of the fastest backend frameworks available.
 ASP.NET Core provides features like dependency injection and includes tools for
 authentication and authorization, supporting common protocols like \gls{JWT} or OAuth.
 It also includes other security features like prevention against cross-site
-scripting attacks or data protection.
+scripting attacks or data protection\cite{ASPMicrosoft}.
 
 Despite being mainly a backend framework, its also possible to develop the
 frontend using this framework. Features like Razor Pages, \gls{MVC} or Blazor allow
-some limited frontend capabilities.
+some limited frontend capabilities\cite{ASPMicrosoft}.
 
 ASP.NET Core implements a modular midleware pipeline that processes \gls{HTTP}
 requests which developers can configure to include middlewares for tasks like
@@ -609,34 +595,6 @@ process.
 
 This framework can be a great choice for large-scale systems, but overwhelming
 for smaller projects.
-\subsubsection{Laravel}
-Laravel is a popular \gls{PHP} framework built using the \gls{MVC}
-pattern. It's a simple but complete framework offering a great set of built-in
-tools. It includes an Object-Relational Mapping tool called Eloquent, and a
-template engine called Blade. It also provides built-in tools for tasks like
-authentication, authorization, task scheduling, and testing. Lastly, it
-provides protection against security vulnerabilities such as \gls{SQL} injection,
-cross-site scripting and cross-site request forgery attacks.
-
-Some advantages of this framework include an increase in development
-productivity, a rich ecosystem, scalability, and security.
-By having an expressive syntax and great documentation, Laravel enhances
-development productivity, reducing development time.
-Laravel has an extensive ecosystem, having tools like Laravel Forge for server
-management, Laravel Nova for admin panel development and Laravel Vapor for
-serverless deployment.
-Applications written with this technology can usually scale both horizontally
-and vertically with ease, using tools like queues and caching, making this
-framework suitable for both small and large projects.
-
-On the downside, Laravel trades its completeness by performance, having a
-lower performance when compared with more lightweight frameworks.
-Altought this framework can suite large projects, it requires complex
-optimization with tools like caching, load balancing and database tuning.
-Despite being a simple framework it has a steep learning curve because of its
-specific tools and it's also a framework that's very dependent on its plugins,
-which can be a problem, since the developers can't control the quality of the
-plugins, and its issues may become issues for the application.
 
 \section{Communication and Security}
 Both communication and security are very important parts of any system.
@@ -651,6 +609,7 @@ Backend, and Frontend and Backend.
 and analyzed. This often requires low-latency and reliable communication.
 \subsubsection{Protocols}
 There are many protocols that address the necessities of \gls{IoT} systems.
+
 MQTT is a lightweight bi-directional message protocol created in 1999.
 It follows the publisher-subscriber architecture decoupling the message
 sender from the receiver. This protocol is composed by two parts, the
@@ -660,13 +619,13 @@ authorization features and routing the messages from the publishers to
 the respective subscribers. The clients are every application that
 communicates with the broker, being either a publisher or a subscriber.
 It's commonly used in resource-constrained systems like IoT systems because
-it's easy to implement and requires low bandwidth.
+it's easy to implement and requires low bandwidth\cite{Jayapal2019, CommunicationProtocols}.
 
 \gls{AMQP} is another message protocol just like \gls{MQTT}.
 Despite being similar this protocols have some differences. While \gls{MQTT} is
 focused on simplicity and low-bandwidth communication, \gls{AMQP} is optimized for
 more complex systems, providing robust and reliable message queuing and
-routing introducing concepts like exchanges and queues.
+routing introducing concepts like exchanges and queues\cite{CommunicationProtocols}.
 
 \gls{CoAP} is a \gls{HTTP} based protocol optimized for resource-constrained
 environments, such as \gls{IoT} systems. It's built on \gls{UDP} instead of \gls{TCP},
@@ -674,7 +633,7 @@ resulting in a lightweight and faster solution.
 This protocol follows the \gls{REST}ful design providing resources under a \gls{URL}
 using methods like GET, POST, PUT, and DELETE. Due to its similarity with
 \gls{HTTP}, one of the most widely used protocols, \gls{CoAP} can be easily integrated
-with \gls{HTTP} using proxys.
+with \gls{HTTP} using proxys\cite{coap, Jayapal2019}.
 
 \subsubsection{Middlewares and Gateways}
 Middleware platforms and gateways can be used in \gls{IoT}-to-backend
@@ -702,19 +661,19 @@ request-response model, where the client sends the request and the server
 responds. It's a stateless, meaning each request is independent and doesn't
 affect the others. It's commonly used for fetching \gls{HTML}, images, videos
 and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTPS} but the
-data is encrypted using \gls{TLS} or \gls{SSL}.
+data is encrypted using \gls{TLS} or \gls{SSL}\cite{CloudflareHTTP, CloudflareHTTPS}.
 
 WebSocket is a protocol designed for real-time bi-directional communication.
 It operates over \gls{TCP} and starts as an \gls{HTTP} connection and then changes to a
 WebSocket connection. Unlike \gls{HTTP} it doesn't rely on requests, and both
-parts can communicate at any time.
+parts can communicate at any time\cite{WebsocketRFC}.
 
 \gls{TCP} is a connection-oriented protocol that ensures reliability by
 estabilishing a connection via a three-way handshake, retrying lost
 packets and ensuring data is received in the correct order.
 On the other side \gls{UDP} is a connectionless protocol which sends data in
 independent packets. It doesn't guarantee delivery, order or error
-correction. Because of this, \gls{UDP} is faster but less reliable.
+correction. Because of this, \gls{UDP} is faster but less reliable\cite{al2018performance}.
 
 \subsection{APIs}
 An \gls{API} is an interface of an application that defines a set of rules and
@@ -728,7 +687,7 @@ This \gls{API}s' communication are stateless, meaning that each request must
 have all the information required for being processed.
 \gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated to them, and
 each resource idependent meaning that it doesn't depend on other
-requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}.
+requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}\cite{9101226}.
 
 Another widely used API type is GraphQL.
 GraphQL allows clients to specify exactly the data they need. This
@@ -737,19 +696,19 @@ under-fetching (not getting enough data in a single request).
 Just like \gls{REST}ful \gls{API}s, GraphQL works with \gls{HTTP} or \gls{HTTPS}
 but GraphQL \gls{API}s usually expose a single \gls{HTTP} endpoing for all
 requests. GraphQL supports subscriptions, which allows the client to receive
-real-time updates.
+real-time updates\cite{9101226}.
 
 \gls{gRPC} was developed by google and can be seen as both a protocol and an
 \gls{API} type. With this protocol, both clients and servers can call
 functions on each other, just like if it was its own code.
-It's commonly used in microservices architectures and real-time applications.
+It's commonly used in microservices architectures and real-time applications\cite{newton2024benchmarking}.
 
 Despite \gls{SOAP} being defined as a protocol, it's more comparable to \gls{API}
 types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP} or
 \gls{SMTP}(email).
 \gls{SOAP} is a lightweight protocol for exchanging structured data. It uses \gls{XML}
 to format messages in its own standards. These strict standards ensure
-reliability and compatibility between systems.
+reliability and compatibility between systems\cite{newton2024benchmarking}.
 
 \subsection{Security}
 
@@ -771,7 +730,7 @@ authentication process.
 It's important that the component that does the request identifies itself
 in a way that the other part can authenticate.
 In the case of \gls{IoT} to backend communication, \gls{IoT} devices must authenticate
-using approachs like token-based or certificate-based authentication.
+using approachs like token-based or certificate-based authentication\cite{schiller2022landscape}.
 
 In frontend to backend communication the most common approachs to
 authentication are sessions and token-based authentication using \gls{JWT}.
@@ -791,11 +750,11 @@ The data can be encrypted during transmission with protocols like \gls{TLS}/\gls
 These protocols ensure that data is only readable by the intended parts.
 For frontend-backend communication, this can be achieved using the \gls{HTTPS}
 protocol.
-For more sensitive applications, end-to-end ecryption can be used.
+For more sensitive applications, end-to-end ecryption can be used\cite{schiller2022landscape}.
 
 Besides data encryption, it's also important to check data integrity.
 To ensure that data isn't changed during transmition, techniques like
-\gls{HMAC} can be used.
+\gls{HMAC} can be used\cite{schiller2022landscape}.
 
 It's also important to control who can access each data.
 Some data may be restricted to a specific group of users, therefore the
@@ -810,9 +769,9 @@ In \gls{IoT} systems, the firmware must be updated regularly to prevent this
 attacks.
 \gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it's possible to enforce
 rate limits and \gls{API} quotas. To prevent \gls{SQL} Injection, strategies like
-input sanitization or the use of an \gls{ORM} are essencial.
+input sanitization or the use of an \gls{ORM} are essencial\cite{schiller2022landscape}.
 
-\section{Database}
+\section{Database Systems}
 The storage and management of data, is an essencial part of \gls{IoT} platforms.
 Due to the high volume of data, the high frequency and the diversity of the
 data, the effective design of a database is essencial to ensure query efficiency
@@ -834,13 +793,12 @@ defined using primary and foreign keys. Their transactions follow the \gls{ACID}
 properties, ensuring data
 consistency, integrity and reliability. Additionally, they provide a way of
 doing complex querying, through a query language called \gls{SQL}, making them
-a realiable choice for structured data requiring \gls{ACID} compliance. The figure
-\ref{fig:databases:sql}
+a realiable choice for structured data requiring \gls{ACID} compliance\cite{bdcc7020097, Yadav2024}.
+The figure \ref{fig:databases:sql}
 is an example of an entity relationship diagram for a simple \gls{SQL} database structure.
 This diagram represents a relational database with a customer table, an order table, a product table, a product
 category table and an additional table that handles the many-to-many
 relationship between orders and products.
-
 
 \begin{figure}[H]
 	\centering
@@ -852,7 +810,7 @@ relationship between orders and products.
 Relational databases offer several advantages.
 They ensure data integrity by allowing the use of constraints (e.g. unique values, not null values,
 foreign keys) to force strict rules, preventing anomalies and ensuring
-reliability.
+reliability\cite{bdcc7020097}.
 
 They also support complex queries, as the use of \gls{SQL} as a standard
 language allows complex queries with JOIN operations and nested queries for relational data analysis.
@@ -863,18 +821,18 @@ available for backup, replication, and access control, such as PostgreSQL and My
 However, relational databases also present some challenges.
 
 One of them is scalability, as \gls{IoT} systems can generate a large volume of
-data, vertical scaling can be costly.
+data, vertical scaling can be costly\cite{Yadav2024}.
 
 In terms of horizontal scaling, traditional relational databases generally
 struggle with adding more servers. Sharding is a popular approach to
 solve this problem by spliting large tables into smaller segments(shards)
 and store them in different servers, but it adds complexity to joins
-across multiple shards.
+across multiple shards\cite{Yadav2024}.
 
 Another disadvantage is schema rigidity.
 In relational databases, tables follow a strict predefined schema, which
 difficults the process of integrating new data types, like unstructured
-data or new \gls{IoT} devices.
+data or new \gls{IoT} devices\cite{bdcc7020097}.
 
 
 
@@ -882,7 +840,7 @@ data or new \gls{IoT} devices.
 \gls{NoSQL} databases provide flexible schemas, making them suitable
 for storing unstructured and semi-structured data. Following the \gls{CAP} theorem,
 \gls{NoSQL} databases, unlike relational ones, prioritize availability and partition
-tolerance over consistency. There are several types of \gls{NoSQL} databases,
+tolerance over consistency\cite{Yadav2024, bdcc7020097}. There are several types of \gls{NoSQL} databases,
 each optimized for different use cases.
 
 Document Databases store data as \gls{JSON}, \gls{BSON}, or \gls{XML} documents (e.g.
@@ -894,7 +852,7 @@ Key-value Databases store data as key-value pairs, similar to
 a hash table, providing fast access to data. Mainly used as cache. Some
 examples include Redis and Amazon DynamoDB.
 Graph Databases store relationships between entities as nodes and
-edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
+edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune\cite{Yadav2024, bdcc7020097}.
 
 \begin{figure}[htbp]
 	\centering
@@ -905,7 +863,7 @@ edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune.
 
 \gls{NoSQL} databases offer several advantages. One of its strenghts is scalability
 as they can easily scale horizontally by spliting data across
-multiple servers or clusters.
+multiple servers or clusters\cite{Yadav2024}.
 
 Another advantage is performance. \gls{NoSQL} databases are optimized for speed
 and its transactions typically have low latency. Due to its data being stored
@@ -918,13 +876,13 @@ Flexibility is another crucial benefit.
 Unlike \gls{SQL} databases that restrict the data to predefined rigid schemas,
 \gls{NoSQL} databases allow for dynamic schema changes, meaning that fields can
 be added or removed to the schema on the fly without requiring database
-migrations or even downtime.
+migrations or even downtime\cite{Yadav2024}.
 
 Lastly, availability is a big advantage of \gls{NoSQL} databases.
 Many solutions offer built-in replication and fault tolerance
 technologies to ensure availability and fault tolerance. Typically data is
 replicated across multiple nodes, so in case one node fails, the others
-are up and have the data required.
+are up and have the data required\cite{Yadav2024}.
 
 Despite their advantages, \gls{NoSQL} databases also come with some challenges.
 
@@ -934,7 +892,7 @@ Consistency, Availability and Partition Tolerance. \gls{NoSQL} Databases focus o
 Availability and Partition Tolerance, leaving consistency to second plan.
 This results in eventual consistency, meaning that data takes time to update
 between nodes, leading to inconsistency in the meantime and leading to
-consistency in the end.
+consistency in the end\cite{Yadav2024}.
 
 Another challenge is having limited query capabilities.
 \gls{NoSQL} databases don't support complex queries with features like JOINs,
@@ -944,13 +902,13 @@ languages like \gls{SQL} but even those are not as powerful as \gls{SQL} queries
 Additionally, there's also the problem of data duplication.
 In order to improve reading performance, some data is replicated across
 multiple documents or collections, increasing storage requirements, and
-making consistency harder to maintain.
+making consistency harder to maintain\cite{bdcc7020097}.
 \subsection{Time-Series Databases}
 \gls{TSDB}s are focused on storing time-stamped data. The
 data is indexed by timestamp, making time-based queries very efficient. They are
 optimized for high-velocity writes, making these databases a reliable solution
 for storing sensor data on \gls{IoT} systems. Popular time-series databases include
-InfluxDB, TimescaleDB, and Prometheus.
+InfluxDB, TimescaleDB, Apache IoTDB, and Prometheus\cite{wang2023apache, InfluxDB}.
 
 \gls{TSDB}s offer several advantages, particularly in handling large volumes
 of timestamped data efficiently. These databases are optimized for receiving
@@ -958,7 +916,7 @@ millions of timestamped data per second, having an high write throughput.
 
 Another major advantage is having efficient querying. \gls{TSDB}s are optimized
 for querying and aggregating based on timestamps. This makes real-time analytics
-efficient.
+efficient\cite{InfluxDB}.
 
 Additionally, is also compatible with edge computing.
 Some lighter \gls{TSDB}s like QuestDB can run on resource-constrained environments,
@@ -1073,13 +1031,13 @@ This happens because the search engine scans the static
 \gls{HTML} page, and doesn\'t have into account the dynamic \gls{HTML} created after by
 the script. \gls{SEO} can also be improved in another way, through the website
 metadata (title, description, keyworks etc..) which NextJS also makes easier to
-manage because of its ready-to-use Head component.
+manage because of its ready-to-use Head component\cite{NextjsSSR}.
 
 Another feature that improves the performance of projects using this framework
 is the automatic code splitting. The automatic code splitting consists in
 the separation of the javascript bundle into small parts that can be loaded
 separately. This reduces significantly the page load time, by loading only the
-parts that are needed to display the requested page.
+parts that are needed to display the requested page\cite{Salanke_A.R_G.S_Dalali_2022}.
 
 \subsubsection{Angular}
 Angular is a typescript based, open-source framework used for building user
@@ -1088,13 +1046,13 @@ of AngularJS. Angular is a strongly structured and opinionated framework,
 organizing the code into feature modules. It also follows a component-based
 design, but introduces features like dependency injection ensuring efficient
 state sharing and improving testability.
-It includes built-in features like routing, \gls{HTTP} client and form validation.
+It includes built-in features like routing, \gls{HTTP} client and form validation\cite{Alves}.
 
 \subsection{State Management}
 State management is a fundamental aspect of frontend development. It enhances
 the user experience providing data consistency and an improved performance.
 State represents the dynamic data of an application and can be local, shared,
-or global.
+or global\cite{tran2023state}.
 
 ocal state is the state managed within a single component. It can
 represent data from \gls{UI} elements like forms or button states.
@@ -1109,7 +1067,7 @@ every component has access to it.
 
 Handling global state is a complex proccess and requires the use of state
 management solutions like Redux, Recoil, Zustand, or Jotai for ReactJS and
-NgRx, Elf or NGXS for Angular.
+NgRx, Elf or NGXS for Angular\cite{tran2023state}.
 
 \section{Data Processing Pipelines}
 A data processing pipeline is a structured workflow that transforms raw data
@@ -1122,7 +1080,7 @@ efficiency, data quality and real-time processing.
 store. \gls{IoT} systems use \gls{ETL} pipelines to process and store data from sensors,
 smart devices, and edge computing nodes. Figure \ref{fig:etl:pipeline}
 ilustrates the \gls{ETL} pipeline, with the data being extracted from de devices,
-transformed and then loaded to the database.
+transformed and then loaded to the database\cite{singu2022etl}.
 
 \begin{figure}[htbp]
 	\centering
@@ -1144,7 +1102,7 @@ null values. In the filtering, the data is filtered, discarding irrelevant data
 for the purpose. For example, if the purpose is to use a temperature sensor to
 check for high temperatures, this process discards all the data that is
 considered a normal temperature. The data can also be enriched with metadata
-like timestamps, device location, etc. This stage can be done on the edge, on
+like timestamps, device location, etc\cite{singu2022etl}. This stage can be done on the edge, on
 the cloud or using an hybrid approach. There are cloud tools like Apache NiFi
 and \gls{AWS} \gls{IoT} Analytics designed for transforming data.
 
@@ -1167,7 +1125,7 @@ data, diagnostic analytics are for finding the cause of specific problems, and
 predictive analytics use machine learning algorightms to predict future events.
 Prescriptive analytics use the predictions generated by predictive to recommend
 actions, and lastly, real-time analytics process data in real-time to make
-decisions instantly.
+decisions instantly\cite{Adi2020}.
 
 There are many \gls{BI} visualization tools available for integration with \gls{IoT} systems.
 Tableau, Microsoft PowerBI, Looker and Grafana are some of the most popular ones.
@@ -1176,16 +1134,6 @@ To make analytics easier, there are several ready-to-use tools for generating
 analytics from raw data. Examples include Apache Flink, Apache Spark,
 TensorFlow and ElasticSearch.
 
-\gls{BI} in \gls{IoT} systems comes with several challenges.
-One major challenge is high cost associated with processing and storing
-high volume of data. An high-performance and high-capacity storage
-solution is required, which increases the cost significantly. On top of this,
-licences for \gls{BI} tools are expensive and free tools are usually very
-limited in terms of features.
-
-Ensuring consistency between data from different sources can also be difficult.
-The data preparation can be a complex process and an efficient \gls{ETL} is
-essencial to prevent inconsistencies.
 
 
 
