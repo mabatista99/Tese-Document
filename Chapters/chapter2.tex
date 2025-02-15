@@ -11,28 +11,25 @@
 \chapter{State-Of-The-Art}
 \label{cha:State-Of-The-Art}
 
-This chapter provides a view of the state-of-the-art of \gls{IoT} platforms as well
-as well as web development technologies and connection with iot devices.
+This chapter provides a view of the state-of-the-art of \gls{IoT} platforms
+as well as web development technologies and connection with \gls{IoT} devices.
 It starts by addressing how \gls{IoT} impacts monitoring and surveillance and how it's
-possible to detect alarm situations with \gls{IoT} systems, and then it presents an overview on system architectures and compares common
-architecture patterns. Then the backend development is addressed along with
+possible to detect alarm situations with \gls{IoT} systems. Then it presents an overview on system architectures and compares common
+architecture patterns. After that, the backend development is addressed along with
 its frameworks, followed by a section dedicated to communication and security.
-After that, Database solutions are detailed and compared in context of IoT
-systems. A briefly overview on frontend development, libraries and frameworks is
+In the following section, database solutions are detailed and compared in the context of IoT
+systems. A brief overview of frontend development, libraries, and frameworks is
 also given.
-Then, in the following two sections, data processing pipelines are explained as
-well as \gls{AI}/\gls{ML} integration with the system.
-
-Lastly, some similar solutions previously developed are addressed and compared.
+Then, in the following two sections, data processing pipelines are explained.
 
 \section{Monitoring and Surveillance in the Digitalization Era}
 The digital transformation of the world has resulted in an increased adoption
 of \gls{IoT} systems for monitoring and surveillance. Smart cities are an
 example of how interconnected \gls{IoT} devices can help with challenges
-like traffic management, public safety and environmental monitoring\cite{sharma2024}. Figure
+like traffic management, public safety, and environmental monitoring \cite{sharma2024}. Figure
 \ref{fig:monitoring:smartcities}
 illustrates how \gls{IoT} systems can be applied to smart cities, from public
-security to entretainment.
+security to entertainment.
 
 \begin{figure}[H]
 	\centering
@@ -42,9 +39,9 @@ security to entretainment.
 \end{figure}
 
 Agriculture can also benefit from these systems. Figure \ref{fig:monitoring:smartagriculture}
-shows an example on how \gls{IoT} can be used to monitor information like
-temperature, humidity, soil analysis and ilumination. At the same time, the
-agriculture area is being surveilled through a camera\cite{hengko_smart_agriculture}.
+shows an example of how \gls{IoT} can be used to monitor information like
+temperature, humidity, soil analysis, and ilumination. At the same time, the
+agricultural area is being surveilled through a camera \cite{hengko_smart_agriculture}.
 
 \begin{figure}[H]
 	\centering
@@ -53,47 +50,48 @@ agriculture area is being surveilled through a camera\cite{hengko_smart_agricult
 	\label{fig:monitoring:smartagriculture}
 \end{figure}
 
-There are many other examples on how \gls{IoT} can be an helpful tool. Some
-examples include fire detection, equipment failures or  smart buildings, where
-sensors can detect smoke, or gas leaks.
+There are many other examples of how \gls{IoT} can be a helpful tool. Some
+examples include fire detection, equipment failures, or  smart buildings, where
+sensors can detect smoke or gas leaks.
 
 \section{Anomaly Detection}
 Anomaly detection is the process of identifying data that deviates from the norm.
 In \gls{IoT} systems, anomalies can represent equipment failures, traffic violations,
-security breaches etc. \gls{ML} and \gls{AI} techniques
-can be integrated in the data process pipeline to detect anomalies.
+security breaches, etc. \gls{ML} and \gls{AI} techniques
+can be integrated into the data process pipeline to detect anomalies.
 
 \subsection{Traditional Approaches}
-\gls{FTA} is a top-down approach used to determine the root cause of an failure.
+\gls{FTA} is a top-down approach used to determine the root cause of a failure.
 It uses boolean logic to find which events can cause potential failures. It
 starts with a failure and maps events hierarchically in a tree-like structure
-(fault tree) that leads to that failure, spliting complex events into simpler
-events until reaching the root causes, called basic events\cite{IBMFTA}.
+(fault tree) that leads to that failure, splitting complex events into simpler
+events until reaching the root causes, called basic events \cite{IBMFTA}.
 
 \gls{FMEA} is a method that, unlike \gls{FTA}, uses a bottom-up approach.
-It starts by finding how each component of the system can fail, then analysis
-the potential effects of each failure and then its causes. Each failure is
-then rated based on how serious it impact would be (severity), how likely it is
-to happen (occurrence), and how likely is the failure to be addressed before
-it impacts the system (Detection). Then this ratings are multiplied to get
+It starts by finding how each component of the system can fail, then analyzing
+the potential effects of each failure, and then its causes. Each failure is
+then rated based on how serious its impact would be (severity), how likely it is
+to happen (occurrence), and how likely the failure is to be addressed before
+it impacts the system (detection). Then these ratings are multiplied to get
 the \gls{RPN} that is then used to define priorities \cite{CambridgeFMEA}.
 
 Boolean logic and rule-based systems detect anomalies through a series of
-predefined rules, by comparing the current state of the system with each
+predefined rules by comparing the current state of the system with each
 rule's requirements. An example would be a rule that states that a temperature
 above 90\textdegree C reflects an overheat anomaly. These are objective rules
 that the system can use to map failures directly.
 
 
 \subsection{Statistical and AI/ML Approaches}
-Integrating \gls{ML} and \gls{AI} techniques improves the anomaly detection
-process efficiency.
-The model development process start by the cleaning, normalizing and adding
-timestamps to the raw sensor data. Then, the data is used to train the model.
+Integrating \gls{ML} and \gls{AI} techniques improves the efficiency of the
+anomaly detection process.
+The model development process starts with cleaning, normalizing, and adding
+timestamps to the raw sensor data, and then the data is used to train the model.
+
 The learning process can be of three types: supervised learning, which uses
 labeled anomalies, like historical equipment failures, to train the model;
-Unsupervised learning which is used for unknown anomaly patterns, when there's
-no labeled historical anomalies; and Hybrid approaches which use both labeled
+unsupervised learning, which is used for unknown anomaly patterns when there are
+no labeled historical anomalies; and hybrid approaches, which use both labeled
 and unlabeled data to train the model.
 
 \subsubsection{Modeling Techniques}
@@ -104,20 +102,20 @@ conditional dependencies through a graph. They are adequate for anomaly
 detection on complex data, as they can model complex interactions between
 variables \cite{BayesServerIntro, BayesServerAnomaly}.
 
-Decision trees are tree-like structures of decision which split the data
+Decision trees are tree-like structures of decisions that split the data
 hierarchically to classify anomalies using rules inferred from features.
-Random forests are composed by multiple decision trees, and use their data
+Random forests are composed of multiple decision trees and use their data
 for ensemble learning, where multiple models work together to improve the
 overall performance. \cite{Zhang2022}
 
-Lastly, deep learning models, utilize neural networks with multiple layers
-to detect complext patterns in data. Techniques such as Autoencoders, \gls{RNN}s,
-\gls{LSTM} networks and \gls{CNN}s are effective in detecting anomalies\cite{BHAROT2024574}.
+Lastly, deep learning models utilize neural networks with multiple layers
+to detect complex patterns in data. Techniques such as autoencoders, \gls{RNNs},
+\gls{LSTM} networks, and \gls{CNNs} are effective in detecting anomalies \cite{BHAROT2024574}.
 
 \subsubsection{Frameworks}
 Selecting the appropriate framework is crucial for implementing these models
-effectively. The table \ref{tab:ai-ml:frameworks}
-compares some of the most popular frameworks in \gls{IoT} context.
+effectively. Table \ref{tab:ai-ml:frameworks}
+compares some of the most popular frameworks in the \gls{IoT} context.
 
 \begin{table}[ht]
 	\centering
@@ -143,8 +141,8 @@ compares some of the most popular frameworks in \gls{IoT} context.
 \subsubsection{Deployment}
 
 The deployment can be done on the edge device using light tools optimized for
-low resource hardware like TensorFlow lite or Edge Impulse. This can be useful
-for real-time inference and tasks that require low-latency.
+low-resource hardware like TensorFlow Lite or Edge Impulse. This can be useful
+for real-time inference and tasks that require low latency.
 On the other side, the models can also be deployed on the cloud, processing
 sensor readings in batch, and retraining the models. This can handle more
 complex analytics.
@@ -152,37 +150,39 @@ complex analytics.
 \subsubsection{Challenges}
 
 Integrating \gls{AI}/\gls{ML} with \gls{IoT} systems for anomaly detection
-have some challenges associated.
+has some challenges associated with it.
 
 One challenge is the data imbalance.
 Anomalies are rare, and synthetic data generation may be needed to train
 the model.
+
 Another problem is that in the beginning, there's a low amount of data to
 train the model.
-And lastly, there's the need to adapt to model drift as sensors behaviour
+
+Lastly, there's the need to adapt to model drift as sensor behavior
 changes over time.
 
 \section{System Architecture Patterns}
 Designing an IoT event management platform relies heavily on the underlying
 system architecture. The architecture choice affects performance, scalability,
 fault tolerance, and the ability to process real-time data effectively. This
-section explores several architectural patterns, from the simplest --- monolithic
---- to more complex ones that can be relevant for IoT --- microservices,
-event-driven, serverless, and edge computing --- each one with distinct
+section explores several architectural patterns, from the simplest---monolithic---to
+more complex ones that can be relevant for IoT---microservices,
+event-driven, serverless, and edge computing---each one with distinct
 advantages and challenges. Understanding these models provides a foundation for
-building the best architecture for a robust IoT-system monitoring and anomaly
+building the best architecture for robust IoT-system monitoring and anomaly
 detection systems.
 
 \subsection{Monolithic Architecture}
-A monolithic architecture is a software design pattern in which all parts ---
-such as the \gls{UI}, business logic and data access layers --- are tightly
-coupled and deployed together as a single unit\cite{7436659,10031648}. This
-was the most popular approach for decades due to how simple it is, specially in
-the early stages of software development\cite{Garlan2018}.
+A monolithic architecture is a software design pattern in which all parts---such
+as the \gls{UI}, business logic, and data access layers---are tightly
+coupled and deployed together as a single unit \cite{7436659}. This
+was the most popular approach for decades due to how simple it is, especially in
+the early stages of software development.
 Figure \ref{fig:architectures:monolithic}
 illustrates the structure of a monolith. The whole application is represented
 as a unique block that communicates with the database using the data access
-layer. The user interacts with the application through an \gls{UI}.
+layer. The user interacts with the application through a \gls{UI}.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Architectures/Monolith.pdf}
@@ -190,72 +190,72 @@ layer. The user interacts with the application through an \gls{UI}.
 	\label{fig:architectures:monolithic}
 \end{figure}
 
-Despite some problems, monoliths have some advantages on the other architectures,
-specially for smaller applications or early-stage development.
+Despite some problems, monoliths have some advantages over the other architectures,
+especially for smaller applications or early-stage development.
 
 The monolithic architecture is the simplest way of structuring a
-project and monolithic solutions are easier to design, develop and deploy
+project, and monolithic solutions are easier to design, develop, and deploy
 than other solutions.
 Having the code in a single codebase removes the need for complex
 integration, making it more attractive for smaller teams with limited
-resources or expertise\cite{IBMMonolith}.
+resources or expertise \cite{IBMMonolith}.
 
 Another advantage is that since there is a single application in monolithic
-systems, there are no services integrations and developers can debug without
+systems, there are no service integrations, and developers can debug without
 dealing with inter-service communications. Testing is also easier because all
 of the components are located in the same codebase and run in the same
-environment\cite{newman2019monolith}.
+environment \cite{newman2019monolith}.
 
 Lastly, deploying a monolithic application involves managing a single artifact. This
 reduces operational complexity compared to systems where deployment
-pipelines must coordinate multiple services\cite{AWSMonolithMicroservices}.
+pipelines must coordinate multiple services.
 
 For bigger architectures, this solution might not be adequate as several
 challenges appear as applications grow in size and complexity.
 Scaling a monolithic system can be much harder when
-compared with other modular architectures. Let's say that hipotetically,
+compared with other modular architectures. Let's say that hypothetically,
 an application is composed of three modules. One is in constant
 overload and needs to be scaled with urgency, the second has some peaks of
-usage but doesn't require to be scaled, and the third is barely used and
-could be ajusted to use less resources. In an architecture where this
-modules are separated for example in three services, scaling publishers
-efficient and we can scale up the first service and scale down the third.
+usage but doesn't require scaling, and the third is barely used and
+could be adjusted to use fewer resources. In an architecture where these
+modules are separated, for example, in three services, scaling publishers is
+efficient, and we can scale up the first service and scale down the third.
 However, in a monolith, we can only scale everything as one, meaning there
-can be modules that force the scaling of unrelated components unnecesarily.
-In the example above, we would need to scamicroservicesle the whole system, including
-the third module that is already wasting more resources that it needs\cite{7333476,AWSMonolithMicroservices}.
+can be modules that force the scaling of unrelated components unnecessarily.
+In the example above, we would need to scale the whole system, including
+the third module that is already wasting more resources than it needs \cite{7333476}.
 
 Another disadvantage is that monoliths are prone to tech debt accumulation over
 time. The lack of modularity present in these systems frequently results in
 an architecture where dependencies between the system's elements are unclear,
-slowing the development process and making maintenance an hard and continuous
-process\cite{7333476}.
+slowing the development process and making maintenance a hard and continuous
+process \cite{7333476}.
 
-Additionally, every change in the codebase requires all the application to be
+Additionally, every change in the codebase requires the whole application to be
 redeployed, increasing the risk of downtime and complicating release cycles. If
 an error is deployed to the public environment, it can cause the whole system
-to go down while in modular systems, if a problem is deployed in one of the
+to go down, while in modular systems, if a problem is deployed in one of the
 modules, the others are independent and can still run even if the one with
-the problem is down, meaning that only part of the system is unavailable\cite{7333476,AWSMonolithMicroservices}.
+the problem is down, meaning that only part of the system is unavailable \cite{7333476,AWSMonolithMicroservices}.
 
-Monoliths also suffer from lack of flexibility. Since all of the application's
+Monoliths also suffer from a lack of flexibility. Since all of the application's
 logic resides in a single codebase, it will likely be enforced that everything
-should be developed using an uniform technology stack. In architectures that
-have the application divided in modules is possible for each module to have
+should be developed using a uniform technology stack. In architectures that
+have the application divided into modules, it is possible for each module to have
 its own technology stack, which can facilitate the development of some specific
-features that are easier to do with specific technologies\cite{IBMMonolith}.
+features that are easier to do with specific technologies \cite{IBMMonolith}.
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
 application into several other independently deployed applications called
-microservices\cite{7436659}.
+microservices \cite{7436659}.
 In this solution, the modules communicate between each other through
-synchronous communications using \gls{API}s based on technologies like like
+synchronous communications using \gls{API}s based on technologies like
 \gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
-adopting tools like message brokers or event streaming platforms\cite{7436659}.
+adopting tools like message brokers or event streaming platforms \cite{7436659}.
 The structure of a microservices application is depicted in \ref{fig:architectures:microservices}.
-In this example, the architecture is composed by an \gls{UI}, on the left,
+In this example, the architecture is composed of a \gls{UI}, on the left,
 that communicates with the three different microservices via their \gls{API}s.
-Each microservice (the three blocks on the middle), in this case, communicates
+Each microservice (the three blocks in the middle), in this case, communicates
 with a different database through the data access layer.
 
 \begin{figure}[htbp]
@@ -265,50 +265,50 @@ with a different database through the data access layer.
 	\label{fig:architectures:microservices}
 \end{figure}
 
-Microservices are independent applications with its own codebase, deployed
-separately and in most cases with their individual database. For this reason
-microservices have the advatage that each service can be scaled independently based on demand. A service with
-high demand like for example user authentication can scale separately from
-services with less workload\cite{8990350}.
+Microservices are independent applications with their own codebase, deployed
+separately, and in most cases, with their individual database. For this reason,
+microservices have the advantage that each service can be scaled independently based on demand. A service with
+high demand, like, for example, user authentication, can scale separately from
+services with less workload \cite{8990350}.
 
 Another benefit of having the logic separated into services is that when
-a failure occurs in a service, the others will unlikely be affected. For
+a failure occurs in a service, the others will be unlikely to be affected. For
 example, when a store website has a problem with its payment service, the
 users might not be able to pay but they can still browse the website and
-do other things like managing the profile or adding products to the cart\cite{8990350}.
+do other things like managing the profile or adding products to the cart \cite{8990350}.
 
-In addition, each service is an independent application, which means that each service
-can be developed using different technologies\cite{7436659}. This allows the service to
+In addition, since services are in independent codebases, each service
+can be developed using different technologies \cite{7436659}. This allows the service to
 be developed using technologies that are more suitable for its own purpose.
 
 Despite the advantages, managing multiple services is much more complex than managing a single
-application\cite{newman2019monolith}. Deployment and maintenance efforts are multiplied, which can
+application \cite{newman2019monolith}. Deployment and maintenance efforts are multiplied, which can
 lead to operational overhead. The heavy use of monitoring tools can be
-helpful, or even required in this kind of solutions.
+helpful, or even required, in this kind of solution.
 
 Another challenge is that in these architectures, services often depend on each other,
 and despite fault isolation being an advantage, if the dependencies are not
-properly managed a failure can lead to successive failures on other modules.
-When there are two services that need to be change in order to add or update
-a feature, the first service to be deployed need to be compatible with the
+properly managed, a failure can lead to successive failures on other modules.
+When there are two services that need to be changed in order to add or update
+a feature, the first service to be deployed needs to be compatible with the
 previous version of the other, otherwise there will be problems while they
 are not both properly deployed.
-Observability tools like tracing and logging are essencial to prevent and
-diagnose this king of issues\cite{richards2015software}.
+Observability tools like tracing and logging are essential to prevent and
+diagnose those kinds of issues \cite{richards2015software}.
 
 \subsection{Event-Driven Architecture}
 The event-driven architecture is a system design pattern where the components
-are loosely coupled, and communicate through events. Events are predefined
+are loosely coupled and communicate through events. Events are predefined
 messages that are sent by a system in reaction to a change in its state.
-As shown in figure \ref{fig:architectures:event-driven}
-, the communication is made between an event producer, and an event subscriber.
-Event producers generate the events and send the messages to a broker, Event
+As shown in figure \ref{fig:architectures:event-driven},
+the communication is made between an event producer and an event subscriber.
+Event producers generate the events and send the messages to a broker, and event
 subscribers subscribe to events and react to them. Both these parts are agnostic
 to each other, meaning that the producers send the events not knowing who will
-receive them and the subscribers receive the events not knowing who sent them.
-This is possible because of the broker. Event Brokers, like Apache Kafka or
-RabbitMQ are responsible for routing the events from the producers to the
-subscribers through features like message queuing and topic-based routing\cite{9226286,manchana2021event,AWSEventDriven}.
+receive them, and the subscribers receive the events not knowing who sent them.
+This is possible because of the broker. Event brokers, like Apache Kafka or
+RabbitMQ, are responsible for routing the events from the producers to the
+subscribers through features like message queuing and topic-based routing \cite{manchana2021event,AWSEventDriven}.
 
 \begin{figure}[htbp]
 	\centering
@@ -319,36 +319,36 @@ subscribers through features like message queuing and topic-based routing\cite{9
 
 One benefit of this architecture is the fault tolerance.
 Components of an event-driven architecture operate independently, meaning
-that if a component fails the system can continue functioning. In this
+that if a component fails, the system can continue functioning. In this
 case, due to the existence of an event broker, the messages are stored in
 this intermediary until they are processed, reducing the probability of
-loosing data\cite{AWSEventDriven}.
+losing data \cite{AWSEventDriven}.
 
 Another advantage is that, by decoupling producers from subscribers, a new
 consumer can be added and subscribe to existing events. This doesn't require
 any change in the producer in order to work, which facilitates the extension of
-the system\cite{MicrosoftEventDriven}.
+the system \cite{MicrosoftEventDriven}.
 
 Lastly, despite what was said above about the events not needing to be processed
 in real-time, they can be configured to process and respond to events
-as they occur, making it ideal for applications which require real-time
-responsiveness\cite{manchana2021event}.
+as they occur, making it ideal for applications that require real-time
+responsiveness \cite{manchana2021event}.
 
-On the other side, there are some challenges like handling the events order and
+On the other side, there are some challenges, like handling the events order and
 duplication.
 Making sure that events are queued in the correct order and that they are
 processed only once can be a difficult task because of the concurrency
-that is characteristic of these systems\cite{MicrosoftEventDriven}.
+that is characteristic of these systems \cite{MicrosoftEventDriven}.
 
-The debugging process is also harder due to the assynchronous nature of the
+The debugging process is also harder due to the asynchronous nature of the
 communication process.
-Observability tool are essencial to diagnose problems\cite{manchana2021event}.
+Observability tools are essential to diagnose problems \cite{manchana2021event}.
 
 \subsection{Serverless Architecture}
 Serverless architecture is a solution where the cloud provider manages all the
 server infrastructure, scaling, and maintaining it automatically as needed.
 Serverless applications are made of event-driven stateless functions that run
-only when needed\cite{marcelino2024goldfish}. This functions are triggered
+only when needed. This functions are triggered
 through events like \gls{API} calls, database changes, message queues or
 \gls{IoT} events and shutdown after execution, making this a highly efficient
 solution\cite{s21030928}.
@@ -368,34 +368,34 @@ Serverless architectures benefit from high scalability. With this
 architecture, the applications automatically scale horizontally as needed, creating or
 deleting function instances in response to demand. This is a great
 advantage for applications with peak times where the demand is
-significantly bigger than normal\cite{GoogleServerless}.
+significantly bigger than normal \cite{GoogleServerless}.
 
-On top of that, unlike servers, that are usually paid by uptime, serverless functions are
-tipically paid per execution, reducing costs when the application is idle\cite{s23104868}.
+On top of that, unlike servers, which are usually paid by uptime, serverless functions are
+typically paid per execution, reducing costs when the application is idle.
 
 Another advantage is that since the developers don't need to handle all the infrastructure management,
 they can focus entirely on the code, usually resulting in improvements in
-produtivity and code quality\cite{GoogleServerless}.
+productivity and code quality \cite{GoogleServerless}.
 
-On the other side, serverless functions suffer from cold start. After a long
+On the other side, serverless functions suffer from cold starts. After a long
 period of inactivity, functions take longer to execute, which
-can be a problem for applications that require real-time responsiveness\cite{s21030928}.
+can be a problem for applications that require real-time responsiveness \cite{s21030928}.
 
 Testing and debugging in serverless architectures are harder due to the
-decentralized nature of this systems\cite{meghla2023testing}.
+decentralized nature of these systems \cite{meghla2023testing}.
 
-Another drawback is that serverless functions are stateless meaning they
-can not store data between executions and due to that, some
-applications will require external storage solutions\cite{meghla2023testing}.
+Another drawback is that serverless functions are stateless, meaning they
+cannot store data between executions, and due to that, some
+applications will require external storage solutions \cite{meghla2023testing}.
 
 \subsection{Edge Architecture}
-Edge architectur is a system design pattern in where the data is processed
+Edge architecture is a system design pattern in which the data is processed
 closer to where it is generated. This practice is called edge computing and
-is commonly used in \gls{IoT} systems, with data being process in the device
+is commonly used in \gls{IoT} systems, with data being processed in the device
 before being sent to a server \cite{s20226441}.
 The processing can be done in the device itself or, as figure \ref{fig:architectures:edge}
 shows, can be done in a separate node close to the devices. These nodes
-pre-process the data and after that, send the data to a cloud server.
+preprocess the data and, after that, send the data to a cloud server.
 
 \begin{figure}[H]
 	\centering
@@ -404,23 +404,23 @@ pre-process the data and after that, send the data to a cloud server.
 	\label{fig:architectures:edge}
 \end{figure}
 
-Edge architectures have some advantages specially in the context of IoT systems.
+Edge architectures have some advantages, especially in the context of IoT systems.
 Since there's no need to access a server, it allows for real-time decisions
 in systems like self-driving cars or industrial automation. When there's
 still data being sent to a server, the data can be processed and filtered
-locally before being sent, reducing bandwidth usage\cite{s20226441}.
+locally before being sent, reducing bandwidth usage \cite{s20226441}.
 
 It's also a reliable choice because it can operate offline by storing data
-locally until the connection is restored\cite{MicrosoftEdgeComputing}.
+locally until the connection is restored \cite{MicrosoftEdgeComputing}.
 
 Additionally, it enhances data privacy, as sensitive information, such as biometric data,
-can be kept on the device rather than being transmitted to the cloud\cite{MicrosoftEdgeComputing}.
+can be kept on the device rather than being transmitted to the cloud \cite{MicrosoftEdgeComputing}.
 
 Despite the advantages, edge devices are usually constrained in processing power
-and storage capacity, which can be a drawback\cite{s20226441}.
+and storage capacity, which can be a drawback \cite{s20226441}.
 
 Another challenge is that edge devices are more vulnerable to attacks, both
-physical and cyberattacks\cite{s20226441}.
+physical and cyberattacks \cite{s20226441}.
 
 \subsection{Applications and Use Cases}
 Every architecture has its own advantages and disadvantages, but they all have
@@ -432,7 +432,7 @@ its infrastructure is very simple, and it's relatively fast to have an initial
 functional product. This architecture is often used as a starting point, and
 eventually, as the application grows, it's migrated to more complex architectures.
 Examples of real-world applications are basic e-commerce platforms, content
-management systems and small desktop applications.
+management systems, and small desktop applications.
 
 Microservices architectures have become the go-to solution for more complex
 systems. It's widely used in bigger e-commerce applications where the application
@@ -442,30 +442,35 @@ solution, dividing the application into services for content recommendation, use
 preferences, subscription handling, etc.
 
 The event-driven architecture shines in products where real-time
-responsiveness is crucial. It's widely used in Internet of Things systems,in
+responsiveness is crucial. It's widely used in \gls{IoT} systems, in
 applications like industrial monitoring, home automation, and environmental
-sensing where \gls{IoT} devices send events to be processed in real-time.
+sensing, where \gls{IoT} devices send events to be processed in real-time.
 E-commerce platforms can also use event-driven architecture for
 features like processing orders or updating inventory.
 
 Serverless architectures are useful in cases where scalability and cost-efficiency
-are required. They are often used in applications that have a variable workload
-like backend application, real-time data processing and \gls{IoT} event handling, where
+are required. They are often used in applications that have a variable workload,
+like backend applications, real-time data processing, and \gls{IoT} event handling, where
 there are periods with spikes and others with low usage.
 
 Lastly, edge architectures are great for applications that require low-latency
 real-time processing. It's widely used in \gls{IoT} systems in industrial
-automation, or autonomous vehicles where real-time decisions are crucial.
+automation or autonomous vehicles, where real-time decisions are crucial.
 
 It's also common to mix different architectures in the same system using
-hybrid solutions. E-commerce platforms, for example, where referenced above in
-multiple architectures as these platforms can use microsservices for processing
+hybrid solutions. E-commerce platforms, for example, are referenced above in
+multiple architectures, as these platforms can use microservices for processing
 payments or user authentication and event-driven architecture to process orders.
+
+Cruz et al. in \cite{s22155866} developed a platform using an hybrid architecture
+with cloud and edge components in where the devices communicate with
+the cloud using the \gls{MQTT} protocol. On the other side, in \cite{lopez},
+an event-driven architecture is used, without recurring to edge computing.
 
 \section{Backend Development}
 Managing the underlying logic, data storage, and communication processes that
 allow the web application to operate is the responsibility of the backend.
-The backend operates behind the scenes managing data, processes requests, and
+The backend operates behind the scenes, managing data, processes requests, and
 responding to them, while the frontend gives users a visual and interactive
 experience.
 \subsection{Backend Frameworks}
@@ -486,82 +491,82 @@ Although this framework is mostly seen as a backend solution, it supports
 integration with various template engines like \gls{EJS}, Pug, and Handlebars,
 providing a way to render dynamic \gls{HTML} pages.
 Despite having a simple and clean approach to the development of \gls{REST} \gls{API}s,
-this framework lacks built-in features. Express doen't provide features like
-dependency injection, user authentication, database integration or input
-validation which all need to be implemented using third-party libraries.
+this framework lacks built-in features. Express doesn't provide features like
+dependency injection, user authentication, database integration, or input
+validation, which all need to be implemented using third-party libraries.
 By being an unopinionated solution, it lacks structure, increasing the effort
-of the developers on manually configuring middlewares, and maintaining the code
-organized, specially for more complex projects.
+of the developers on manually configuring middlewares and maintaining the code
+organized, especially for more complex projects.
 Express is a popular framework, being adopted by many developers. Resources
-about this technology, like documentation or tutorials are easy to find
+about this technology, like documentation or tutorials, are easy to find
 everywhere, due to its vast community, which might be an advantage for
-developers less experienced\cite{expressJSMDN}.
+developers less experienced \cite{expressJSMDN}.
 
-\subsubsection{Nestjs}
+\subsubsection{NestJS}
 Nest JS is an opinionated Node.js framework with a highly structured
 development environment. It has a very rich environment providing many built-in
-features\cite{nestJS}.
+features \cite{nestJS}.
 
-With Typescript support, NestJS ensures strong typing, reducing the risk of
+With TypeScript support, NestJS ensures strong typing, reducing the risk of
 having runtime errors.
 
 This framework simplifies the process of building applications with
 microservices or event-driven architectures by providing native support for
-communication technologies like GraphQL, and websockets, and easy configuration
-for technologies like RabitMQ, \gls{MQTT}, Kafka and \gls{gRPC}\cite{nestJS}.
+communication technologies like GraphQL and websockets and easy configuration
+for technologies like RabbitMQ, \gls{MQTT}, Kafka, and \gls{gRPC} \cite{nestJS}.
 
 NestJS integrates a powerful dependency injection system, which, apart from the
 increase in performance, also helps the developers writing clean code, testing,
-and maintaining it\cite{nestJS}.
+and maintaining it \cite{nestJS}.
 
-Applications in Nestjs are divided into
+Applications in NestJS are divided into
 self-contained modules, making large applications easier to scale and maintain.
 
 On the other side, due to the structured and opinionated approach, the learning
 curve might be steeper than other simple solutions like Express.
-It has also the disadvantage of being a heavier framework, slightly loosing
+It also has the disadvantage of being a heavier framework, slightly losing
 performance. This performance overhead is usually imperceptible in most
 applications.
 
 Due to its structured approach, it can be a great choice for more complex
-applications, specially applications with microservices or event-driven
+applications, especially applications with microservices or event-driven
 architectures.
 \subsubsection{Java Spring}
-Spring is a the most popular framework for building complex and robust
+Spring is the most popular framework for building complex and robust
 applications using Java. It's a great solution for developing scalable and secure
-applications. It's one of the most complete backend frameworks having features
-like dependency injection, and extensions for developing \gls{REST} \gls{API}s and
-microservices\cite{GFGJava}.
+applications. It's one of the most complete backend frameworks, having features
+like dependency injection and extensions for developing \gls{REST} \gls{API}s and
+microservices \cite{GFGJava}.
 
-A popular extension for Spring is called Spring Boot and its job is to
+A popular extension for Spring is called Spring Boot, and its job is to
 simplify configuration and deployment. It provides opinionated defaults,
-reducing boilerplate code and improving development speed\cite{GFGJava}.
+reducing boilerplate code and improving development speed \cite{GFGJava}.
 
-Another popular extensions include Spring \gls{MVC} for building \gls{REST}ful \gls{API}s, Spring
-Cloud for building microservices and Spring Security for implemenenting
-security features like authentication and authorization\cite{GFGJava}.
+Other popular extensions include Spring \gls{MVC} for building \gls{REST}ful \gls{API}s, Spring
+Cloud for building microservices, and Spring Security for implementing
+security features like authentication and authorization \cite{GFGJava}.
 
-Spring also includes suport for testing tools like JUnit and Mockito.
+Spring also includes support for testing tools like JUnit and Mockito.
 
 Applications developed in spring are easily scalable due to Spring's modular
 design.
-It's a very flexible solution handling every type of architectures, from
+It's a very flexible solution handling every type of architecture, from
 monoliths to microservices.
 
 On the other side, just like NestJS, Spring has a steeper learning curve when
-compared to more simple and straightforward solutions. Learging concepts like
-dependency injection or Inversion of Control can be overwhelming for less
+compared to more simple and straightforward solutions. Learning concepts like
+dependency injection or inversion of control can be overwhelming for less
 experienced developers.
 On top of that, configuring Spring is a complex task that requires significant
-boilerplade code and \gls{XML} configuration. This effort can be reduced with Spring
+boilerplate code and \gls{XML} configuration. This effort can be reduced with Spring
 Boot.
-Another downside of this framework, is that it's an heavy framework and
+Another downside of this framework is that it's a heavy framework and
 requires higher resources to run when compared with other lightweight solutions.
 
 \subsubsection{ASP.NET Core}
 ASP.NET Core is an open-source framework developed and maintained by Microsoft.
 It's a high-performance framework designed for scalability and modularity and
-widely used for developing complex web applications\cite{ASPMicrosoft}.
+widely used for developing complex web applications \cite{ASPMicrosoft}.
 
 Contrary to all the other frameworks mentioned above, this framework can be
 used with more than one programming language. C\# is the most used language, but
@@ -574,34 +579,34 @@ it as one of the fastest backend frameworks available.
 ASP.NET Core provides features like dependency injection and includes tools for
 authentication and authorization, supporting common protocols like \gls{JWT} or OAuth.
 It also includes other security features like prevention against cross-site
-scripting attacks or data protection\cite{ASPMicrosoft}.
+scripting attacks or data protection \cite{ASPMicrosoft}.
 
-Despite being mainly a backend framework, its also possible to develop the
-frontend using this framework. Features like Razor Pages, \gls{MVC} or Blazor allow
-some limited frontend capabilities\cite{ASPMicrosoft}.
+Despite being mainly a backend framework, it's also possible to develop the
+frontend using this framework. Features like Razor Pages, \gls{MVC}, or Blazor allow
+some limited frontend capabilities \cite{ASPMicrosoft}.
 
-ASP.NET Core implements a modular midleware pipeline that processes \gls{HTTP}
-requests which developers can configure to include middlewares for tasks like
-authentication, authorization, logging and error handling.
+ASP.NET Core implements a modular middleware pipeline that processes \gls{HTTP}
+requests, which developers can configure to include middlewares for tasks like
+authentication, authorization, logging, and error handling.
 
 Despite all the good things about this framework, there are also some drawbacks.
 
-Like another frameworks already mentioned, developers that are new to this
+Like other frameworks already mentioned, developers that are new to this
 technology may also face a steep learning curve, mainly regarding advanced
 features like dependency injection and middleware pipelines.
 
-Setting up the middleware pipeline and dependency injection can be a complex
+Additionally, setting up the middleware pipeline and dependency injection can be a complex
 process.
 
-This framework can be a great choice for large-scale systems, but overwhelming
+This framework can be a great choice for large-scale systems but overwhelming
 for smaller projects.
 
 \section{Communication and Security}
 Both communication and security are very important parts of any system.
-Deciding which protocols should be used or how to address security concerns are
+Deciding which protocols should be used or how to address security concerns are two
 important parts of designing a software system. In the context of this
 dissertation, we need to address both communication between \gls{IoT} systems and
-Backend, and Frontend and Backend.
+the backend, and between the frontend and the backend.
 
 
 \subsection{Communication between IoT systems and backend}
@@ -611,47 +616,34 @@ and analyzed. This often requires low-latency and reliable communication.
 There are many protocols that address the necessities of \gls{IoT} systems.
 
 MQTT is a lightweight bi-directional message protocol created in 1999.
-It follows the publisher-subscriber architecture decoupling the message
-sender from the receiver. This protocol is composed by two parts, the
-broker, and the clients. The broker is the system responsible for providing
-a safe transmittion between clients implementing authentication and
-authorization features and routing the messages from the publishers to
+It follows the publisher-subscriber architecture, decoupling the message
+sender from the receiver. This protocol is composed of two parts: the
+broker and the clients. The broker is the system responsible for providing
+a safe transmission between clients, implementing authentication and
+authorization features, and routing the messages from the publishers to
 the respective subscribers. The clients are every application that
 communicates with the broker, being either a publisher or a subscriber.
 It's commonly used in resource-constrained systems like IoT systems because
-it's easy to implement and requires low bandwidth\cite{Jayapal2019, CommunicationProtocols}.
+it's easy to implement and requires low bandwidth \cite{Jayapal2019, CommunicationProtocols}.
 
 \gls{AMQP} is another message protocol just like \gls{MQTT}.
-Despite being similar this protocols have some differences. While \gls{MQTT} is
+Despite being similar, these protocols have some differences. While \gls{MQTT} is
 focused on simplicity and low-bandwidth communication, \gls{AMQP} is optimized for
 more complex systems, providing robust and reliable message queuing and
-routing introducing concepts like exchanges and queues\cite{CommunicationProtocols}.
+routing and introducing concepts like exchanges and queues \cite{CommunicationProtocols}.
 
-\gls{CoAP} is a \gls{HTTP} based protocol optimized for resource-constrained
+\gls{CoAP} is an \gls{HTTP}-based protocol optimized for resource-constrained
 environments, such as \gls{IoT} systems. It's built on \gls{UDP} instead of \gls{TCP},
 resulting in a lightweight and faster solution.
-This protocol follows the \gls{REST}ful design providing resources under a \gls{URL}
+This protocol follows the \gls{REST}ful design, providing resources under a \gls{URL}
 using methods like GET, POST, PUT, and DELETE. Due to its similarity with
 \gls{HTTP}, one of the most widely used protocols, \gls{CoAP} can be easily integrated
-with \gls{HTTP} using proxys\cite{coap, Jayapal2019}.
-
-\subsubsection{Middlewares and Gateways}
-Middleware platforms and gateways can be used in \gls{IoT}-to-backend
-communication to simplify the device integration and improving scalability:
-
-Middlewares are platforms like \gls{AWS} \gls{IoT} Core or Google Cloud \gls{IoT}.
-These platforms have features like device management, protocol translation, and
-analytics in real-time that can be useful when integrating \gls{IoT} systems
-with backend services.
-
-Gateways are platforms that can aggregate, preprocess and filter data
-from \gls{IoT} systems. This way, only useful data is sent to the backend server,
-removing useless, resource consuming interactions.
+with \gls{HTTP} using proxies\cite{coap, Jayapal2019}.
 
 \subsection{Communication between Frontend and Backend}
-Backend is where all the business logic relies and it's what provides frontend
-the data for it to display to the end user. An effective communication between
-these two parts is crucial for a well designed system.
+The backend is where all the business logic relies, and it's what provides the frontend
+the data for it to display to the end user. Effective communication between
+these two parts is crucial for a well-designed system.
 \subsubsection{Protocols}
 There are many protocols that can be used to transmit data between the frontend
 and the backend.
@@ -659,61 +651,82 @@ and the backend.
 \gls{HTTP} is the most widely used protocol. It works on a
 request-response model, where the client sends the request and the server
 responds. It's a stateless, meaning each request is independent and doesn't
-affect the others. It's commonly used for fetching \gls{HTML}, images, videos
-and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTPS} but the
-data is encrypted using \gls{TLS} or \gls{SSL}\cite{CloudflareHTTP, CloudflareHTTPS}.
+affect the others. It's commonly used for fetching \gls{HTML}, images, videos,
+and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTP}, but the
+data is encrypted using \gls{TLS} or \gls{SSL} \cite{CloudflareHTTP, CloudflareHTTPS}.
 
 WebSocket is a protocol designed for real-time bi-directional communication.
-It operates over \gls{TCP} and starts as an \gls{HTTP} connection and then changes to a
-WebSocket connection. Unlike \gls{HTTP} it doesn't rely on requests, and both
-parts can communicate at any time\cite{WebsocketRFC}.
+It operates over \gls{TCP} and starts as an \gls{HTTP} connection which then changes to a
+WebSocket connection. Unlike \gls{HTTP}, it doesn't rely on requests, and both
+parts can communicate at any time \cite{WebsocketRFC}.
 
 \gls{TCP} is a connection-oriented protocol that ensures reliability by
-estabilishing a connection via a three-way handshake, retrying lost
-packets and ensuring data is received in the correct order.
-On the other side \gls{UDP} is a connectionless protocol which sends data in
-independent packets. It doesn't guarantee delivery, order or error
-correction. Because of this, \gls{UDP} is faster but less reliable\cite{al2018performance}.
+establishing a connection via a three-way handshake, retrying lost
+packets, and ensuring data is received in the correct order.
+On the other side, \gls{UDP} is a connectionless protocol that sends data in
+independent packets. It doesn't guarantee delivery, order, or error
+correction. Because of this, \gls{UDP} is faster but less reliable \cite{al2018performance}.
 
 \subsection{APIs}
 An \gls{API} is an interface of an application that defines a set of rules and
 protocols that allows other applications to communicate with it.
 These protocols define rules for communication between systems, focusing on the
-technical implementation. \gls{API}s define how data is requested, sent and
+technical implementation. \gls{API}s define how data is requested, sent, and
 consumed using these protocols.
 
 \gls{REST}ful \gls{API}s are \gls{API}s that follow the \gls{REST} principles.
-This \gls{API}s' communication are stateless, meaning that each request must
+These \gls{API}s' communications are stateless, meaning that each request must
 have all the information required for being processed.
-\gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated to them, and
-each resource idependent meaning that it doesn't depend on other
-requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}\cite{9101226}.
+\gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated with them, and
+each resource independent meaning that it doesn't depend on other
+requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}\cite {9101226}.
 
 Another widely used API type is GraphQL.
 GraphQL allows clients to specify exactly the data they need. This
-flexibility avoids over-fetching(getting more data than necessary) and
+flexibility avoids over-fetching (getting more data than necessary) and
 under-fetching (not getting enough data in a single request).
-Just like \gls{REST}ful \gls{API}s, GraphQL works with \gls{HTTP} or \gls{HTTPS}
-but GraphQL \gls{API}s usually expose a single \gls{HTTP} endpoing for all
-requests. GraphQL supports subscriptions, which allows the client to receive
-real-time updates\cite{9101226}.
+Just like \gls{REST}ful \gls{API}s, GraphQL works with \gls{HTTP} or \gls{HTTPS},
+but GraphQL \gls{API}s usually expose a single \gls{HTTP} endpoint for all
+requests. GraphQL supports subscriptions, which allow the client to receive
+real-time updates \cite{9101226}.
 
-\gls{gRPC} was developed by google and can be seen as both a protocol and an
+\gls{gRPC} was developed by Google and can be seen as both a protocol and an
 \gls{API} type. With this protocol, both clients and servers can call
 functions on each other, just like if it was its own code.
-It's commonly used in microservices architectures and real-time applications\cite{newton2024benchmarking}.
+It's commonly used in microservices architectures and real-time applications \cite{newton2024benchmarking}.
 
 Despite \gls{SOAP} being defined as a protocol, it's more comparable to \gls{API}
-types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP} or
-\gls{SMTP}(email).
+types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP}, or
+\gls{SMTP} (email).
 \gls{SOAP} is a lightweight protocol for exchanging structured data. It uses \gls{XML}
 to format messages in its own standards. These strict standards ensure
-reliability and compatibility between systems\cite{newton2024benchmarking}.
+reliability and compatibility between systems \cite{newton2024benchmarking}.
 
 \subsection{Security}
 
-Security is a crucial part of any system, it ensures the integrity of both
+Security is a crucial part of any system, as it ensures the integrity of both
 the data and the system.
+
+When projecting the security in a system, some aspects need to be addressed.
+
+One very common example is the authentication process.
+It's important that the component that does the request identify itself
+in a way that the other part can authenticate.
+In the case of \gls{IoT}-to-backend communication, \gls{IoT} devices must authenticate
+using approaches like token-based or certificate-based authentication \cite{schiller2022landscape}.
+
+In frontend to backend communication, the most common approaches to
+authentication are sessions and token-based authentication using \gls{JWT}.
+Figure \ref{fig:security:JWT}
+is a flow chart of the authentication process using \gls{JWT}.
+Firstly, the server verifies the credentials, and if the credentials are
+correct, the server issues two tokens, an access token and a refresh
+token. These tokens are stored in the client and sent in all of the
+following requests to the server. The access token is used to validate
+the access and has a short life span (usually around 15 minutes). When
+the access token expires, the refresh token is used to generate a new
+access token. The refresh token is valid for a longer period of time (tipically
+one week).
 
 \begin{figure}[htbp]
 	\centering
@@ -722,82 +735,59 @@ the data and the system.
 	\label{fig:security:JWT}
 \end{figure}
 
-When projecting the security in a system some
-aspects need to be addressed.
-
-One very common example is the
-authentication process.
-It's important that the component that does the request identifies itself
-in a way that the other part can authenticate.
-In the case of \gls{IoT} to backend communication, \gls{IoT} devices must authenticate
-using approachs like token-based or certificate-based authentication\cite{schiller2022landscape}.
-
-In frontend to backend communication the most common approachs to
-authentication are sessions and token-based authentication using \gls{JWT}.
-Figure \ref{fig:security:JWT}
-is a flow chart of the authentication process using \gls{JWT}.
-Firstly the server verifies the credentials, if the credentials are
-correct, the server issues two tokens, an access token and a refresh
-token. These tokens are stored in the client and send in all of the
-following request to the server. The access token is used to validate
-the access and has a short life span (usually around 15 minutes). When
-the access token expires, the refresh token is used to generate a new
-access token. The refresh token is valid for a longer period of time (
-tipically one week).
-
 Another important element to consider is data encryption.
 The data can be encrypted during transmission with protocols like \gls{TLS}/\gls{SSL}.
 These protocols ensure that data is only readable by the intended parts.
 For frontend-backend communication, this can be achieved using the \gls{HTTPS}
 protocol.
-For more sensitive applications, end-to-end ecryption can be used\cite{schiller2022landscape}.
+For more sensitive applications, end-to-end encryption can be used \cite{schiller2022landscape}.
 
 Besides data encryption, it's also important to check data integrity.
-To ensure that data isn't changed during transmition, techniques like
-\gls{HMAC} can be used\cite{schiller2022landscape}.
+To ensure that data isn't changed during transmission, techniques like
+\gls{HMAC} can be used \cite{schiller2022landscape}.
 
 It's also important to control who can access each data.
-Some data may be restricted to a specific group of users, therefore the
+Some data may be restricted to a specific group of users, and therefore the
 system needs to check if the user that requests the data has
 authorization to get that data. Techniques like \gls{RBAC} can be used to
 prevent access to sensitive data from users that can't access it.
 In the frontend-backend communication, \gls{CORS} policies can be used to
 restrict which origins can access the backend \gls{API}.
 
-Lastly, attacks like \gls{XSS}, \gls{SQL} Injection or \gls{DoS} need to be prevented.
-In \gls{IoT} systems, the firmware must be updated regularly to prevent this
+Lastly, attacks like \gls{XSS}, \gls{SQL} Injection, or \gls{DoS} need to be prevented.
+In \gls{IoT} systems, the firmware must be updated regularly to prevent these
 attacks.
 \gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it's possible to enforce
 rate limits and \gls{API} quotas. To prevent \gls{SQL} Injection, strategies like
-input sanitization or the use of an \gls{ORM} are essencial\cite{schiller2022landscape}.
+input sanitization or the use of an \gls{ORM} are essencial \cite{schiller2022landscape}.
 
 \section{Database Systems}
-The storage and management of data, is an essencial part of \gls{IoT} platforms.
-Due to the high volume of data, the high frequency and the diversity of the
-data, the effective design of a database is essencial to ensure query efficiency
+The storage and management of data is an essential part of \gls{IoT} platforms.
+Due to the high volume of data, the high frequency, and the diversity of the
+data, the effective design of a database is essential to ensure query efficiency
 and scalability.
 \gls{IoT} platforms generate diverse data types:
 \begin{itemize}
-	\item transactional metadata (e.g. device \gls{ID}s, user permissions)
-	\item logs (e.g. event triggers)
-	\item high-frequency time-series data (e.g. sensor measurements).
+	\item transactional metadata (e.g., device \gls{ID}, user permissions)
+	\item logs (e.g., event triggers)
+	\item high-frequency time-series data (e.g., sensor measurements).
 \end{itemize}
 
-This section addresses the different types of databases, its advantages and
-challenges in the context of \gls{IoT} systems.
+This section addresses the different types of databases, their advantages, and
+their challenges in the context of \gls{IoT} systems.
 
 \subsection{Relational Databases (SQL)}
 Relational databases organize data into tables with predefined schemas.
-This tables can have relationships of one to one, one to many, or many to many,
+These tables can have relationships of one to one, one to many, or many to many,
 defined using primary and foreign keys. Their transactions follow the \gls{ACID}
 properties, ensuring data
-consistency, integrity and reliability. Additionally, they provide a way of
-doing complex querying, through a query language called \gls{SQL}, making them
-a realiable choice for structured data requiring \gls{ACID} compliance\cite{bdcc7020097, Yadav2024}.
-The figure \ref{fig:databases:sql}
+consistency, integrity, and reliability. Additionally, they provide a way of
+doing complex querying through a query language called \gls{SQL}, making them
+a reliable choice for structured data requiring \gls{ACID} compliance \cite{bdcc7020097, Yadav2024}.
+Figure \ref{fig:databases:sql}
 is an example of an entity relationship diagram for a simple \gls{SQL} database structure.
 This diagram represents a relational database with a customer table, an order table, a product table, a product
-category table and an additional table that handles the many-to-many
+category table, and an additional table that handles the many-to-many
 relationship between orders and products.
 
 \begin{figure}[H]
@@ -808,9 +798,9 @@ relationship between orders and products.
 \end{figure}
 
 Relational databases offer several advantages.
-They ensure data integrity by allowing the use of constraints (e.g. unique values, not null values,
+They ensure data integrity by allowing the use of constraints (e.g., unique values, not null values,
 foreign keys) to force strict rules, preventing anomalies and ensuring
-reliability\cite{bdcc7020097}.
+reliability \cite{bdcc7020097}.
 
 They also support complex queries, as the use of \gls{SQL} as a standard
 language allows complex queries with JOIN operations and nested queries for relational data analysis.
@@ -820,39 +810,37 @@ available for backup, replication, and access control, such as PostgreSQL and My
 
 However, relational databases also present some challenges.
 
-One of them is scalability, as \gls{IoT} systems can generate a large volume of
-data, vertical scaling can be costly\cite{Yadav2024}.
+One of them is scalability, since \gls{IoT} systems can generate a large volume of
+data, vertical scaling can become costly \cite{Yadav2024}.
 
 In terms of horizontal scaling, traditional relational databases generally
 struggle with adding more servers. Sharding is a popular approach to
-solve this problem by spliting large tables into smaller segments(shards)
-and store them in different servers, but it adds complexity to joins
-across multiple shards\cite{Yadav2024}.
+solve this problem by splitting large tables into smaller segments (shards)
+and storing them in different servers, but it adds complexity to joins
+across multiple shards \cite{Yadav2024}.
 
 Another disadvantage is schema rigidity.
 In relational databases, tables follow a strict predefined schema, which
-difficults the process of integrating new data types, like unstructured
-data or new \gls{IoT} devices\cite{bdcc7020097}.
-
-
+makes it difficult to integrate new data types, like unstructured
+data or new \gls{IoT} devices \cite{bdcc7020097}.
 
 \subsection{NoSQL Databases}
 \gls{NoSQL} databases provide flexible schemas, making them suitable
 for storing unstructured and semi-structured data. Following the \gls{CAP} theorem,
 \gls{NoSQL} databases, unlike relational ones, prioritize availability and partition
-tolerance over consistency\cite{Yadav2024, bdcc7020097}. There are several types of \gls{NoSQL} databases,
+tolerance over consistency \cite{Yadav2024, bdcc7020097}. There are several types of \gls{NoSQL} databases,
 each optimized for different use cases.
 
-Document Databases store data as \gls{JSON}, \gls{BSON}, or \gls{XML} documents (e.g.
+Document databases store data as \gls{JSON}, \gls{BSON}, or \gls{XML} documents (e.g.,
 MongoDB, CouchDB, Firebase Firestore). Figure \ref{fig:databases:NoSQL}
 shows an example of a \gls{JSON}-like document that represents an order's data.
-Column Oriented Databases store data in columns instead of rows (e.g.
+Column-oriented databases store data in columns instead of rows (e.g.,
 Apache Cassandra, HBase, ScyllaDB).
-Key-value Databases store data as key-value pairs, similar to
+Key-value databases store data as key-value pairs, similar to
 a hash table, providing fast access to data. Mainly used as cache. Some
 examples include Redis and Amazon DynamoDB.
-Graph Databases store relationships between entities as nodes and
-edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune\cite{Yadav2024, bdcc7020097}.
+Graph databases store relationships between entities as nodes and
+edges. Popular databases include Neo4j, ArangoDB, and Amazon Neptune\cite{Yadav2024, bdcc7020097}.
 
 \begin{figure}[htbp]
 	\centering
@@ -861,219 +849,219 @@ edges. Popular databases include Neo4j, ArangoDB and Amazon Neptune\cite{Yadav20
 	\label{fig:databases:NoSQL}
 \end{figure}
 
-\gls{NoSQL} databases offer several advantages. One of its strenghts is scalability
-as they can easily scale horizontally by spliting data across
-multiple servers or clusters\cite{Yadav2024}.
+\gls{NoSQL} databases offer several advantages. One of its strengths is scalability,
+as they can easily scale horizontally by splitting data across
+multiple servers or clusters \cite{Yadav2024}.
 
-Another advantage is performance. \gls{NoSQL} databases are optimized for speed
-and its transactions typically have low latency. Due to its data being stored
-in an unstructured and simpler, without constraints or relations, \gls{NoSQL}
-databases operations are generally faster when compared to relational databases.
-On top of this, many non relational solutions implement in-memory storage,
-caching and efficient indexing techniques, improving the performance even more.
+Another advantage is performance. \gls{NoSQL} databases are optimized for speed,
+and their transactions typically have low latency. Due to its data being stored
+in an unstructured and simpler way, without constraints or relations, \gls{NoSQL}
+database operations are generally faster when compared to relational databases.
+On top of this, many non-relational solutions implement in-memory storage,
+caching, and efficient indexing techniques, improving the performance even more.
 
 Flexibility is another crucial benefit.
 Unlike \gls{SQL} databases that restrict the data to predefined rigid schemas,
 \gls{NoSQL} databases allow for dynamic schema changes, meaning that fields can
 be added or removed to the schema on the fly without requiring database
-migrations or even downtime\cite{Yadav2024}.
+migrations or even downtime \cite{Yadav2024}.
 
 Lastly, availability is a big advantage of \gls{NoSQL} databases.
 Many solutions offer built-in replication and fault tolerance
-technologies to ensure availability and fault tolerance. Typically data is
+technologies to ensure availability and fault tolerance. Typically, data is
 replicated across multiple nodes, so in case one node fails, the others
-are up and have the data required\cite{Yadav2024}.
+are up and have the data required \cite{Yadav2024}.
 
 Despite their advantages, \gls{NoSQL} databases also come with some challenges.
 
 One of the main issues is consistency.
 According to the \gls{CAP} theorem, database systems can only guarantee two out of
-Consistency, Availability and Partition Tolerance. \gls{NoSQL} Databases focus on
-Availability and Partition Tolerance, leaving consistency to second plan.
+Consistency, Availability, and Partition Tolerance. \gls{NoSQL} databases focus on
+availability and partition tolerance, leaving consistency to second place.
 This results in eventual consistency, meaning that data takes time to update
 between nodes, leading to inconsistency in the meantime and leading to
-consistency in the end\cite{Yadav2024}.
+consistency in the end \cite{Yadav2024}.
 
 Another challenge is having limited query capabilities.
 \gls{NoSQL} databases don't support complex queries with features like JOINs,
-aggregations etc. making querying less flexible. Some databases have query
-languages like \gls{SQL} but even those are not as powerful as \gls{SQL} queries.
+aggregations etc., making querying less flexible. Some databases have query
+languages like \gls{SQL}, but even those are not as powerful as \gls{SQL} queries.
 
 Additionally, there's also the problem of data duplication.
 In order to improve reading performance, some data is replicated across
 multiple documents or collections, increasing storage requirements, and
-making consistency harder to maintain\cite{bdcc7020097}.
+making consistency harder to maintain \cite{bdcc7020097}.
 \subsection{Time-Series Databases}
 \gls{TSDB}s are focused on storing time-stamped data. The
 data is indexed by timestamp, making time-based queries very efficient. They are
 optimized for high-velocity writes, making these databases a reliable solution
 for storing sensor data on \gls{IoT} systems. Popular time-series databases include
-InfluxDB, TimescaleDB, Apache IoTDB, and Prometheus\cite{wang2023apache, InfluxDB}.
+InfluxDB, TimescaleDB, Apache IoTDB, and Prometheus \cite{wang2023apache, InfluxDB}.
 
 \gls{TSDB}s offer several advantages, particularly in handling large volumes
 of timestamped data efficiently. These databases are optimized for receiving
-millions of timestamped data per second, having an high write throughput.
+millions of timestamped data per second, having a high write throughput.
 
 Another major advantage is having efficient querying. \gls{TSDB}s are optimized
 for querying and aggregating based on timestamps. This makes real-time analytics
-efficient\cite{InfluxDB}.
+efficient \cite{InfluxDB}.
 
-Additionally, is also compatible with edge computing.
+Additionally, it is also compatible with edge computing.
 Some lighter \gls{TSDB}s like QuestDB can run on resource-constrained environments,
-making possible to use this databases to store sensor data on the devices,
-to be processed on the edger and then sent to the backend service.
+making it possible to use these databases to store sensor data on the devices,
+to be processed on the edge, and then sent to the backend service.
 
 
-On the other side, \gls{TSDB}s have also some drawbacks, like lacking flexibility
+On the other side, \gls{TSDB}s also have some drawbacks, like lacking flexibility
 with data structures.
-Despite being efficient with time-series data, it struggles with non
-time-stamped data (e.g. user metadata). It is also not suitable for applications requiring
+Despite being efficient with time-series data, it struggles with non-time-stamped
+data (e.g., user metadata). It is also not suitable for applications requiring
 complex joins or relational data models.
 
 Another significant challenge is requiring high storage capacity due to the
-high-speed of incoming data.
-Strategies like data compression, prunning or retention policies
-are essencial to the reduction of this problem.
+high speed of incoming data.
+Strategies like data compression or retention policies
+are essential to the reduction of this problem.
 
 \subsection{Applications and Use Cases}
 Choosing the right databases to use is an important part of system design. This
 choice must have into account the system requirements. Relational databases are
 ideal when the system requires \gls{ACID} compliance. It's also a good choice for
-data that requires a rigid structure, consistencystraints or relies heavily on
+data that requires a rigid structure, consistency, or relies heavily on
 relationships between data. \gls{NoSQL} databases are mostly used for unstructured
 data, where flexibility is a crucial requirement.
 
-In many cases, the best choice is an hybrid approach with different databases
+In many cases, the best choice is a hybrid approach with different databases
 being used for different types of data.
 
-\gls{IoT} systems rely on several kinds of data that differs a lot from each other.
+\gls{IoT} systems rely on several kinds of data that differ a lot from each other.
 
-Structure data like device metadata, or user metadata for accessing the
+Structured data like device metadata or user metadata for accessing the
 frontend pages would be better stored in relational databases for assuring
-consistency. The constraints possible in \gls{SQL} also ensures that the data is valid,
-and structured. Lastly, queries that rely on relationships, for example finding
-which sensors a user has access to are also easier on relational databases.
+consistency. The constraints possible in \gls{SQL} also ensure that the data is valid
+and structured. Lastly, queries that rely on relationships, for example, finding
+which sensors a user has access to, are also easier on relational databases.
 
 For data like sensor readings, which is unstructured and deeply associated with
 the sensor reading time, time-series databases are a better choice. This data
 is usually generated at a very high frequency, and time-series databases are
 optimized for high-speed writing. Real-time data processing is also better with
-this databases, because despite time-based queries being possible and common in
+these databases because, despite time-based queries being possible and common in
 relational databases, they are optimized in \gls{TSDB}s, making
 real-time analytics more efficient.
 
-\gls{NoSQL}, more precisely, document or column oriented databases, in \gls{IoT} systems
+\gls{NoSQL}, more precisely, document or column oriented databases, in the \gls{IoT} systems
 context, can also be a great choice for storing unstructured data that isn't
-time-based, for example events spoted from analyzing sensor data.
+time-based, for example, events spotted from analyzing sensor data.
 
-Lastly, for the web application, key-value databases like redis can be useful
-for caching, and relational databases can be used for handling for example
+Lastly, for the web application, key-value databases like Redis can be useful
+for caching, and relational databases can be used for handling, for example,
 role-based access.
 
 \section{Frontend Development}
-Frontend is the part of a web application that runs in the user's browser and
+The frontend is the part of a web application that runs in the user's browser and
 the part that the user can see and interact with. It is divided into three
-parts: Markup, styling and scripting.
+parts: markup, styling, and scripting.
 The markup defines the structure of the website, the styling is the part that
-defines all of the styling of the page including colors fonts and empty spaces
-(margins/paddings) and the scripting is the part that enables the interaction
-of the user with the website, including buttons functionalities, form handling
-etc..
-It can be developed in many languages but all of them are in the end transpiled
-to the languages that the browsers can understand which are:
-\gls{HTML} for markup, \gls{CSS} for styling and Javascript for scripting.
+defines all of the styling of the page, including colors, fonts and empty spaces
+(margins/paddings), and the scripting is the part that enables the interaction
+of the user with the website, including button functionalities, form handling,
+etc.
+It can be developed in many languages, but all of them are, in the end, transpiled
+to the languages that the browsers can understand, which are \gls{HTML} for
+markup, \gls{CSS} for styling, and Javascript for scripting.
 
 \subsection{Frameworks and Libraries}
-With the advance of technology many libraries were created to facilitate the
+With the advance of technology, many libraries were created to facilitate the
 frontend development experience. This section addresses the most popular
-frotend web development javascript libraries and frameworks.
+frontend web development JavaScript libraries and frameworks.
 \subsubsection{ReactJS}
-React JS is an open-source javascript library created by Facebook in 2013 that
-simplifies the development of complex and dynamic user interfaces. Its the most widely
+ReactJS is an open-source javascript library created by Facebook in 2013 that
+simplifies the development of complex and dynamic user interfaces. It's the most widely
 used library of its kind.
-React applications are build using components. Components are reusable pieces of
-code that represent a part of the \gls{UI}, e.g. a button, a form or an entire section.
-Each component has its own logic and styling and its declarative i.e. the
+ReactJS applications are built using components. Components are reusable pieces of
+code that represent a part of the \gls{UI}, e.g., a button, a forml, or an entire section.
+Each component has its own logic and styling, and it's declarative, i.e., the
 component defines what the \gls{UI} should look like for a given state.
 Components can be nested inside other components to build more complex \gls{UI}s.
-The components are developed using JavaScript for scripting and JavaScript \gls{XML}(\gls{JSX}),
+The components are developed using JavaScript for scripting and JavaScript \gls{XML} (\gls{JSX}),
 which is similar to \gls{HTML} for markup.
 
-React uses a virtual \gls{DOM} to optimize performance. A virtual
+ReactJS uses a virtual \gls{DOM} to optimize performance. A virtual
 \gls{DOM} is a lightweight in-memory representation of the real \gls{DOM}, which is a
 representation of the \gls{HTML} structure in a tree-like structure. When a change
-occur, it updates the virtual \gls{DOM} first, then calculates the minimal changes needed
-and then apply these changes to the real \gls{DOM}\cite{bawane2022review}.
+occurs, it updates the virtual \gls{DOM} first, then calculates the minimal changes needed,
+and then applies these changes to the real \gls{DOM} \cite{bawane2022review}.
 
 \subsubsection{NextJS}
-NextJS is a full-stack framework built on top of reactJS by vercel. This means
+NextJS is a full-stack framework built on top of ReactJS by Vercel. This means
 that NextJS can be used to develop both the frontend and backend parts of the
-web application. Besides that, NextJS has several more advantages on ReactJS
-adding features such as file-system based routing, \gls{SSR}
+web application. Besides that, NextJS has several more advantages over ReactJS
+adding features such as file-system-based routing, \gls{SSR}
 and automatic code splitting.
 
-One of Reactjs problems is that it doesn\'t have built-in support for routing,
-meaning that the page routing needed to be handled using third party libraries
+One of ReactJS problems is that it doesn't have built-in support for routing,
+meaning that the page routing needed to be handled using third-party libraries
 like react-router-dom. NextJS solves this issue by having a file-system based
 routing. This works by automatically mapping every page file (a \gls{JSX}/\gls{TSX}
-file named page) to an \gls{URL}. This \gls{URL} is defined by the path of that file
+file named page) to a \gls{URL}. This \gls{URL} is defined by the path of that file
 relative to the app folder, which means that a file in app/report/test/page.tsx
 is mapped to the endpoint report/test.
 
 Another improvement of NextJS relative to ReactJS is that it allows \gls{SSR}. In
-\gls{CSR}, used by react, the server sends to the server a small
-html document and a link to the javascript which the client needs to download
+\gls{CSR}, used by ReactJS, the server sends to the server a small
+\gls{HTML} document and a link to the JavaScript, which the client needs to download
 and run. On the other side, with \gls{SSR}, the server sends to the browser the
-full \gls{HTML} document which it just needs to render\cite{Salanke_A.R_G.S_Dalali_2022}.
+full \gls{HTML} document, which it just needs to render \cite{Salanke_A.R_G.S_Dalali_2022}.
 
 Apart from the clear performance increase, the \gls{SSR} also improves the \gls{SEO}.
 This happens because the search engine scans the static
-\gls{HTML} page, and doesn\'t have into account the dynamic \gls{HTML} created after by
+\gls{HTML} page and doesn't take into account the dynamic \gls{HTML} created after by
 the script. \gls{SEO} can also be improved in another way, through the website
-metadata (title, description, keyworks etc..) which NextJS also makes easier to
-manage because of its ready-to-use Head component\cite{NextjsSSR}.
+metadata (title, description, keywords, etc.), which NextJS also makes easier to
+manage because of its ready-to-use Head component \cite{NextjsSSR}.
 
 Another feature that improves the performance of projects using this framework
-is the automatic code splitting. The automatic code splitting consists in
-the separation of the javascript bundle into small parts that can be loaded
-separately. This reduces significantly the page load time, by loading only the
-parts that are needed to display the requested page\cite{Salanke_A.R_G.S_Dalali_2022}.
+is the automatic code splitting. The automatic code splitting consists of
+the separation of the JavaScript bundle into small parts that can be loaded
+separately. This significantly reduces the page load time by loading only the
+parts that are needed to display the requested page \cite{Salanke_A.R_G.S_Dalali_2022}.
 
 \subsubsection{Angular}
-Angular is a typescript based, open-source framework used for building user
+Angular is a TypeScript-based, open-source framework used for building user
 interfaces. It was developed by Google in 2016 as a new, restructured version
 of AngularJS. Angular is a strongly structured and opinionated framework,
 organizing the code into feature modules. It also follows a component-based
-design, but introduces features like dependency injection ensuring efficient
+design but introduces features like dependency injection, ensuring efficient
 state sharing and improving testability.
-It includes built-in features like routing, \gls{HTTP} client and form validation\cite{Alves}.
+It includes built-in features like routing, \gls{HTTP} client, and form validation \cite{Alves}.
 
 \subsection{State Management}
 State management is a fundamental aspect of frontend development. It enhances
-the user experience providing data consistency and an improved performance.
+the user experience by providing data consistency and improved performance.
 State represents the dynamic data of an application and can be local, shared,
-or global\cite{tran2023state}.
+or global \cite{tran2023state}.
 
-ocal state is the state managed within a single component. It can
+Local state is the state managed within a single component. It can
 represent data from \gls{UI} elements like forms or button states.
 
 When multiple components need access to the same data, that data can be shared
 between them using solutions like context \gls{API}s or external libraries which
 handle the shared state.
 
-Usually used for user authentication, notifications and
-data persistance, the global state is application-wide, meaning that
+Usually used for user authentication, notifications, and
+data persistence, the global state is application-wide, meaning that
 every component has access to it.
 
-Handling global state is a complex proccess and requires the use of state
+Handling global state is a complex process and requires the use of state
 management solutions like Redux, Recoil, Zustand, or Jotai for ReactJS and
-NgRx, Elf or NGXS for Angular\cite{tran2023state}.
+NgRx, Elf, or NGXS for Angular \cite{tran2023state}.
 
 \section{Data Processing Pipelines}
 A data processing pipeline is a structured workflow that transforms raw data
-into useful insights. These pipelines are essential for handling an high-volume
+into useful insights. These pipelines are essential for handling a high volume
 of data in real-time. Data pipelines must ensure scalability, fault tolerance,
-efficiency, data quality and real-time processing.
+efficiency, data quality, and real-time processing.
 
 \subsection{ETL for IoT}
 \gls{ETL} is a workflow that transforms raw data into data that is ready for
@@ -1091,8 +1079,8 @@ transformed and then loaded to the database\cite{singu2022etl}.
 
 \subsubsection{Extract}
 The first step is the extraction. In this step, the raw data is collected from
-\gls{IoT} devices, \gls{API}s, cloud platforms or edge systems. This can be done through
-\gls{MQTT} brokers, \gls{HTTP} or \gls{CoAP} endpoints, Apache Kafka streams or \gls{IoT} gateways.
+\gls{IoT} devices, \gls{API}s, cloud platforms, or edge systems. This can be done through
+\gls{MQTT} brokers, \gls{HTTP} or \gls{CoAP} endpoints, Apache Kafka streams, or \gls{IoT} gateways.
 
 \subsubsection{Transform}
 The extracted data is then transformed through a sequence of processes. These
@@ -1102,37 +1090,37 @@ null values. In the filtering, the data is filtered, discarding irrelevant data
 for the purpose. For example, if the purpose is to use a temperature sensor to
 check for high temperatures, this process discards all the data that is
 considered a normal temperature. The data can also be enriched with metadata
-like timestamps, device location, etc\cite{singu2022etl}. This stage can be done on the edge, on
-the cloud or using an hybrid approach. There are cloud tools like Apache NiFi
+like timestamps, device location, etc. \cite{singu2022etl}. This stage can be done on the edge, on
+the cloud, or using a hybrid approach. There are cloud tools like Apache NiFi
 and \gls{AWS} \gls{IoT} Analytics designed for transforming data.
 
 \subsubsection{Load}
 Load is the stage in which the transformed data is stored in databases.
 
 \subsection{Business Intelligence}
-\gls{BI} refers to the strategies, technologies and tools used to process and
-analyze raw data for decision-making, monitoring and strategic planning.
-This data can be shown through data visualization tools, and analytics.
-In \gls{IoT} systems, \gls{BI} tools are essencial to understand trends, detect
-anomalies and optimize operations.
+\gls{BI} refers to the strategies, technologies, and tools used to process and
+analyze raw data for decision-making, monitoring, and strategic planning.
+This data can be shown through data visualization tools and analytics.
+In \gls{IoT} systems, \gls{BI} tools are essential to understand trends, detect
+anomalies, and optimize operations.
 
-The data visualization can be done through dashboards, for monitoring real-time
-metrics, geospatial maps, for visualization of devices or anomalies locations,
-or customized reporting for regulatory compliance or audits. The analytics, can
-be of several types: descriptive, diagnostic, predictive, prescriptive and
+The data visualization can be done through dashboards for monitoring real-time
+metrics, geospatial maps for visualization of devices or anomalies locations,
+or customized reporting for regulatory compliance or audits. The analytics can
+be of several types: descriptive, diagnostic, predictive, prescriptive, and
 real-time analytics. Descriptive analytics are used to summarize historical
 data, diagnostic analytics are for finding the cause of specific problems, and
-predictive analytics use machine learning algorightms to predict future events.
+predictive analytics use machine learning algorithms to predict future events.
 Prescriptive analytics use the predictions generated by predictive to recommend
 actions, and lastly, real-time analytics process data in real-time to make
-decisions instantly\cite{Adi2020}.
+decisions instantly \cite{Adi2020}.
 
 There are many \gls{BI} visualization tools available for integration with \gls{IoT} systems.
-Tableau, Microsoft PowerBI, Looker and Grafana are some of the most popular ones.
+Tableau, Microsoft Power BI, Looker, and Grafana are some of the most popular ones.
 
 To make analytics easier, there are several ready-to-use tools for generating
 analytics from raw data. Examples include Apache Flink, Apache Spark,
-TensorFlow and ElasticSearch.
+TensorFlow, and ElasticSearch.
 
 
 
