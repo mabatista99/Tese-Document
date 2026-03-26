@@ -3,19 +3,25 @@
 %% abstract-en.tex
 %% NOVA thesis document file
 %%
-%% Abstract in English([^%]*)
+%% Abstract in English
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \typeout{NT FILE abstract-en.tex}%
-\keywords{
-	IoT\and
-	Cloud Computing \and
-	Edge Computing \and
-	Monitoring \and
-	Surveillance \and
-	IoT Platform \and
-	Artificial Intelligence \and
-	Machine Learning \and
-	Anomaly Detection \and
 
+The \gls{IoT} is transforming monitoring and surveillance across sectors such as manufacturing, agriculture, and smart cities. However, building platforms that handle heterogeneous devices at scale, process data in real time, and remain operational during network outages remains challenging. Existing solutions are often rigid, tightly coupled to specific device schemas, or lack offline resilience.
+
+This thesis presents the design, implementation, and evaluation of a cloud-based \gls{IoT} event management platform for monitoring and surveillance. The platform adopts a microservice architecture with event-driven communication, using \gls{MQTT} for device telemetry ingestion and Apache Kafka as the internal messaging backbone. A schema-agnostic ingestion model automatically discovers and normalizes telemetry fields without predefined device schemas. A rule-based analytics engine with four severity levels enables real-time anomaly detection, and a web application provides live dashboards with WebSocket-based telemetry and alert delivery.
+
+The platform is extended with an edge computing node deployed on a Raspberry Pi 3B that provides offline-resilient monitoring through a write-first data persistence pattern. The edge node performs local telemetry ingestion and \texttt{CRITICAL} rule evaluation, buffering all data in SQLite during connectivity interruptions and synchronizing with the cloud upon reconnection. Asymmetric \gls{JWT} signing (RS256) enables fully offline device authentication on the edge.
+
+The platform was evaluated under ten load profiles ranging from one to five thousand messages per second, measuring throughput, latency percentiles, and per-service resource utilization. The results demonstrate that the architecture meets the design goals of real-time processing, extensibility, and offline resilience, while identifying the scalability boundaries of a single-node deployment.
+
+\keywords{
+	Internet of Things \and
+	Microservices \and
+	Event-Driven Architecture \and
+	Edge Computing \and
+	Real-Time Monitoring \and
+	MQTT \and
+	Apache Kafka
 }

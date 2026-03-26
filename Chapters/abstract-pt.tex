@@ -8,7 +8,20 @@
 
 \typeout{NT FILE abstract-pt.tex}%
 
+A \gls{IoT} est\'{a} a transformar a monitoriza\c{c}\~{a}o e vigil\^{a}ncia em setores como a ind\'{u}stria, agricultura e cidades inteligentes. No entanto, construir plataformas que lidem com dispositivos heterog\'{e}neos em escala, processem dados em tempo real e permane\c{c}am operacionais durante falhas de rede continua a ser um desafio. As solu\c{c}\~{o}es existentes s\~{a}o frequentemente r\'{i}gidas, fortemente acopladas a esquemas espec\'{i}ficos de dispositivos, ou carecem de resili\^{e}ncia offline.
+
+Esta tese apresenta o desenho, implementa\c{c}\~{a}o e avalia\c{c}\~{a}o de uma plataforma cloud de gest\~{a}o de eventos \gls{IoT} para monitoriza\c{c}\~{a}o e vigil\^{a}ncia. A plataforma adota uma arquitetura de microsservi\c{c}os com comunica\c{c}\~{a}o orientada a eventos, utilizando \gls{MQTT} para a ingest\~{a}o de telemetria de dispositivos e Apache Kafka como backbone de mensagens interno. Um modelo de ingest\~{a}o agn\'{o}stico ao esquema descobre e normaliza automaticamente campos de telemetria sem esquemas pr\'{e}-definidos de dispositivos. Um motor de an\'{a}lise baseado em regras com quatro n\'{i}veis de severidade permite a dete\c{c}\~{a}o de anomalias em tempo real, e uma aplica\c{c}\~{a}o web fornece dashboards em tempo real com entrega de telemetria e alertas via WebSocket.
+
+A plataforma \'{e} estendida com um n\'{o} de edge computing implementado num Raspberry Pi 3B que fornece monitoriza\c{c}\~{a}o resiliente a falhas de rede atrav\'{e}s de um padr\~{a}o de persist\^{e}ncia write-first. O n\'{o} edge realiza ingest\~{a}o local de telemetria e avalia\c{c}\~{a}o de regras \texttt{CRITICAL}, armazenando todos os dados em SQLite durante interrup\c{c}\~{o}es de conectividade e sincronizando com a cloud ap\'{o}s a reconex\~{a}o. A assinatura assim\'{e}trica de \gls{JWT} (RS256) permite a autentica\c{c}\~{a}o de dispositivos totalmente offline no edge.
+
+A plataforma foi avaliada sob dez perfis de carga variando de uma a cinco mil mensagens por segundo, medindo throughput, percentis de lat\^{e}ncia e utiliza\c{c}\~{a}o de recursos por servi\c{c}o. Os resultados demonstram que a arquitetura cumpre os objetivos de design de processamento em tempo real, extensibilidade e resili\^{e}ncia offline, identificando simultaneamente os limites de escalabilidade de uma implementa\c{c}\~{a}o single-node.
+
 \keywords{
-	% Primeira palavra-chave \and
-	% Outra palavra-chave \and
+	Internet das Coisas \and
+	Microsservi\c{c}os \and
+	Arquitetura Orientada a Eventos \and
+	Edge Computing \and
+	Monitoriza\c{c}\~{a}o em Tempo Real \and
+	MQTT \and
+	Apache Kafka
 }

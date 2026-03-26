@@ -1,0 +1,38 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% future_work.tex
+%% NOVA thesis document file
+%%
+%% Future Work Chapter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE future_work.tex}%
+
+\chapter{Future Work}
+\label{cha:FutureWork}
+
+This chapter identifies directions for future development that were outside the scope of this proof-of-concept but would strengthen the platform for production deployment and broader adoption.
+
+\section{Complex Stateful Alerting}
+The current analytics engine evaluates each telemetry data point independently against a static threshold. This model is sufficient for detecting instantaneous anomalies but cannot express conditions that depend on state transitions over time. A stateful alerting system would introduce enter and exit states for each rule, triggering an alert only when a value crosses the threshold (enter) and clearing it when the value returns to normal (exit). This requires maintaining persistent alert state across evaluation windows and introduces hysteresis to prevent rapid toggling between alert and normal states when values oscillate near the threshold boundary. Implementing stateful alerting would require state machines with persistence, complicating the Analytics Service's currently stateless processing model, but would significantly reduce alert noise for users monitoring slowly varying quantities such as temperature or humidity.
+
+\section{Edge Fleet Management}
+The current edge implementation supports a single Raspberry Pi 3B node. A production deployment would likely involve multiple edge nodes distributed across different locations, each managing its own set of devices. A centralized edge fleet management system would provide discovery and registration of edge nodes, centralized configuration distribution, health monitoring and alerting for edge infrastructure, and coordinated firmware and application updates. Multi-edge orchestration would also need to address scenarios where devices roam between edge nodes or where multiple edge nodes serve overlapping geographic areas, requiring synchronization protocols to prevent duplicate processing.
+
+\section{Advanced ML-Based Anomaly Detection}
+The platform currently implements Z-score statistical anomaly detection with configurable sliding windows, hierarchical configuration, and deduplication. While effective for detecting point anomalies in approximately normal distributions, the Z-score approach has limitations with non-Gaussian data, seasonal patterns, and complex multivariate anomalies. Integrating more sophisticated machine learning models, such as isolation forests for multivariate outlier detection, autoencoders for learning complex normal behavior representations, or \gls{LSTM} networks for capturing temporal dependencies, would complement the current Z-score approach by detecting patterns that statistical methods may miss. Lightweight models could potentially run directly on edge hardware for latency-sensitive applications, while more complex models could be deployed in the cloud with access to the full historical dataset. The \texttt{method} enum in the \texttt{AnomalyDetectorConfig} table is designed for this extension, allowing new detection algorithms to be added alongside the existing Z-score method. The event-driven architecture supports this naturally: the existing anomaly detection pipeline already produces alerts to the \texttt{alerts.events} topic, and new detection methods would use the same alert emission and delivery infrastructure.
+
+\section{Expanded Rule Severity on Edge}
+The current edge node evaluates only \texttt{CRITICAL} severity rules to conserve processing resources on the constrained Raspberry Pi 3B hardware. As more capable edge hardware becomes available, or as the edge deployment is extended to more powerful devices, the severity restriction could be relaxed to include \texttt{HIGH} or even \texttt{MEDIUM} rules. This would require dynamic severity thresholds based on available hardware resources, more sophisticated resource monitoring on the edge, and potentially adaptive rule scheduling that adjusts evaluation frequency based on current load.
+
+\section{Tiered Telemetry Storage}
+The platform already enforces 90-day retention policies on the \texttt{DeviceData} and \texttt{Alert} hypertables through TimescaleDB's built-in chunk management. A natural next step would be tiered storage: before chunks are dropped, older data could be downsampled and archived to cheaper object storage for long-term trend analysis. This would let users query months or years of historical data at reduced resolution without increasing the cost or size of the primary database.
+
+\section{Additional Notification Delivery Channels}
+The Notifications Service currently implements email delivery with user-configurable severity filtering and an audit trail of all delivery attempts. Extending the platform with additional delivery channels, such as SMS alerts through providers such as Twilio and push notifications to mobile devices, would broaden alert reach beyond email. Each additional delivery channel would subscribe to the \texttt{alerts.events} Kafka topic under its own consumer group, maintaining the event-driven decoupling already established by the email implementation. Additional user preferences, such as per-channel quiet hours and channel-specific severity routing, could build on the existing \texttt{NotificationPreference} model.
+
+\section{Advanced CoAP Features}
+The Protocol Adapter currently provides basic \gls{CoAP} telemetry ingestion over \gls{UDP}, enabling integration with constrained devices that cannot maintain persistent \gls{TCP} connections. Several advanced \gls{CoAP} features would strengthen this capability for production deployments. \gls{DTLS} encryption should be added to secure the \gls{UDP} transport layer, preventing eavesdropping and tampering on the telemetry path. The CoAP Observe pattern would enable server-initiated push delivery, allowing the platform to push configuration updates or commands to devices without requiring them to poll. Block-wise transfer support would enable reliable transmission of large payloads that exceed a single \gls{UDP} datagram. On the edge node, adding a local \gls{CoAP} endpoint alongside the Mosquitto broker would extend the Protocol Adapter's multi-protocol capabilities to edge deployments, which is particularly valuable for devices operating in low-power wide-area networks.
+
+\section{Production Hardening}
+Moving the platform from a proof-of-concept to a production-ready system would require several infrastructure-level improvements. \gls{TLS} encryption should be enabled for all internal communication between services, between the edge node and the cloud, and between devices and brokers. A proper secret management system should replace the hardcoded credentials in Docker Compose configurations. The Kafka broker should be deployed as a cluster with topic replication for fault tolerance. The TimescaleDB instance should be configured with replication and automated failover. On the edge side, the connection between the edge node and the cloud should be secured with mutual \gls{TLS}, and the edge device provisioning process should be hardened against physical access threats.

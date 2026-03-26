@@ -1,0 +1,58 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% edge_node_implementation.tex
+%% Edge Node implementation details for the Implementation chapter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Edge Node Implementation}
+\label{sec:EdgeNodeImplementation}
+
+This section covers how the edge node introduced in Section~\ref{sec:EdgeNode} is built.
+
+\subsection{Edge MQTT Broker}
+\label{subsec:EdgeMQTTBrokerImpl}
+
+The edge uses Mosquitto as its local \gls{MQTT} broker because of its small resource footprint. Device authentication goes through the \texttt{mosquitto-go-auth} plugin, which makes an \gls{HTTP} callback to the edge application whenever a device tries to connect. The edge application then checks the device's \gls{JWT} token against a local copy of the \gls{RSA} public key (see Section~\ref{subsec:jwt-rs256}). Since the key is stored locally, devices can connect even when there is no internet, as long as their token is still valid. Topic-level \gls{ACL} rules make sure each device can only publish to its own topic.
+
+\subsection{Write-First Implementation}
+\label{subsec:WriteFirstImpl}
+
+When telemetry comes in, the edge application normalizes the \gls{JSON} payload into individual typed data points and writes them to SQLite with a \texttt{synced=false} flag. Only after that does it try to publish the data to the cloud \gls{MQTT} broker. On success, the record is deleted from SQLite. On failure, it stays and the \texttt{SyncModule} picks it up on the next cycle. Alerts follow the same pattern: saved locally first, then forwarded to the cloud, and deleted only after a successful publish.
+
+\subsection{Local Analytics Implementation}
+\label{subsec:LocalAnalyticsImpl}
+
+The edge evaluates incoming telemetry against its locally cached rules using the \texttt{json-rules-engine} library. Only \texttt{CRITICAL} rules exist on the edge, since the rule synchronization endpoint filters by this severity level. When a rule fires, the edge applies a sixty-second deduplication window so that the same rule-device-key combination does not produce repeated alerts. Any alert that gets through is written to SQLite and forwarded to the cloud through the write-first pattern.
+
+\subsection{Rule Synchronization Implementation}
+\label{subsec:RuleSyncImpl}
+
+On a periodic schedule, the edge fetches all enabled \texttt{CRITICAL} rules from the cloud \gls{API} by calling \texttt{GET /rules/edge}. The response replaces the entire local rule set in a single SQLite transaction, and the in-memory rule cache is reloaded immediately so that new rules take effect without waiting for the next evaluation cycle.
+
+\subsection{Data Synchronization Implementation}
+\label{subsec:DataSyncImpl}
+
+Every thirty seconds, the \texttt{SyncModule} queries SQLite for unsynced records and publishes them to the cloud \gls{MQTT} broker in batches of one hundred. Telemetry goes to \texttt{edge/telemetry/\{deviceId\}} and alerts to \texttt{alerts/edge}. If a publish fails mid-batch, the module stops and leaves the remaining records for the next cycle. Successfully delivered records are deleted from SQLite.
+
+\subsection{Edge Node Module Architecture}
+\label{subsec:EdgeModuleArchitecture}
+
+Figure~\ref{fig:edge-node-module-architecture} shows the main internal structure of the edge node, including the local broker, SQLite storage, the in-memory rule cache, and the modules that interact with the cloud services. The edge NestJS application is split into eleven modules. Three are infrastructure: a \texttt{DatabaseModule} that wraps the SQLite connection through Prisma, a \texttt{MetricsModule} that exposes Prometheus counters and gauges (covered in Section~\ref{sec:ProposedModelObservabilityAndMonitoring}), and a \texttt{HealthModule} that reports component status to Docker. The remaining eight handle specific responsibilities:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{Chapters/Figures/Architectures/EdgeNodeModuleArchitecture.pdf}
+    \caption{Edge node module architecture, showing the local broker, the main application modules, SQLite persistence, the in-memory rule cache, and the cloud-facing integration points.}
+    \label{fig:edge-node-module-architecture}
+\end{figure}
+
+\begin{description}
+    \item[MqttModule] Connects to the local Mosquitto broker, subscribes to device telemetry topics, and exposes a publish interface for other modules.
+    \item[CloudMqttModule] Connects to the cloud EMQX broker for forwarding telemetry and alerts. It handles reconnection after network outages and picks up new credentials when tokens are refreshed.
+    \item[IngestionModule] Reads raw telemetry from the local Mosquitto broker, flattens the \gls{JSON} payloads into individually typed data points (the same normalization the cloud Ingestion Service does), and stores them in SQLite.
+    \item[AnalyticsModule] Checks incoming telemetry against locally cached \texttt{CRITICAL} rules using the \texttt{json-rules-engine} library, applies deduplication, and saves any triggered alerts to SQLite.
+    \item[RuleSyncModule] Fetches \texttt{CRITICAL} rules from the cloud \gls{API} (\texttt{GET /rules/edge}) on a periodic schedule, replaces the stored rules in SQLite with a full-replace transaction, and reloads the in-memory rule cache.
+    \item[SyncModule] Runs the background loop that sends unsynced telemetry and alerts from SQLite to the cloud broker, retrying failed records on a configurable interval.
+    \item[TokenRefreshModule] Refreshes the edge device's access token before it expires and passes the new token to the \texttt{CloudMqttModule} so it can reconnect.
+    \item[MqttAuthModule] Exposes an \gls{HTTP} endpoint that the Mosquitto \texttt{mosquitto-go-auth} plugin calls to validate device \gls{JWT} tokens during \gls{MQTT} connection handshakes.
+\end{description}

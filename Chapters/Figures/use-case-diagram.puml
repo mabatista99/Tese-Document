@@ -1,0 +1,59 @@
+@startuml use-case-diagram
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "End User" as EU
+actor "IoT Device" as DEV
+actor "Edge Node" as EDGE
+actor "System" as SYS
+
+rectangle "IoT Monitoring Platform" {
+    (UC01: Register and\nAuthenticate) as UC01
+    (UC02: Register\nIoT Device) as UC02
+    (UC03: Create and Manage\nMonitoring Rules) as UC03
+    (UC04: View Real-Time\nTelemetry) as UC04
+    (UC05: View and\nAcknowledge Alerts) as UC05
+    (UC06: Query Historical\nTelemetry) as UC06
+    (UC07: Configure Notification\nPreferences) as UC07
+    (UC08: Configure Anomaly\nDetection) as UC08
+    (UC09: Authenticate\nDevice) as UC09
+    (UC10: Publish\nTelemetry) as UC10
+    (UC11: Monitor Devices\nLocally) as UC11
+    (UC12: Synchronize\nwith Cloud) as UC12
+    (UC13: Send Email\nNotification) as UC13
+}
+
+EU -- UC01
+EU -- UC02
+EU -- UC03
+EU -- UC04
+EU -- UC05
+EU -- UC06
+EU -- UC07
+EU -- UC08
+
+DEV -- UC09
+DEV -- UC10
+
+EDGE -- UC11
+EDGE -- UC12
+
+SYS -- UC13
+
+UC10 ..> UC09 : <<include>>
+
+note right of UC01
+    All End User use cases
+    (UC02-UC08) require
+    authentication (UC01)
+end note
+
+UC13 ..> UC05 : <<extend>>
+
+@enduml

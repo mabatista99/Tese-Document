@@ -1,0 +1,77 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% web_application.tex
+%% Web Application section for the Implementation chapter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Web Application}
+\label{sec:WebApplication}
+
+The web application is the platform's user-facing interface, providing device management, real-time telemetry visualization, alert monitoring, and rule configuration through a browser-based dashboard. It is built with Next.js 16 using the App Router and React 19, styled with TailwindCSS, and communicates with the backend exclusively through the \gls{API} gateway and a WebSocket connection to the Read Service.
+
+\subsection{Application Architecture}
+\label{subsec:WebAppArchitecture}
+
+The application follows the Next.js App Router convention, where the file system defines the routing structure. Each route is a directory under \texttt{app/} containing a \texttt{page.tsx} file, and layouts at each level of the directory tree compose the page shell. The root layout wraps the entire application in a provider stack that initializes authentication, state management, real-time connections, and data fetching. All pages share the same authentication context, WebSocket connection, and query cache without per-page setup.
+
+The application defines eleven pages organized into the following route groups:
+
+\begin{description}
+    \item[Authentication] Login and registration pages, handling user credential submission and session initialization.
+    \item[Dashboard] The landing page after authentication, displaying an overview of the user's devices, recent alerts, and system status.
+    \item[Devices] A device listing page with search and filtering, and a per-device detail page showing live telemetry charts, device metadata, and associated rules.
+    \item[Alerts] An alert listing page with filtering by device, severity, and acknowledgment status, supporting cursor-based pagination. Alerts can be acknowledged directly from this view. The listing visually distinguishes rule-based alerts from statistical anomaly alerts.
+    \item[Rules] A rule management page for creating, editing, enabling, and deleting monitoring rules. The rule creation form dynamically loads available data keys from the Read Service and restricts operators based on the selected key's data type.
+    \item[Settings] User account settings and device registration, including the device provisioning flow that displays the generated configuration object.
+\end{description}
+
+Figure~\ref{fig:webapp-device-detail} shows a representative device detail page, where the user can inspect live telemetry, review device metadata, and keep the monitoring context for a single device in one view.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Web application device detail page screenshot showing live telemetry charts, device metadata, and monitoring context}
+    \caption{Device detail page of the web application, showing live telemetry charts, device metadata, and active monitoring context.}
+    \label{fig:webapp-device-detail}
+\end{figure}
+
+\subsection{Authentication Flow}
+\label{subsec:WebAppAuth}
+
+Authentication uses NextAuth v5 (Auth.js) with a credentials provider that delegates login to the Authentication Service through the \gls{API} gateway. On success, the service returns an access token (15 minutes) and a refresh token (30 days). NextAuth stores both in an encrypted server-side session cookie.
+
+The access token is attached as a \texttt{Bearer} header to every \gls{API} request. When it expires, the NextAuth session callback calls the refresh endpoint, obtains a new token pair, and updates the session transparently. If the refresh token has also expired, the user is redirected to the login page.
+
+NextAuth middleware protects authenticated routes by redirecting unauthenticated users to login. The WebSocket connection to the Read Service also requires a valid access token, passed during the Socket.IO handshake.
+
+\subsection{State Management}
+\label{subsec:WebAppStateManagement}
+
+The application uses Jotai for global client-side state management. Jotai's atomic model lets each component subscribe only to the specific piece of state it needs, which avoids unnecessary re-renders in a dashboard where many data streams update independently. The application defines atoms for three concerns: telemetry buffers indexed by device and data key, live alert state with unacknowledged counts, and WebSocket connection status.
+
+\subsection{Data Fetching}
+\label{subsec:WebAppDataFetching}
+
+Server state is managed with TanStack React Query v5, which handles caching, background refetching, and cache invalidation separately from the client-side state in Jotai. All \gls{API} calls go through a centralized client that attaches the access token and handles 401 responses by triggering a token refresh. Query keys follow a hierarchical convention (e.g., \texttt{['devices', deviceId, 'telemetry', key]}) so that mutations invalidate only the affected queries. The alert listing uses cursor-based pagination matching the Read Service's model.
+
+\subsection{Real-Time Updates}
+\label{subsec:WebAppRealTime}
+
+Live telemetry and alerts arrive through a persistent Socket.IO connection to the Read Service. The connection is established once during application initialization with the access token. A connection provider component handles reconnection and token refresh on disconnection.
+
+When a user opens a device detail page, the application sends a subscription request with the device identifier and data keys to monitor. The Read Service joins the socket to the matching rooms and begins forwarding events. Navigating away triggers an unsubscribe request. Alert events are delivered to all of the user's sockets regardless of the current page, so the navigation bar badge updates in real time.
+
+Incoming telemetry events update the corresponding Jotai atoms, triggering re-renders only in subscribed components. Live charts append new data points as they arrive and maintain a sliding window of 500 points to bound memory usage.
+
+The alert management interface shown in Figure~\ref{fig:webapp-alerts} complements this real-time stream by giving users a dedicated view to filter alerts, inspect severity, and acknowledge events that require action.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Web application alerts page screenshot showing filtering, severity, acknowledgment status, and recent alert history}
+    \caption{Alerts page of the web application, showing severity filtering, acknowledgment state, and recent alert history.}
+    \label{fig:webapp-alerts}
+\end{figure}
+
+\subsection{Technology Choices}
+\label{subsec:WebAppTechnologyChoices}
+
+Next.js 16 was chosen for its App Router, which provides structured layouts, loading states, and error boundaries suited to a multi-page dashboard. TailwindCSS handles styling with a utility-first approach. Jotai was preferred over Redux or Zustand because its per-atom subscription model gives fine-grained reactivity without boilerplate, which matters for a real-time dashboard where many independent data streams update concurrently. TanStack React Query handles server state separately from client state, and Recharts provides the telemetry charts with support for real-time data appending.

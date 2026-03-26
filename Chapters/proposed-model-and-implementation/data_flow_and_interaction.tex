@@ -1,0 +1,62 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% data_flow_and_interaction.tex
+%% Data Flow and Interaction section for Proposed Model and Implementation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Data Flow and Interaction}
+\label{sec:ProposedModelDataFlowAndInteraction}
+
+This section describes the main data flows happening in the platform, showing how components interact and why each flow is structured the way it is. Each subsection covers a different flow: ingestion, analytics, and historical queries. The specific topic names, endpoints, and configuration values for these flows can be found in Table~\ref{tab:kafka-topics} and Chapter~\ref{cha:Implementation}.
+
+\subsection{Telemetry Ingestion Flow}
+This flow covers the path a telemetry message takes from a physical device all the way to the database. It starts when a device publishes a \gls{JSON} payload to the \gls{MQTT} broker on its device-specific topic. The broker has already authenticated the device during the connection handshake, so it accepts the message under \gls{QoS} level 1 and sends an acknowledgment back. The \gls{MQTT}-Kafka bridge then picks up the message and forwards it to the raw telemetry topic on Kafka (see Table~\ref{tab:kafka-topics}). The main cloud ingestion path is shown in Figure~\ref{fig:telemetry-ingestion-flow}.
+
+The Ingestion Service consumes this message, flattens the \gls{JSON} payload into individual key-value pairs, and publishes each data point as a separate normalized event. A different consumer within the same service picks up these normalized events and writes them to TimescaleDB for historical querying. These two stages, normalization and storage, are intentionally separate. This way, slow database writes do not block the publishing path, and if storage fails, it does not stop other consumers from receiving events in real time. When something does go wrong, whether a message cannot be parsed or a write to the database fails, the failed message gets sent to a dead-letter topic for retry later, following the pattern described in Section~\ref{sec:ProposedModelArchitecturalOverview}.
+
+\gls{QoS} level 1 gives at-least-once delivery between the device and the \gls{MQTT} broker: the device retransmits if it does not get an acknowledgment. Once the bridge sends the message to Kafka, Kafka's durable log makes sure no message is lost even if a consumer crashes or restarts. Put together, these two guarantees mean that once the broker accepts a telemetry message, it will eventually reach the database regardless of failures along the way.
+
+Once normalized, the events are ready for downstream processing. The Analytics Service picks them up to check against monitoring rules, and the Read Service picks them up to push real-time updates to the web application. Both of these flows are described below.
+
+For devices that use \gls{HTTP} or \gls{CoAP} instead, the Protocol Adapter authenticates the device and publishes the payload to the same raw telemetry topic that the \gls{MQTT}-Kafka bridge uses. From that point on, the data goes through the exact same pipeline.
+
+The Protocol Adapter also handles binary file uploads from devices. When a device sends a file over \gls{HTTP}, the adapter stores it in MinIO and emits a metadata event to the \texttt{file.uploads} Kafka topic containing the object key, content type, file size, and a download \gls{URL}. This path is separate from the telemetry pipeline: files go to object storage instead of TimescaleDB, and the metadata event carries a reference to the stored object rather than the data itself. No service currently consumes this topic, but the event is available for future capabilities such as image analysis or automated processing, following the same extensibility model that the rest of the Kafka architecture provides.
+
+Telemetry from the edge follows the write-first pattern described in Section~\ref{sec:EdgeNode}. Once the data reaches the cloud broker, the bridge routes it to a dedicated Kafka topic for pre-normalized data. The Ingestion Service skips normalization, stores the data directly in TimescaleDB, and re-emits it to the normalized event stream, where it follows the same path as any other telemetry. This edge-specific path is shown in Figure~\ref{fig:edge-telemetry-flow}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{Chapters/Figures/DataFlow/TelemetryIngestionFlow.pdf}
+    \caption{Telemetry ingestion sequence diagram.}
+    \label{fig:telemetry-ingestion-flow}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[height=0.95\textheight]{Chapters/Figures/DataFlow/EdgeTelemetryIngestionFlow.pdf}
+    \caption{Edge telemetry ingestion flow, showing local write-first persistence, periodic retry during connectivity loss, and reintegration into the cloud processing pipeline.}
+    \label{fig:edge-telemetry-flow}
+\end{figure}
+
+\subsection{Analytics and Alert Flow}
+This flow starts where ingestion ends: with normalized telemetry events sitting on Kafka. The Analytics Service consumes each event and checks it against the monitoring rules that apply to that device. If a rule fires, the service checks for duplicates so the same alert is not sent multiple times, then saves it as a snapshot record in TimescaleDB and emits it to the alert event stream. The snapshot includes everything relevant at the moment of detection: the rule, its thresholds, the value that triggered it, the device, and which user should be notified. Since a snapshot is captured and recorded in the database, the alert has all the rule context even if the rule is changed or deleted later. If the Kafka emission fails, the event goes to a dead-letter topic for periodic retry, the same pattern used in the ingestion pipeline. The main alert path is shown in Figure~\ref{fig:analytics-alert-flow}.
+
+The Analytics Service also runs statistical anomaly detection on every numeric event. Anomaly alerts go through the same path as rule-based ones: they get saved to the database and emitted to the alert event stream.
+
+From there, the Read Service pushes each alert over WebSocket to the target user's connections, and the Notifications Service sends email notifications based on the user's preferences and severity filters.
+
+Alerts from the edge take a different route but end up in the same place. The edge node checks telemetry against its locally cached highest-severity rules (Section~\ref{subsec:LocalAnalyticsImpl}), applies deduplication, and stores any alerts it generates. If the cloud connection is available, the alerts are sent directly to the cloud broker. Otherwise, they wait for the next sync cycle (Section~\ref{subsec:DataSyncImpl}). Once the alert reaches the cloud, the Analytics Service saves it with the same snapshot model used for cloud alerts and emits it to the standard alert stream. From that point on, there is no difference between an edge alert and a cloud alert: it is sent over WebSocket, appears in the alert history, and triggers emails the same way. This edge path is also included in Figure~\ref{fig:analytics-alert-flow}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{Chapters/Figures/DataFlow/AnalyticsAlertsFlow.pdf}
+    \caption{Analytics and alert flow, showing rule evaluation, deduplication, alert persistence, event emission, and downstream delivery to WebSocket and email consumers.}
+    \label{fig:analytics-alert-flow}
+\end{figure}
+
+\subsection{Historical Data Query Flow}
+The flows above cover the write path: data arriving from devices, getting processed, and generating alerts. This flow covers the read path, where the web application fetches stored data for dashboards and analysis. Unlike the write path, which is event-driven, the read path is synchronous and follows a standard request-response pattern through the \gls{API} Gateway.
+
+When the web application needs historical telemetry, it sends an \gls{HTTP} request to the \gls{API} Gateway. The gateway authenticates the request and forwards it to the Read Service, which queries TimescaleDB with the appropriate time range. Alert queries work the same way: the web application asks the Read Service through the gateway, filtering by device, acknowledgment status, or date range.
+
+Alert acknowledgment is the exception: since it is a write operation, the gateway routes it to the Analytics Service instead of the Read Service.

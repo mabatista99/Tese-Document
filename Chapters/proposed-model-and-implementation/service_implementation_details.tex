@@ -1,0 +1,91 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% service_implementation_details.tex
+%% Per-service implementation details for the Implementation chapter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Service Implementation Details}
+\label{sec:ServiceImplementationDetails}
+
+This section describes the implementation details of each backend service introduced in the architectural overview (Section~\ref{sec:ProposedModelArchitecturalOverview}) and traced through the data flows in Section~\ref{sec:ProposedModelDataFlowAndInteraction}. While the architecture chapter describes what each component does and how they interact, this section focuses on how each service is built: specific endpoints, algorithms, data structures, and configuration values.
+
+\subsection{Authentication Service}
+\label{subsec:AuthServiceImpl}
+
+The Authentication Service handles identity for users and devices. It issues \gls{JWT} tokens and acts as the source of truth for authentication across the platform entry points. User registration and login use email and password credentials. Passwords are hashed with bcrypt before being stored. After a successful login, the service issues two tokens: a short-lived access token (15 minutes) and a long-lived refresh token (30 days). Both are signed with RS256 (Section~\ref{subsec:jwt-rs256}).
+
+Tokens can be renewed through \texttt{POST /user/refresh} and \texttt{POST /devices/refresh}. Each endpoint validates the refresh token, checks that the user or device still exists, and returns a new token pair. The RS256 public key is distributed to the API Gateway (\texttt{RemoteJwtGuard} and \texttt{EdgeDeviceGuard}), the Protocol Adapter (\texttt{DeviceJwtGuard}), the Read Service (WebSocket authentication), and the edge node's \gls{MQTT} authentication controller.
+
+Devices are registered through the web application. At creation time, the service assigns a database-generated \gls{UUID} as the device identifier and a second \gls{UUID} as the \gls{PSK}. It returns a device configuration object with the device \gls{ID}, the \gls{PSK}, the \gls{MQTT} broker connection details, and the authentication \gls{URL} for the device login endpoint. For edge devices, \texttt{POST /devices/register-edge} marks the device with the \texttt{is\_edge} flag. The issued \gls{JWT} includes an \texttt{isEdge} claim, which is used by the edge broker and enforced by the API Gateway's \texttt{EdgeDeviceGuard}. When a device is registered, the service emits a \texttt{device.registered} event to Kafka. The Read Service consumes this event to invalidate its Redis permission cache (Section~\ref{subsec:ReadServiceImpl}).
+
+\subsubsection{Device Authentication at the \gls{MQTT} Broker}
+\label{subsubsec:device-auth-mqtt}
+
+Devices authenticate to the Authentication Service using their identifier and \gls{PSK}. If the credentials are valid, the service returns access and refresh tokens. During the \gls{MQTT} connection handshake, the access token is sent as the password field. The broker validates the token locally using the RS256 public key and checks that the token's \texttt{sub} claim matches the connection username. This avoids a per-connection callback to the Authentication Service.
+
+\subsection{API Gateway}
+\label{subsec:APIGatewayImpl}
+
+The API Gateway is the single external \gls{HTTP} entry point for both the web application and the devices. Only a small set of endpoints is public: user login, signup, token refresh, device login, and device token refresh. All remaining endpoints are protected by the \texttt{RemoteJwtGuard}. This guard validates the bearer token locally with the RS256 public key. If the token is valid, the gateway extracts the user identity and forwards it to downstream services through a serialized \texttt{x-user} \gls{HTTP} header. This lets backend services know who made the request without validating the same \gls{JWT} again.
+
+The gateway also implements the read-write split described in Section~\ref{sec:ProposedModelArchitecturalOverview}. Read requests, such as listing devices or fetching telemetry, rules, and alerts, are forwarded to the Read Service. Write requests are forwarded to the service that owns the resource. Device registration goes to the Authentication Service, rule creation and updates go to the Analytics Service, and alert acknowledgment goes to the Read Service. Because of this, the same \gls{API} path can be routed to different services depending on the \gls{HTTP} method. For example, \texttt{GET /rules} goes to the Read Service, while \texttt{POST /rules} goes to the Analytics Service.
+
+The \texttt{EdgeDeviceGuard} protects \texttt{GET /rules/edge}. It checks the \texttt{isEdge} claim in the \gls{JWT} before allowing an edge node to fetch its rule set.
+
+\subsection{Cloud \gls{MQTT} Broker}
+\label{subsec:CloudMQTTImpl}
+
+The broker disables the plaintext TCP listener and exposes only a \gls{TLS} listener on port 8883. This means all traffic between devices and the broker is encrypted. The broker uses \gls{QoS} level 1, which provides at-least-once delivery. \gls{QoS} 0 was rejected because it provides no delivery guarantee. \gls{QoS} 2 was also rejected because its four-step handshake adds too much overhead for resource-limited devices sending frequent and idempotent messages.
+
+EMQX is configured with two authentication backends, evaluated in order. The first is the \gls{JWT} authentication flow described in Section~\ref{subsubsec:device-auth-mqtt}, which is used by devices. The second is the built-in password database, used by the \gls{MQTT}-Kafka bridge. The bridge connects with a fixed service account, \texttt{kafka-connect}, and static credentials. This keeps device authentication stateless while giving the bridge a simple service identity.
+
+Devices publish to \texttt{telemetry/data/\{deviceId\}}. The broker enforces per-device \gls{ACL} rules so that each device can publish only to its own topic, which prevents cross-device data injection. The bridge account can subscribe to all topics. A default-deny rule blocks anything that is not explicitly allowed. Edge-originated data arrives on \texttt{edge/telemetry/\{deviceId\}} and \texttt{alerts/edge}, which the bridge forwards to separate Kafka topics.
+
+The \gls{MQTT}-Kafka bridge is a standalone Node.js process that subscribes to the broker and publishes to Kafka. For raw device telemetry, it extracts the device identifier from the \gls{MQTT} topic, parses the \gls{JSON} payload, and wraps it in an envelope with the device \gls{ID}, timestamp, and payload fields before producing it to Kafka. The same device identifier is used as the Kafka partition key, so messages from the same device stay in the same partition and keep their order. Edge telemetry and edge alerts are forwarded without transformation because the edge node already sends normalized data.
+
+The bridge uses in-memory buffering with a flush threshold of 500 messages or 100\,ms (whichever comes first), Snappy compression on all Kafka batches, retry logic for produce failures (up to 5 retries with a 1-second delay), and graceful shutdown to drain buffered messages before exit.
+
+\subsection{Protocol Adapter}
+\label{subsec:ProtocolAdapterImpl}
+
+The Protocol Adapter provides two telemetry ingestion paths alongside the \gls{MQTT} broker. Unlike the other backend services, which use the default Express adapter, this service runs on Fastify with a 50\,MB body limit. This choice reduces per-request overhead on a high-throughput ingestion service. The \gls{HTTP} path exposes \texttt{POST /telemetry} on port 3010 and uses \gls{JWT} Bearer authentication through the \texttt{DeviceJwtGuard}. The \gls{CoAP} path exposes \texttt{POST /telemetry} on \gls{UDP} port 5683. It carries the \gls{JWT} in a custom \gls{CoAP} option (number 2048), because the protocol has limited header space. The \gls{CoAP} server allows up to 2048 inflight requests. When that limit is reached, it returns \texttt{5.03 Service Unavailable}.
+
+Both protocols use the same global \texttt{SharedModule}. This module provides the \texttt{JwtAuthService}, the \texttt{DeviceJwtGuard}, and the \texttt{TelemetryProducerService}. The \texttt{JwtAuthService} caches verified token payloads in memory, using the raw token string as the key. Cache entries expire when the \gls{JWT} expires, and a cleanup timer runs every 60 seconds to remove stale entries. This avoids repeating RS256 signature verification for every request from the same device. The \texttt{TelemetryProducerService} wraps each payload in the same \texttt{\{device\_id, timestamp, payload\}} envelope used by the \gls{MQTT}-Kafka bridge and publishes it to the \texttt{telemetry.raw} Kafka topic with Snappy compression. It buffers messages internally and flushes at 100 messages or every 50\,ms. Because both the \gls{HTTP} and \gls{CoAP} paths use the same producer, they enter the same downstream Kafka pipeline as \gls{MQTT} telemetry.
+
+The Protocol Adapter also exposes \texttt{POST /files}, protected by the same \texttt{DeviceJwtGuard}. The request body contains the raw binary data. The content type is sent in the \texttt{Content-Type} header, and the file name is optional in the custom \texttt{X-Filename} header. The adapter uploads the file to MinIO and organizes objects by device \gls{ID} and timestamp to avoid collisions. After the upload, it emits a \texttt{FileUploadEvent} to the \texttt{file.uploads} Kafka topic with the object key, content type, file size, and download \gls{URL}. Since this event follows the same Kafka integration model used in the rest of the platform, new consumers can subscribe to the topic without changes to the Protocol Adapter or existing services.
+
+\subsection{Ingestion Service}
+\label{subsec:IngestionServiceImpl}
+
+The Ingestion Service consumes from the \texttt{telemetry.raw} Kafka topic and normalizes each \gls{JSON} payload. It flattens the payload into individual key-value pairs and classifies each scalar value as number, boolean, or string. The flattening is recursive. Nested objects produce dot-separated keys, such as \texttt{sensor.temperature}, and arrays produce indexed keys, such as \texttt{readings.0.value}. One raw message can therefore produce multiple normalized events on \texttt{telemetry.events}, one for each data point.
+
+All consumers in this service use Kafka batch processing. The main ingestion consumer handles each batch in three phases. First, it transforms all messages. Second, it produces the normalized events to Kafka in chunks of 1000, which keeps the batch under Kafka's maximum message size. These Kafka writes use Snappy compression and retry with exponential backoff. Third, it commits offsets and sends a heartbeat. A separate storage consumer subscribes to \texttt{telemetry.events} with its own consumer group and writes each batch to TimescaleDB in a single operation. To reduce per-row overhead, the batch insert uses raw SQL with parameterized placeholders, also chunked at 1000 rows, instead of the \gls{ORM}'s insert method.
+
+A metadata discovery consumer also subscribes to \texttt{telemetry.events} under its own consumer group. It registers each new device-key combination that appears in the stream. To avoid repeated upserts for the same field, it applies a 30-second throttle per key. These registered data keys are later used by the web application when users create rules and when device detail pages are shown. A \texttt{NormalizedConsumer} handles pre-normalized edge telemetry from the \texttt{telemetry.normalized} topic. It skips the flattening step, emits directly to \texttt{telemetry.events}, and also registers metadata for edge data keys.
+
+When failures occur, the service uses a dead-letter topic to keep the pipeline moving. Malformed raw \gls{JSON} messages are logged and skipped. Transform failures and Kafka infrastructure failures are sent to the \texttt{telemetry.dlq} topic with an error type tag, either \texttt{TRANSFORM\_ERROR} or \texttt{INFRA\_ERROR}. An hourly cron job reads from the \gls{DLQ} and retries only infrastructure errors, because transform errors are deterministic and would fail again. If a TimescaleDB batch insert fails, the service falls back to individual row inserts and logs any rows that still cannot be stored.
+
+\subsection{Analytics Service}
+\label{subsec:AnalyticsServiceImpl}
+
+The Analytics Service combines a data-plane consuming from \texttt{telemetry.events} and a control-plane \gls{REST} \gls{API} for rule and anomaly configuration management. The consumer skips events with an \texttt{edge} source tag, since those have already been evaluated locally by the edge node (Section~\ref{sec:EdgeNode}). Rules support ten operators: greater than, greater than or equal, less than, less than or equal, equal, not equal, in range, out of range, contains, and regex match. Each rule carries a severity level (\texttt{CRITICAL}, \texttt{HIGH}, \texttt{MEDIUM}, or \texttt{LOW}). Rules are managed through CRUD endpoints (\texttt{POST}, \texttt{PUT}, \texttt{DELETE /rules}), with read operations served by the Read Service as part of the \gls{CQRS} split described in Section~\ref{subsec:APIGatewayImpl}.
+
+Rule evaluation uses the \texttt{json-rules-engine} library, the same engine used on the edge node. The service keeps a cached \texttt{Engine} instance per device-key combination and rebuilds it only when the rule set changes, tracked by an internal cache version counter. A custom \texttt{regex} operator is registered so that \texttt{MATCHES} rules can run inside the engine. Device ownership is resolved through a Redis cache with a fifteen-minute TTL. Deduplication suppresses duplicate alerts within a sixty-second window, tracked in Redis per rule-device-key combination using atomic \texttt{SET NX EX} operations. The rule cache is fully reloaded from the database after every \gls{API} modification.
+
+Anomaly detection runs only for numeric telemetry values. The Z-score engine maintains a sliding window as a circular buffer per device-key pair, computing the Z-score using running \texttt{sum} and \texttt{sumOfSquares} counters for O(1) computation. Defaults are: window size 100, threshold 3.0, minimum samples 30. Configuration follows a hierarchical model: specific device-key, device wildcard, key wildcard, or global default. Anomaly alerts use \texttt{alertType} \texttt{STATISTICAL\_ANOMALY} with metadata containing mean, standard deviation, Z-score, window size, and threshold. Configuration is managed through \gls{REST} endpoints at \texttt{/anomaly-config}.
+
+Each alert record captures the rule name, operator, and threshold values at the time it fires, so the alert remains readable even if the rule is later deleted. The foreign key to the rule is nullable with a set-null deletion policy. The \texttt{PATCH /alerts/:id/acknowledge} endpoint allows users to mark alerts as reviewed. An \texttt{EdgeAlertsConsumer} subscribes to \texttt{alerts.from-edge} to persist and re-emit edge-generated alerts into the cloud pipeline. If emitting an alert to Kafka fails, the event goes to the \texttt{alerts.dlq} topic and a cron job retries it every minute, so temporary failures do not cause alerts to disappear.
+
+\subsection{Notifications Service}
+\label{subsec:NotificationsServiceImpl}
+
+The Notifications Service consumes from \texttt{alerts.events} and dispatches email notifications using Nodemailer with an \gls{SMTP} transporter. In development, emails route to a Mailhog instance; in production, the transporter is configured via \texttt{SMTP\_HOST} and \texttt{SMTP\_PORT} environment variables. The service exposes \gls{REST} endpoints for managing notification preferences: \texttt{GET /notification-preferences}, \texttt{PUT /notification-preferences}, and \texttt{DELETE /notification-preferences}. Delivery history is read through the Read Service (\texttt{GET /notification-history}), following the same \gls{CQRS} split used for other resources. Each user's \texttt{NotificationPreference} record specifies whether email is enabled and which severity levels trigger notifications. Every delivery attempt is recorded in a \texttt{SentNotification} audit table for diagnostics.
+
+\subsection{Read Service}
+\label{subsec:ReadServiceImpl}
+
+The Read Service provides a read-only \gls{HTTP} \gls{API} with endpoints for historical telemetry (\texttt{GET /telemetry/:deviceId/:key}), alert history (\texttt{GET /alerts}) with cursor-based pagination for efficient traversal of large result sets, rule listings, and device listings. For real-time delivery, it manages WebSocket connections using Socket.IO with a Redis pub/sub adapter for cross-replica coordination.
+
+Telemetry uses device-based routing through Socket.IO rooms named \texttt{telemetry:\{deviceId\}:\{key\}}. Alerts use user-based routing, delivering to all sockets belonging to the target user regardless of the device view. Device permissions are cached in Redis with a five-minute TTL.
+
+The service runs two Kafka consumers subscribing to \texttt{telemetry.events} and \texttt{alerts.events}, processing only messages arriving after startup for real-time delivery. Both consumers start paused and only resume when the first WebSocket client connects. When the last client disconnects, they pause again. This avoids processing Kafka messages when no one is listening. A third consumer on \texttt{device.registered} invalidates the Redis permission cache when new devices are registered, so WebSocket authorization reflects the change without waiting for cache expiry.

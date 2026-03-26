@@ -1,0 +1,20 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% edge_node.tex
+%% Edge Node section for Architecture and Design
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Edge Node}
+\label{sec:EdgeNode}
+
+The edge node is a standalone application running on a local device close to the \gls{IoT} devices it serves. It handles telemetry ingestion, rule evaluation, and data storage on its own, so the platform can work in environments where the internet connection is unreliable.
+
+A local \gls{MQTT} broker runs on the edge and uses the same authentication model as the cloud broker. Devices must present a \gls{JWT} token when connecting (see Section~\ref{subsec:jwt-rs256}), and each device can only publish to its own topic.
+
+All incoming telemetry is saved to the local database before anything else happens. If the cloud is reachable, the data is forwarded right away. If not, it stays stored locally and gets sent later. This write-first approach means no data is lost when the connection drops.
+
+The edge also evaluates telemetry against monitoring rules locally, but only the highest-severity ones to keep resource usage low. When a rule fires, deduplication stops repeated alerts from piling up, and the resulting alerts are stored locally using the same write-first approach.
+
+Two synchronization mechanisms keep the edge consistent with the cloud. A rule sync periodically fetches the latest highest-severity rules and replaces the local cache entirely. A data sync loop forwards any unsent telemetry and alerts to the cloud broker in batches. Between these two, the edge and cloud reach eventual consistency.
+
+Section~\ref{sec:ProposedModelDataFlowAndInteraction} walks through the data flows involving the edge node, and Section~\ref{sec:EdgeNodeImplementation} covers how it is implemented.

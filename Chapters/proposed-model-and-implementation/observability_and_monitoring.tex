@@ -1,0 +1,95 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% observability_and_monitoring.tex
+%% Observability and Monitoring section for Proposed Model and Implementation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Observability and Monitoring}
+\label{sec:ProposedModelObservabilityAndMonitoring}
+
+A telemetry message in this platform passes through an \gls{MQTT} broker, a Kafka bridge, the ingestion service, Kafka again, and finally the analytics service and TimescaleDB. A failure at any stage can cause latency spikes or message loss, and without per-component metrics the root cause is hard to find. This section describes the monitoring infrastructure built into the platform for real-time visibility across cloud and edge components. Chapter~\ref{cha:Evaluation} presents the experimental evaluation that uses this infrastructure.
+
+\subsection{Monitoring Architecture}
+\label{subsec:MonitoringArchitecture}
+
+The monitoring stack follows a pull-based model centred on Prometheus. A single Prometheus instance scrapes \texttt{/metrics} endpoints exposed by all instrumented components, defaulting to fifteen-second intervals for cloud targets and thirty seconds for edge targets. Pull was chosen over push because it keeps the collection schedule under the monitoring system's control, simplifies firewall rules (only Prometheus initiates connections), and makes target health visible through scrape failures.
+
+The scrape targets fall into three categories. The first includes six NestJS backend services (the \gls{API} gateway, authentication service, ingestion service, analytics service, read service, and protocol adapter) together with the \gls{MQTT}-Kafka bridge, all exposing application-level metrics on their respective \texttt{/metrics} endpoints. The second category consists of four infrastructure exporters: cAdvisor for per-container \gls{CPU}, memory, network, and disk metrics; kafka-exporter for broker, topic, and consumer group metrics; redis-exporter for memory usage, connection counts, and command statistics; and postgres-exporter for TimescaleDB query performance and connection pool metrics. The third covers the edge node, where the edge application exposes \texttt{/metrics} on port 3010, a node-exporter instance provides host-level hardware metrics, and a dedicated cAdvisor instance monitors edge containers. Edge targets use the longer thirty-second scrape interval to reduce overhead on the Raspberry Pi.
+
+Grafana serves as the visualization layer, reading from two data sources: Prometheus for time-series metrics and TimescaleDB directly for application-level queries such as device counts and alert histories. Both data sources are provisioned declaratively through \gls{YAML} files mounted into the Grafana container at startup.
+
+The monitoring infrastructure is deployed through Docker Compose alongside the application services. In the cloud environment, six monitoring containers run alongside the application: Prometheus, Grafana, cAdvisor, kafka-exporter, redis-exporter, and postgres-exporter. On the edge node, two monitoring containers are deployed: node-exporter and a cAdvisor instance.
+
+Figure~\ref{fig:monitoring-architecture} summarizes this layout, showing Prometheus as the central collector for cloud and edge metrics, the exporters and application targets it scrapes, and Grafana's two data sources.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Monitoring architecture diagram showing Prometheus scraping cloud and edge targets, and Grafana reading from Prometheus and TimescaleDB}
+    \caption{Monitoring architecture showing Prometheus scraping all instrumented targets and Grafana reading from both Prometheus and TimescaleDB.}
+    \label{fig:monitoring-architecture}
+\end{figure}
+
+\subsection{Application-Level Instrumentation}
+\label{subsec:ApplicationLevelInstrumentation}
+
+Each NestJS cloud service is instrumented using the \texttt{prom-client} library through a shared \texttt{MetricsService} in the monorepo's common library. This singleton module is injected into any component that needs to record metrics, so all services share the same metric names, label conventions, and histogram buckets. Metrics are exposed on each service's existing \gls{HTTP} port at \texttt{/metrics}.
+
+The shared service defines three categories of custom metrics. Counters track messages received, messages processed at each pipeline stage, processing failures (labelled by error type), alerts emitted by rule evaluation (labelled by severity), and messages routed to \glspl{DLQ}. Histograms capture latency distributions for message processing, \gls{HTTP} requests, Kafka produces, and database queries, each with bucket boundaries tuned to the expected range. Gauges track the number of WebSocket clients connected to the Read Service. The service also defines protocol-adapter-specific metrics for request counts, Kafka flush performance, and in-flight requests. On top of these custom metrics, the default \texttt{prom-client} collector is enabled with an \texttt{iot\_nodejs\_} prefix, exposing Node.js runtime metrics such as event loop lag, garbage collection duration, and heap usage.
+
+Table~\ref{tab:cloud-custom-metrics} summarises the custom metrics defined in the shared \texttt{MetricsService}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Custom Prometheus metrics defined in the cloud \texttt{MetricsService}.}
+    \label{tab:cloud-custom-metrics}
+    \small
+    \begin{tabular}{l l p{6cm}}
+        \hline
+        \textbf{Metric name} & \textbf{Type} & \textbf{Purpose} \\
+        \hline
+        \texttt{iot\_messages\_received\_total}      & Counter   & Messages received from Kafka/\gls{MQTT} \\
+        \texttt{iot\_messages\_processed\_total}      & Counter   & Messages successfully processed \\
+        \texttt{iot\_messages\_failed\_total}         & Counter   & Messages that failed processing \\
+        \texttt{iot\_alerts\_emitted\_total}          & Counter   & Alerts produced by rule evaluation \\
+        \texttt{iot\_dlq\_messages\_total}            & Counter   & Messages sent to \glspl{DLQ} \\
+        \texttt{iot\_processing\_duration\_seconds}   & Histogram & Single message processing time \\
+        \texttt{http\_request\_duration\_seconds}     & Histogram & \gls{HTTP} request latency \\
+        \texttt{iot\_kafka\_produce\_duration\_seconds} & Histogram & Kafka produce latency \\
+        \texttt{iot\_db\_query\_duration\_seconds}    & Histogram & Database query execution time \\
+        \texttt{iot\_ws\_connected\_clients}          & Gauge     & WebSocket clients connected \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The \gls{MQTT}-Kafka bridge is a standalone Node.js process with its own \texttt{prom-client} instrumentation. It defines four metrics: a counter for messages bridged (labelled by source \gls{MQTT} topic and destination Kafka topic), a counter for bridge errors, a histogram for end-to-end bridging latency, and a gauge for the current buffer size. These are served on a dedicated \gls{HTTP} server on port 9464 with a \texttt{bridge\_} prefix.
+
+The edge node has a parallel \texttt{EdgeMetricsService} that mirrors the cloud service's structure with edge-specific metrics. Counters track messages received from the local Mosquitto broker, messages forwarded to the cloud, rule evaluations performed, and alerts triggered locally. Histograms measure message processing time and batch synchronisation duration. Three gauges report the number of unsynced rows in the SQLite buffer, the cloud connection status (1 if connected, 0 otherwise), and the number of locally cached rules. Default Node.js runtime metrics use the \texttt{edge\_nodejs\_} prefix.
+
+\subsection{Dashboards and Visualization}
+\label{subsec:DashboardsAndVisualization}
+
+The Grafana instance is provisioned with eight dashboards organised into four folders. The dashboards are defined as \gls{JSON} files in the repository and mounted into the Grafana container through Docker volumes. A \gls{YAML} provisioning file declares each folder as a dashboard provider, so dashboard definitions are version-controlled and automatically loaded when the stack starts.
+
+Table~\ref{tab:grafana-dashboards} summarises the eight dashboards and their purposes.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Grafana dashboards provisioned with the platform.}
+    \label{tab:grafana-dashboards}
+    \begin{tabular}{l l p{6.5cm}}
+        \hline
+        \textbf{Folder} & \textbf{Dashboard} & \textbf{Purpose} \\
+        \hline
+        Cloud      & System Overview       & Service health, uptime, and request rates \\
+        Cloud      & Throughput \& Latency & Message throughput and latency percentiles (p50, p95, p99) across pipeline stages \\
+        Cloud      & Resource Usage        & Per-container \gls{CPU}, memory, and network metrics from cAdvisor \\
+        Cloud      & Database              & TimescaleDB query performance, connection pool, and hypertable sizes \\
+        Cloud      & Protocol Adapter      & Protocol adapter request rates, Kafka flush performance, and in-flight requests \\
+        Kafka      & Kafka                 & Broker health, topic throughput, consumer lag, and partition distribution \\
+        Edge       & Edge Node             & Edge \gls{CPU}, memory, processing rates, SQLite buffer depth, and cloud sync status \\
+        Comparison & Edge vs Cloud         & Side-by-side comparison of processing latency and resource usage between edge and cloud \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The Cloud folder covers service health, pipeline throughput and latency percentiles, per-container resource usage from cAdvisor, TimescaleDB query performance, and protocol adapter metrics. A separate Kafka dashboard tracks broker health, consumer group lag, and partition distribution. The Edge Node dashboard combines host-level metrics from node-exporter with application-level metrics from the \texttt{EdgeMetricsService}, showing hardware usage alongside processing rates, the SQLite buffer depth, and the cloud connection status. The Edge vs Cloud dashboard places edge and cloud metrics side by side to compare performance across the two deployment environments. Detailed screenshots with experimental data are presented in Chapter~\ref{cha:Evaluation}.

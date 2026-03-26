@@ -1,0 +1,645 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% evaluation.tex
+%% NOVA thesis document file
+%%
+%% Evaluation Chapter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE evaluation.tex}%
+
+\chapter{Experimental Results and Evaluation}
+\label{cha:Evaluation}
+
+This chapter evaluates the platform through five experiments designed to test its performance, scalability, resilience, extensibility, and support for heterogeneous devices. The evaluation uses the monitoring infrastructure described in Section~\ref{sec:ProposedModelObservabilityAndMonitoring} to collect metrics from all platform components during controlled experiments. Section~\ref{sec:EvalMethodology} describes the experimental methodology, including the hardware environment, load profiles, and collected metrics. Sections~\ref{sec:EvalBaseline} and~\ref{sec:EvalScaling} present the quantitative results for baseline performance and horizontal scaling. Sections~\ref{sec:EvalOffline},~\ref{sec:EvalExtensibility}, and~\ref{sec:EvalHeterogeneity} describe the offline resilience, extensibility, and device heterogeneity experiments. Section~\ref{sec:EvalDiscussion} discusses how the results relate to the requirements defined in Section~\ref{sec:RequirementsSpecification} and the design goals from Section~\ref{sec:ProposedModelArchitecturalOverview}.
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Evaluation Methodology}
+\label{sec:EvalMethodology}
+% ══════════════════════════════════════════════════════════════════════
+
+This section describes the shared experimental context for all five experiments: the hardware and software environment, the load profiles used for performance testing, the metrics collected, and the statistical approach.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Hardware and Software Environment}
+\label{subsec:EvalHardware}
+
+% Cloud environment
+% - Host machine specs: CPU model, cores, RAM, storage type, OS, kernel version
+% - Docker version, Docker Compose version
+% - Node.js runtime version (from package.json or Dockerfile)
+% - Key infrastructure versions: Kafka (KRaft mode), TimescaleDB, Redis, EMQX, MinIO, Mosquitto
+% - All 21 containers deployed via Docker Compose on a single host (see Section~\ref{sec:ProposedModelImplementationDetails})
+
+% Edge environment
+% - Raspberry Pi 3B: ARM Cortex-A53 quad-core 1.2 GHz, 1 GB RAM, microSD storage
+% - Raspbian/Raspberry Pi OS version
+% - Mosquitto version, SQLite version
+% - NestJS version on edge
+% - Network: WiFi/Ethernet connection to cloud host, note measured round-trip latency if available
+
+% Load generator
+% - Runs on the same host as the cloud deployment (or specify location)
+% - Custom Node.js script (measurements/scripts/load-generator.js)
+% - Simulates IoT devices: each device authenticates via the API gateway, obtains a JWT, and publishes telemetry at a configurable rate
+% - Supports MQTT (TLS on port 8883), HTTP (via Protocol Adapter), and CoAP (via Protocol Adapter on port 5683)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Load Profiles}
+\label{subsec:EvalLoadProfiles}
+
+The load generator defines seven baseline profiles (L1 through L7) and one additional profile (L8) used only in the scaling experiment. Each profile specifies a number of simulated devices and a per-device message rate, producing a total throughput that ranges from 100 to 25\,000 messages per second. Table~\ref{tab:load-profiles} lists all profiles.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Load profiles used in the experiments.}
+    \label{tab:load-profiles}
+    \small
+    \begin{tabular}{l r r r l}
+        \toprule
+        \textbf{Profile} & \textbf{Devices} & \textbf{Rate/Device (msg/s)} & \textbf{Total (msg/s)} & \textbf{Description} \\
+        \midrule
+        L1 & 10  & 10 & 100    & Warm-up \\
+        L2 & 10  & 50 & 500    & Light load \\
+        L3 & 50  & 20 & 1\,000  & Moderate load \\
+        L4 & 50  & 50 & 2\,500  & Near saturation \\
+        L5 & 100 & 50 & 5\,000  & High load (100 devices) \\
+        L6 & 200 & 25 & 5\,000  & High load (200 devices) \\
+        L7 & 500 & 20 & 10\,000 & Stress test \\
+        L8 & 500 & 50 & 25\,000 & Maximum stress (scaling only) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Profiles L5 and L6 produce the same total throughput (5\,000 msg/s) but with different device counts. This pair is used to analyse how device cardinality, and the connection overhead it brings, affects performance at the same message rate.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Collected Metrics}
+\label{subsec:EvalMetrics}
+
+Each test run collects metrics from Prometheus at the end of the run period. The metrics fall into five categories:
+
+\begin{itemize}
+    \item \textbf{Throughput:} messages per second processed by the ingestion service, analytics service, and protocol adapter, computed from the \texttt{iot\_messages\_processed\_total} counter (Table~\ref{tab:cloud-custom-metrics}).
+    \item \textbf{Latency:} processing duration percentiles (p50, p95, p99) for the ingestion, analytics, and protocol adapter stages, extracted from the \texttt{iot\_processing\_duration\_seconds} histogram.
+    \item \textbf{Resource usage:} per-container CPU utilisation rates and memory consumption from cAdvisor metrics, covering all twelve application services and all infrastructure components.
+    \item \textbf{Delivery:} delivery percentage (messages processed divided by messages sent), error rate, and Kafka consumer lag per consumer group (\texttt{telemetry.raw}, \texttt{telemetry.events}, \texttt{alerts.events}).
+    \item \textbf{Kafka:} Kafka produce latency (p95) and per-group consumer lag, indicating whether consumers keep up with producers.
+\end{itemize}
+
+For the edge experiments, additional metrics include the unsynced rows gauge (\texttt{edge\_unsynced\_rows}), the cloud connection status gauge, and the number of locally cached rules.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Statistical Approach}
+\label{subsec:EvalStatistical}
+
+Each configuration in the baseline and scaling experiments is run three times for 180 seconds each. Results are reported as the median of the three runs to reduce the effect of outliers. Latency values are reported as percentiles (p50, p95, p99) from Prometheus histogram approximations. Delivery percentage is computed as $(\text{messages processed} / \text{messages sent}) \times 100$.
+
+The offline resilience, extensibility, and device heterogeneity experiments are single-run demonstrations. Their evidence consists of Grafana screenshots, database queries, and application logs rather than repeated statistical measurements.
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Baseline Performance}
+\label{sec:EvalBaseline}
+% ══════════════════════════════════════════════════════════════════════
+
+This experiment measures the platform's throughput, latency, resource consumption, and delivery reliability under increasing load across the three supported ingestion protocols: \gls{MQTT}, \gls{HTTP}, and \gls{CoAP}. The goal is to identify the saturation point and the performance characteristics of each protocol path. This experiment tests FR04 (multi-protocol ingestion), FR05 (schema-agnostic normalization), NFR01 (minimal latency), and NFR08 (at-least-once delivery).
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Setup}
+\label{subsec:EvalBaselineSetup}
+
+The baseline experiment uses load profiles L1 through L7 (Table~\ref{tab:load-profiles}), all three protocols, three runs per combination, and 180 seconds per run, for a total of 63 runs. All services run as a single replica. The load generator script (\texttt{run-baseline.sh}) restarts the \gls{MQTT} broker and Kafka bridge between protocol switches to ensure a clean state.
+
+Each simulated device authenticates through the \gls{API} gateway, obtains a \gls{JWT}, and publishes telemetry payloads containing randomised numeric fields. For \gls{MQTT}, devices connect directly to the EMQX broker over TLS on port 8883. For \gls{HTTP} and \gls{CoAP}, devices send requests to the Protocol Adapter, which produces messages to the \texttt{telemetry.raw} Kafka topic.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Throughput}
+\label{subsec:EvalBaselineThroughput}
+
+Figure~\ref{fig:baseline-throughput} summarizes the measured throughput across the baseline load profiles, making it easier to compare the three protocol paths and identify the first saturation point.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Baseline throughput chart comparing MQTT, HTTP, and CoAP across load profiles}
+    \caption{Baseline throughput across load profiles for the three supported ingestion protocols.}
+    \label{fig:baseline-throughput}
+\end{figure}
+
+% Present throughput results:
+% - Table: median throughput (ingestion msg/s, analytics msg/s) at each load profile for each protocol
+% - Line chart: throughput vs load profile, one line per protocol
+% - Identify the saturation point where throughput plateaus or falls behind the send rate
+% - Compare actual throughput vs expected throughput (total_sent / duration)
+% - Note the MQTT-Kafka bridge as potential bottleneck for MQTT path
+% - Note the Protocol Adapter as potential bottleneck for HTTP/CoAP paths
+% - Note: at low loads (L1-L3), analytics throughput is ~2x ingestion because one telemetry event
+%   fans out to multiple consumers on telemetry.events
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Latency}
+\label{subsec:EvalBaselineLatency}
+
+Figure~\ref{fig:baseline-latency} presents the latency percentiles observed in the baseline experiment, highlighting how each protocol path behaves as load increases.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Baseline latency chart showing p50, p95, and p99 across load profiles}
+    \caption{Baseline latency percentiles across load profiles for the supported ingestion protocols.}
+    \label{fig:baseline-latency}
+\end{figure}
+
+% Present latency results:
+% - Table: p50, p95, p99 ingestion latency and analytics latency at each load profile for MQTT
+% - Similar tables or charts for HTTP and CoAP (including adapter latency)
+% - Multi-line chart: p50/p95/p99 vs load profile (per protocol)
+% - Discuss how latency scales with load: stable at low profiles, rising at saturation
+% - Identify the profile where p99 exceeds 1 second (or whatever threshold is meaningful)
+% - Break down latency by stage: adapter processing, ingestion processing, analytics evaluation
+% - Note that MQTT path has no adapter latency (goes through MQTT-Kafka bridge instead)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Resource Usage}
+\label{subsec:EvalBaselineResources}
+
+Figure~\ref{fig:baseline-resources} summarizes the most relevant resource trends for the baseline experiment, focusing on the services and infrastructure components that dominate CPU and memory usage under load.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Baseline resource usage chart showing CPU and memory across representative load profiles}
+    \caption{Baseline resource usage across representative load profiles, highlighting the main CPU and memory consumers.}
+    \label{fig:baseline-resources}
+\end{figure}
+
+% Present per-service resource consumption:
+% - Grouped bar chart: CPU by service at representative levels (L1, L3, L5, L7) for MQTT
+% - Grouped bar chart: memory by service at the same levels
+% - Identify which service has the highest CPU at saturation (likely ingestion or analytics)
+% - Report Kafka broker CPU and memory at each level
+% - Report TimescaleDB resource usage
+% - Brief comparison of resource usage across protocols at the same load level
+%   (HTTP/CoAP likely show higher Protocol Adapter CPU)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Delivery and Errors}
+\label{subsec:EvalBaselineDelivery}
+
+% Present delivery reliability:
+% - Table: delivery percentage and error rate at each load profile for each protocol
+% - At which profiles does delivery drop below 100%?
+% - What types of errors occur? (Kafka produce timeouts, DB write failures, connection drops)
+% - DLQ activity: how many messages were routed to dead-letter topics?
+% - Kafka consumer lag: at which profiles does lag start growing?
+% - This subsection directly validates NFR08 (at-least-once delivery)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Protocol Comparison}
+\label{subsec:EvalBaselineProtocol}
+
+% Summary comparison of the three protocols:
+% - Table comparing MQTT, HTTP, CoAP on:
+%   * Maximum sustainable throughput (highest profile with 100% delivery)
+%   * Median ingestion latency at moderate load (e.g., L3)
+%   * p99 ingestion latency at moderate load
+%   * Protocol adapter overhead (none for MQTT, measurable for HTTP/CoAP)
+%   * Resource overhead (total CPU across all services)
+% - Discuss trade-offs: MQTT has persistent connections and binary framing (lowest overhead),
+%   HTTP is the simplest client implementation, CoAP uses UDP and is designed for constrained devices
+% - State which protocol performs best and why (MQTT expected, since the platform was designed around it)
+% - This validates FR04 (multi-protocol support)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Effect of Device Count}
+\label{subsec:EvalBaselineCardinality}
+
+% Compare L5 (100 devices x 50 msg/s = 5000 msg/s) vs L6 (200 devices x 25 msg/s = 5000 msg/s):
+% - Same total throughput, different device counts
+% - Compare: throughput achieved, latency percentiles, EMQX broker CPU/memory,
+%   connection count overhead, MQTT-Kafka bridge load
+% - More devices means more concurrent MQTT connections, more authentication state,
+%   higher broker memory, more topic ACL lookups
+% - Does device count affect throughput at the same message rate?
+% - This informs capacity planning: for a fixed throughput target, fewer high-frequency
+%   devices are cheaper than many low-frequency devices (or vice versa)
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Horizontal Scaling}
+\label{sec:EvalScaling}
+% ══════════════════════════════════════════════════════════════════════
+
+This experiment evaluates how adding replicas of the ingestion and analytics services affects throughput, latency, and resource usage at high load levels. The goal is to determine whether the event-driven architecture allows near-linear scaling by adding consumers to Kafka consumer groups. This experiment tests NFR05 (independent service scaling), NFR03 (extensibility via the consumer model), and NFR01 (latency under scaling).
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Setup}
+\label{subsec:EvalScalingSetup}
+
+The scaling experiment uses load profiles L5, L6, L7, and L8 (Table~\ref{tab:load-profiles}) with the \gls{MQTT} protocol only. For each profile, the ingestion service and analytics service are scaled together to 1, 2, and 3 replicas using Docker Compose's \texttt{--scale} option. Each configuration is run three times for 180 seconds, with a 45-second wait after scaling to allow Kafka consumer group rebalancing. The total is 36 runs (4 profiles $\times$ 3 replica counts $\times$ 3 runs).
+
+% Note: state the number of Kafka partitions for telemetry.raw and telemetry.events topics.
+% If there are fewer partitions than replicas, additional replicas will be idle.
+% The setup-partitions.sh script configures this -- check and report the partition count.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Throughput Under Scaling}
+\label{subsec:EvalScalingThroughput}
+
+Figure~\ref{fig:scaling-throughput} shows how throughput changes as ingestion and analytics replicas are added, making the scaling trend visible at the highest load profiles.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Scaling throughput chart comparing 1x, 2x, and 3x replicas across high-load profiles}
+    \caption{Throughput under scaling for the ingestion and analytics services across high-load profiles.}
+    \label{fig:scaling-throughput}
+\end{figure}
+
+% Present scaling throughput:
+% - Table: median throughput at each profile for 1x, 2x, 3x replicas
+% - Grouped bar chart or line chart: throughput vs load profile, one line per replica count
+% - Compute scaling efficiency: throughput(Nx) / (N x throughput(1x))
+% - Does throughput scale linearly with replicas?
+% - If not, what limits it? (Kafka partition count, shared DB writes, broker throughput)
+% - Compare with baseline results at L5-L7 to confirm consistency
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Latency Under Scaling}
+\label{subsec:EvalScalingLatency}
+
+Figure~\ref{fig:scaling-latency} shows whether additional replicas reduce latency at the same load and how much of the single-replica saturation effect is absorbed by the scaled deployment.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Scaling latency chart showing p50, p95, and p99 for 1x, 2x, and 3x replicas}
+    \caption{Latency under scaling for the ingestion and analytics services across high-load profiles.}
+    \label{fig:scaling-latency}
+\end{figure}
+
+% Present scaling latency:
+% - Table: p50, p95, p99 latency at high load for each replica count
+% - Chart: p95 latency vs replica count at L7 or L8
+% - Does adding replicas reduce latency at the same load?
+% - Does it allow maintaining low latency at higher loads that saturated the single-replica setup?
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Resource Usage Under Scaling}
+\label{subsec:EvalScalingResources}
+
+Figure~\ref{fig:scaling-resources} summarizes how resource consumption shifts as replicas are added and whether the bottleneck moves from the consumer services to shared infrastructure.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Scaling resource usage chart showing per-replica and total CPU and memory at high load}
+    \caption{Resource usage under scaling, showing how CPU and memory consumption change as replicas are added.}
+    \label{fig:scaling-resources}
+\end{figure}
+
+% Present scaling resource usage:
+% - Per-replica CPU and memory at L7 or L8
+% - Total CPU across all replicas vs single replica
+% - Does 2x replicas use roughly 2x CPU? Or is there overhead?
+% - Kafka consumer lag comparison: does lag decrease with more replicas?
+% - Does the bottleneck shift? (e.g., from ingestion CPU to Kafka broker or TimescaleDB writes)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Scaling Efficiency}
+\label{subsec:EvalScalingEfficiency}
+
+% Summarise scaling behaviour:
+% - Table: scaling efficiency at each profile (throughput gain / replica count)
+% - Is scaling linear, sub-linear, or capped?
+% - Discuss Kafka partition count as the practical ceiling for consumer parallelism
+% - What would be needed to scale beyond the observed limit? (more partitions, Kafka clustering, DB read replicas)
+% - Compare peak throughput achieved with 3 replicas vs single-replica saturation point
+% - This validates NFR05 (independent service scaling) and NFR03 (extensibility)
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Offline Resilience}
+\label{sec:EvalOffline}
+% ══════════════════════════════════════════════════════════════════════
+
+This experiment validates that the edge node maintains full local functionality during cloud connectivity loss and synchronises all buffered data upon reconnection with zero data loss. It tests FR13 (local persistence before cloud delivery), FR14 (periodic synchronisation), FR15 (periodic rule fetch), NFR04 (offline operation), NFR08 (at-least-once delivery end-to-end), and NFR09 (edge resource constraints).
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Setup}
+\label{subsec:EvalOfflineSetup}
+
+The edge node runs on a Raspberry Pi 3B with the NestJS edge application, a local Mosquitto broker, and SQLite for persistence. The cloud platform runs on the cloud host with all services at single-replica baseline. A simulated device publishes telemetry to the edge broker at a rate of approximately one message per second. At least one critical-severity rule is pre-configured and synced to the edge before the test begins.
+
+Cloud connectivity is controlled using Docker's network management. The command \texttt{docker network disconnect} removes the edge container from the network that connects it to the cloud \gls{MQTT} broker, simulating a clean connectivity loss. The command \texttt{docker network connect} restores it.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Test Scenario}
+\label{subsec:EvalOfflineScenario}
+
+The test follows three phases:
+
+\paragraph{Phase 1: Normal operation (2 minutes).}
+The device sends telemetry to the edge broker. The edge node ingests each message, evaluates the cached critical rules, and forwards the telemetry to the cloud via the cloud \gls{MQTT} connection. During this phase, we verify that telemetry appears in the cloud TimescaleDB and that the \texttt{edge\_unsynced\_rows} gauge remains near zero.
+
+\paragraph{Phase 2: Connectivity loss (5 minutes).}
+We disconnect the edge container from the cloud network. The device continues sending telemetry to the local broker. The edge node continues ingesting messages and evaluating rules locally. During this phase, we verify that the cloud connection status drops to zero, the unsynced rows gauge increases steadily, new telemetry records appear in SQLite with \texttt{synced = false}, and the edge CPU and memory remain within the Raspberry Pi's constraints.
+
+\paragraph{Phase 3: Reconnection and synchronisation (2--3 minutes).}
+We restore the network connection. The SyncModule detects the restored connection and begins sending batches of buffered records to the cloud. During this phase, we verify that the cloud connection status returns to one, the unsynced rows gauge decreases as batches are sent, and all buffered telemetry and alerts appear in the cloud database. We compare the record count generated during Phase~2 with the count received by the cloud to confirm zero data loss.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Results}
+\label{subsec:EvalOfflineResults}
+
+Figure~\ref{fig:offline-resilience-dashboard} summarizes the offline resilience experiment by showing the edge dashboard timeline across the normal, disconnected, and resynchronization phases.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Edge dashboard timeline showing unsynced rows, cloud connection status, and edge resource usage across the offline resilience experiment}
+    \caption{Offline resilience experiment dashboard, showing connection loss, buffer growth, and synchronization after reconnection.}
+    \label{fig:offline-resilience-dashboard}
+\end{figure}
+
+% Present:
+% - Grafana timeline screenshot from the edge dashboard showing all three phases:
+%   * edge_unsynced_rows over time (flat near 0, rising during Phase 2, dropping in Phase 3)
+%   * edge_cloud_connection_status over time (1, 0, 1)
+% - Edge CPU and memory during each phase (from cAdvisor or edge dashboard)
+% - Table: number of telemetry records generated during Phase 2 vs number received by cloud after sync
+% - Time to complete synchronisation (from reconnection to unsynced_rows = 0)
+% - Evidence that rule evaluation continued during Phase 2 (alerts generated locally)
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Analysis}
+\label{subsec:EvalOfflineAnalysis}
+
+% Discuss:
+% - Zero data loss confirmed (FR13, FR14, NFR08): record counts match
+% - Full offline functionality (NFR04): ingestion, rule evaluation, and alerting continued
+% - Resource constraints (NFR09): peak memory usage vs 1 GB limit, CPU during offline period
+% - Sync performance: time to drain the buffer, batch size (100 records per batch from SyncModule)
+% - Write-first pattern effectiveness (Section~\ref{subsec:WriteFirstImpl})
+% - Limitation: rules changed on the cloud during the outage are not picked up until reconnection
+%   (rule sync requires cloud API access, Section~\ref{subsec:RuleSyncImpl})
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Extensibility}
+\label{sec:EvalExtensibility}
+% ══════════════════════════════════════════════════════════════════════
+
+This experiment demonstrates that a new processing capability can be added to the platform by subscribing to an existing Kafka topic, without modifying any existing service. We add a Python-based vision service that processes images uploaded through the Protocol Adapter, proving the event-driven extensibility model described in Section~\ref{sec:ProposedModelArchitecturalOverview}. This tests NFR03 (new consumers without modifying producers), FR04 (file upload ingestion), and NFR05 (independent service operation).
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Setup and Integration}
+\label{subsec:EvalExtensibilitySetup}
+
+The experiment introduces a single new component: a Python service that subscribes to the \texttt{file.uploads} Kafka topic and processes image files using OpenCV. The data flow is as follows:
+
+\begin{enumerate}
+    \item A Raspberry Pi with a camera captures an image.
+    \item The Raspberry Pi uploads the image via \gls{HTTP} POST to the Protocol Adapter's file endpoint.
+    \item The Protocol Adapter stores the file in MinIO and publishes a metadata event to the \texttt{file.uploads} Kafka topic.
+    \item The vision service, running as a new Kafka consumer group, consumes the event.
+    \item The vision service downloads the image from MinIO using the URL in the event metadata.
+    \item The vision service processes the image with OpenCV (for example, object detection or edge detection) and publishes the analysis results to the \texttt{telemetry.raw} topic.
+    \item From this point, the standard pipeline processes the results: the Ingestion Service normalises the data, the Analytics Service evaluates rules, and the Read Service delivers updates via WebSocket.
+\end{enumerate}
+
+No existing service is modified. The vision service integrates purely through the Kafka topics listed in Table~\ref{tab:kafka-topics}. It is written in Python while all other services are written in TypeScript, demonstrating cross-language extensibility.
+
+Figure~\ref{fig:vision-service-integration} captures this integration path, highlighting the new Python consumer while keeping the existing upload and telemetry pipelines unchanged.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Vision service integration diagram showing Raspberry Pi camera to Protocol Adapter, MinIO, file.uploads, Vision Service, telemetry.raw, and the standard processing pipeline}
+    \caption{Integration of the Python vision service into the platform through the existing file upload and Kafka event pipeline.}
+    \label{fig:vision-service-integration}
+\end{figure}
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Test Procedure}
+\label{subsec:EvalExtensibilityProcedure}
+
+% Step-by-step:
+% 1. Deploy the Python vision service container alongside existing services
+% 2. Configure it to subscribe to file.uploads with a new consumer group ID
+% 3. Register a device for the Raspberry Pi camera through the API
+% 4. Capture an image on the Raspberry Pi
+% 5. Upload the image via HTTP POST to the Protocol Adapter file endpoint
+% 6. Verify: file appears in MinIO, metadata event appears in file.uploads topic
+% 7. Verify: vision service consumes the event, downloads the image, runs OpenCV processing
+% 8. Verify: vision service publishes results to telemetry.raw
+% 9. Verify: results appear in TimescaleDB as normalised telemetry, visible in the web application
+% 10. Verify: no changes were made to the Protocol Adapter, Ingestion Service, or any other service
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Results}
+\label{subsec:EvalExtensibilityResults}
+
+Figure~\ref{fig:vision-service-results} summarizes the evidence produced by the extensibility experiment, from file upload and consumer processing to the resulting telemetry visible in the platform.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Extensibility experiment evidence showing uploaded image handling, vision service processing, and resulting telemetry in the platform}
+    \caption{Evidence from the extensibility experiment, showing the upload-processing-output path of the vision service.}
+    \label{fig:vision-service-results}
+\end{figure}
+
+% Present:
+% - Screenshot: the uploaded image in MinIO
+% - Screenshot: the vision service processing the image (console output or logs)
+% - Screenshot: the resulting telemetry in the web application dashboard
+% - Kafka consumer group listing showing the new consumer group (vision-service) alongside existing ones
+% - Code snippet showing the Python service is compact (~50-100 lines), demonstrating simplicity
+% - Note that the vision service uses kafkajs or confluent-kafka-python to connect
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Analysis}
+\label{subsec:EvalExtensibilityAnalysis}
+
+% Discuss:
+% - NFR03 confirmed: new consumer added without modifying any producer or existing consumer
+% - The event-driven pub-sub model is the enabler: the Protocol Adapter does not know
+%   that a vision service now consumes its events
+% - Cross-language support: Kafka's protocol is language-agnostic, so the Python service
+%   integrates without any adapter or translation layer
+% - The same approach works for adding ML models, ETL pipelines, or business intelligence consumers
+%   (as discussed in the future work, Section~\ref{cha:FutureWork})
+% - Note the end-to-end latency from upload to processed result (not a performance test,
+%   just a sanity check that the pipeline works)
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Device Heterogeneity}
+\label{sec:EvalHeterogeneity}
+% ══════════════════════════════════════════════════════════════════════
+
+This experiment demonstrates that the platform's schema-agnostic ingestion model handles telemetry from physically different devices with varying data formats and field names, without requiring any prior schema configuration. It tests FR04 (multi-protocol, schema-agnostic ingestion), FR05 (automatic field discovery), and NFR02 (device heterogeneity).
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Setup and Devices}
+\label{subsec:EvalHeterogeneitySetup}
+
+% Describe each device:
+% - Device A: Simulated device (load generator). Sends JSON with fields like
+%   temperature (number), humidity (number), pressure (number). Connects via MQTT.
+% - Device B: Raspberry Pi with physical sensor(s). Sends JSON with structurally different
+%   fields (different names, possibly different data types). Connects via MQTT, HTTP, or CoAP.
+% - Optionally Device C: another sensor or simulated device with boolean or string fields
+%   (e.g., door_open: true, status: "active") to show type diversity.
+%
+% The key point is that each device sends structurally different JSON and the platform
+% handles all of them without any configuration changes.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Test Procedure}
+\label{subsec:EvalHeterogeneityProcedure}
+
+% Step-by-step:
+% 1. Register each device through the API (obtain device ID, PSK, connection details)
+% 2. Each device authenticates and begins sending telemetry with its unique JSON structure
+% 3. Verify: Ingestion Service normalises each payload into typed key-value data points
+%    (value_number, value_bool, value_string columns in DeviceData hypertable)
+% 4. Verify: new fields are automatically discovered and registered in the data_keys table (FR05)
+% 5. Verify: all devices' telemetry is visible in the web application, each with its own fields
+% 6. Create monitoring rules for fields from different devices (e.g., a threshold rule on
+%    accelerometer data, a range rule on temperature)
+% 7. Verify: rules fire correctly for each device's data, confirming cross-schema rule evaluation
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Results}
+\label{subsec:EvalHeterogeneityResults}
+
+Figure~\ref{fig:heterogeneity-evidence} summarizes the heterogeneity experiment by showing how structurally different payloads are normalized into typed fields and then exposed consistently in the platform views.
+
+\begin{figure}[htbp]
+    \centering
+    \missingfigure{Heterogeneity evidence figure showing raw payloads, normalized fields, and resulting platform views for different device types}
+    \caption{Evidence of schema-agnostic ingestion across heterogeneous devices, showing raw payloads, normalized fields, and resulting platform views.}
+    \label{fig:heterogeneity-evidence}
+\end{figure}
+
+% Present:
+% - Table: for each device, show the JSON payload structure, the normalised data points
+%   produced by the Ingestion Service, and the auto-discovered fields in data_keys
+% - Screenshot: web application showing telemetry from each device on its device page
+% - Screenshot: data_keys table showing the automatically discovered field entries
+% - Evidence that monitoring rules work across devices with different schemas
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Analysis}
+\label{subsec:EvalHeterogeneityAnalysis}
+
+% Discuss:
+% - FR05 confirmed: field discovery happened automatically on first observation
+% - NFR02 confirmed: physically different devices with different data formats were handled
+%   without any platform modification or prior schema registration
+% - The normalisation step (Section~\ref{subsec:IngestionServiceImpl}) flattens JSON into
+%   typed key-value pairs, which handles arbitrary payload structures
+% - Trade-off: schema-agnostic means the platform cannot validate incoming data against
+%   an expected structure. Any valid JSON is accepted, which could be a limitation
+%   in production environments that need strict data validation.
+
+
+% ══════════════════════════════════════════════════════════════════════
+\section{Discussion}
+\label{sec:EvalDiscussion}
+% ══════════════════════════════════════════════════════════════════════
+
+This section ties the experimental results back to the requirements from Section~\ref{sec:RequirementsSpecification} and the five design goals from Section~\ref{sec:ProposedModelArchitecturalOverview}.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Requirements Coverage}
+\label{subsec:EvalReqCoverage}
+
+% Present a traceability matrix:
+% Table with columns: Requirement | Experiment(s) | Validated? | Evidence
+%
+% FR01: Prerequisite for all experiments (all devices and users authenticate with JWT)
+% FR02: Experiments 5, all (devices registered via API)
+% FR03: Experiments 5, 3 (edge device registration with isEdge claim)
+% FR04: Experiment 1 (three protocols tested), Experiment 5 (different schemas)
+% FR05: Experiment 5 (automatic field discovery demonstrated)
+% FR06: Experiments 3, 5 (rules created and used)
+% FR07: Experiments 1, 3 (rules evaluated, deduplication on edge)
+% FR08: Implemented but not experimentally isolated (Z-score configured, not stress-tested)
+% FR09: Used throughout (WebSocket dashboard used in experiments)
+% FR10: Used in experiment 3 (alert history queried after sync)
+% FR11: Used for verification (historical queries used to confirm data arrival)
+% FR12: Implemented but not experimentally isolated (email notifications configured)
+% FR13: Experiment 3 (write-first pattern, local persistence confirmed)
+% FR14: Experiment 3 (synchronisation after reconnection confirmed)
+% FR15: Experiment 3 (rule sync from cloud API)
+%
+% NFR01: Experiment 1 (latency measured under load), Experiment 2 (latency under scaling)
+% NFR02: Experiment 5 (heterogeneous devices handled)
+% NFR03: Experiment 4 (new consumer added), Experiment 2 (replicas added to consumer groups)
+% NFR04: Experiment 3 (offline operation demonstrated)
+% NFR05: Experiment 2 (independent scaling of ingestion and analytics)
+% NFR06: Prerequisite for all experiments (auth at all entry points)
+% NFR07: Prerequisite for MQTT experiments (per-device ACL enforced)
+% NFR08: Experiment 1 (delivery % measured), Experiment 3 (zero data loss on edge)
+% NFR09: Experiment 3 (edge ran within RPi constraints)
+% NFR10: Implemented but not experimentally isolated (audit trail exists in sent_notifications table)
+%
+% Mark FR08, FR12, NFR10 as "implemented but not the focus of a dedicated experiment"
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Design Goals}
+\label{subsec:EvalDesignGoals}
+
+% Map results to the five design goals:
+%
+% 1. Genericity (schema-agnostic, heterogeneous device support):
+%    Experiment 5 confirms the platform handles different device types and data formats
+%    without configuration changes. The normalisation pipeline accepts any valid JSON.
+%
+% 2. Real-time processing (minimal latency, event-driven):
+%    Experiment 1 provides concrete latency numbers. At moderate loads (L3, 1000 msg/s),
+%    p50 ingestion latency is X ms and p95 is Y ms. Discuss whether these values
+%    are acceptable for an IoT monitoring platform.
+%
+% 3. Extensibility (new consumers without modifying producers):
+%    Experiment 4 proves the model works: a Python vision service was added by subscribing
+%    to an existing topic. Experiment 2 proves that adding replicas (more consumers in the
+%    same group) improves throughput.
+%
+% 4. Security (JWT, ACL, PSK):
+%    Not a dedicated experiment, but security is a prerequisite for all experiments.
+%    All devices authenticate with PSK, all API requests carry JWT tokens, MQTT ACLs
+%    are enforced per device. Note any observed performance impact from authentication.
+%
+% 5. Offline resilience (write-first, sync, zero data loss):
+%    Experiment 3 confirms zero data loss during a 5-minute connectivity interruption.
+%    The write-first pattern and periodic synchronisation work as designed.
+
+% ──────────────────────────────────────────────────────────────────────
+\subsection{Threats to Validity and Limitations}
+\label{subsec:EvalThreats}
+
+% Internal validity:
+% - Synthetic load from a script may not represent real IoT traffic patterns
+%   (real devices have variable rates, bursty behaviour, and network jitter)
+% - All services run on a single host, so resource contention between containers
+%   may affect results differently than a distributed deployment
+% - Three runs per configuration provides limited statistical power
+% - 180-second runs may miss long-term effects such as memory leaks or buffer growth
+
+% External validity:
+% - Single Raspberry Pi 3B as edge node; results may differ on other hardware
+% - Docker Compose deployment, not Kubernetes; orchestration overhead and
+%   scheduling behaviour would differ in production
+% - Single Kafka broker without replication; a production Kafka cluster would
+%   have different throughput and latency characteristics
+
+% Construct validity:
+% - Prometheus scrape interval (15 seconds) limits metric granularity;
+%   sub-second latency spikes between scrapes may not be captured
+% - Histogram bucket boundaries are predefined and may not capture
+%   all latency distributions accurately
+
+% Limitations:
+% - Internal communication between services does not use TLS; adding TLS would increase latency
+% - The edge was tested with a single Raspberry Pi; fleet scenarios with multiple edge
+%   nodes were not evaluated
+% - FR08 (Z-score anomaly detection) and FR12 (email notifications) are implemented
+%   and functional but were not stress-tested under high load
+% - The extensibility experiment is a proof-of-concept demonstration, not a
+%   performance evaluation of the vision service

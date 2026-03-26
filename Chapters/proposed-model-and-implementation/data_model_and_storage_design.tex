@@ -1,0 +1,31 @@
+%!TEX root = ../../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% data_model_and_storage_design.tex
+%% Data Model and Storage Design section for Architecture and Design
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Data Model and Storage Design}
+\label{sec:ProposedModelDataModelAndStorageDesign}
+
+All platform data is stored in a single TimescaleDB instance, a PostgreSQL extension built for time-series data. The platform needs both relational storage for metadata (users, devices, rules) and time-series storage for high-volume telemetry. Rather than running separate databases, TimescaleDB handles both in one instance. Standard PostgreSQL tables hold the relational data, while hypertables, automatically partitioned by time, store the telemetry. The database is split into two schemas: one for relational metadata and another for time-series data and alert records.
+
+\subsection{Conceptual Data Model}
+At the top level, Users own Devices. Each Device produces telemetry tracked through Data Keys, where a Data Key represents a single telemetry field observed from that device. Users create monitoring Rules against specific Data Keys, linking each rule to one telemetry field on one device.
+
+When an anomaly is detected, the system creates an Alert. Alerts are snapshots of the rule or detector state at the moment they fire, so the record stays complete even if the original rule is changed or deleted later. The database handles this with nullable foreign keys and set-null deletion policies.
+
+There are also a few other entities. Each Anomaly Detector Configuration holds the statistical parameters for a Data Key, and configurations are matched from most specific to a global default. Each user has a Notification Preference that controls which severity levels trigger emails, and every delivery attempt is saved as a Sent Notification for auditing.
+
+Section~\ref{sec:DataModelImplementation} covers the full schema definitions, column types, constraints, and indexing strategies.
+
+\subsection{Time-Series Storage Design}
+Telemetry is stored in a hypertable partitioned on the timestamp column. TimescaleDB splits this data into time-based chunks automatically, which makes both writes and time range queries faster.
+
+Each row holds a single data point and since telemetry values can be numbers, booleans, or strings, the table uses three nullable columns, one for each data type. Only the column matching the value's type is filled in; the other two stay null.
+
+Two other options were considered: Storing everything as strings would lose type information and make numeric aggregations like averages or min/max require type casting at query time, and a single \gls{JSON} column would keep the structure but require per-row extraction and casting at query time, adding overhead that defeats the performance advantages of TimescaleDB's native aggregation and indexing. The typed-column approach keeps native types, allows direct aggregation, and fits how TimescaleDB's query optimizer works.
+
+Both the DeviceData hypertable and the Alert table use TimescaleDB's built-in retention policies to automatically delete data older than 90 days, preventing the database from growing indefinitely.
+
+\subsection{Other Storage Technologies}
+Beyond TimescaleDB, the platform uses three other storage technologies. Redis serves as a cache for frequently accessed data and as a pub/sub adapter for coordinating WebSocket connections across service replicas. MinIO provides S3-compatible object storage for binary files uploaded by devices, such as images or sensor data exports. Storing these files in a dedicated object store keeps large binary objects out of the time-series database, which is designed for small, structured data points. On the edge, SQLite provides local persistence without requiring a server process, fitting the constraints of resource-limited devices. The edge database acts as a temporary buffer, as described in Section~\ref{sec:EdgeNode}.
