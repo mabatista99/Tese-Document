@@ -4,14 +4,18 @@
 %% Requirements Specification section for Architecture and Design
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Requirements Specification}
+\section{Requirements}
 \label{sec:RequirementsSpecification}
 
-This section presents the functional and non-functional requirements derived from the use cases defined in Section~\ref{sec:UseCases}. Each requirement references one or more use cases, establishing a clear link between the expected behavior of the platform and the architectural decisions presented in the following sections.
+The use cases define what the platform is expected to support from the user's point of view. The following tables translate those goals into functional requirements, which describe the required system capabilities, and non-functional requirements, which define the main quality constraints that shape the design.
 
 \subsection{Functional Requirements}
 
-Table~\ref{tab:functional-requirements} lists the functional requirements of the platform. Each requirement describes a specific feature the system must provide.
+Table~\ref{tab:functional-requirements} presents the functional requirements
+specified for the platform. In particular, they cover user authentication,
+device registration and provisioning, telemetry ingestion, anomaly detection,
+real-time monitoring, historical queries, notifications, and operation at the
+edge during temporary connectivity loss.
 
 \begin{table}[H]
     \centering
@@ -21,30 +25,32 @@ Table~\ref{tab:functional-requirements} lists the functional requirements of the
     \rowcolors{2}{gray!8}{}
     \begin{tabularx}{\textwidth}{l X l}
         \toprule
-        \textbf{ID} & \textbf{Description} & \textbf{UC(s)} \\
+        \textbf{ID} & \textbf{Description}                                                                                                                        & \textbf{UC(s)} \\
         \midrule
-        FR01 & The system must allow users to register with email and password and authenticate using \gls{JWT} access tokens (15 min) and refresh tokens (30 days) signed with RS256. & UC01 \\
-        FR02 & The system must allow users to register \gls{IoT} devices, generating a unique identifier, a \gls{PSK}, and a configuration object containing broker connection details and authentication endpoints. & UC02 \\
-        FR03 & The system must support device registration as cloud or edge type, with edge devices receiving tokens containing an \texttt{isEdge} claim for broker authorization. & UC02, UC11 \\
-        FR04 & The system must ingest telemetry from \gls{IoT} devices via \gls{MQTT}, \gls{HTTP}, and \gls{CoAP}, normalizing schema-agnostic \gls{JSON} payloads into individually typed key-value data points. Devices must also be able to upload binary files via \gls{HTTP}, with the files stored in object storage and metadata emitted as a Kafka event for downstream processing. & UC09, UC10 \\
-        FR05 & The system must automatically discover and register new telemetry fields upon first observation, without requiring prior schema definition. & UC10 \\
-        FR06 & The system must allow users to create, edit, enable, disable, and delete monitoring rules with ten comparison operators and four severity levels, each bound to a specific device data key. & UC03 \\
-        FR07 & The system must evaluate incoming telemetry against active rules and generate alerts, applying a sixty-second deduplication window per rule, device, and key combination. & UC03, UC10, UC11 \\
-        FR08 & The system must perform statistical anomaly detection on numeric telemetry using Z-score analysis with configurable sliding window, threshold, and minimum sample count, supporting hierarchical configuration scopes. & UC08 \\
-        FR09 & The system must deliver real-time telemetry updates and alert notifications to authenticated users through WebSocket connections with device-based room routing. & UC04, UC05 \\
-        FR10 & The system must support alert acknowledgment and provide alert history with filtering by device, severity, and acknowledgment status, using cursor-based pagination. & UC05 \\
-        FR11 & The system must allow users to query historical telemetry by device, data key, and time range, with support for aggregation and downsampling. & UC06 \\
-        FR12 & The system must allow users to configure per-user email notification preferences with severity-level filters, and send email notifications for matching alerts. & UC07, UC13 \\
-        FR13 & The edge node must persist all telemetry and alerts to local storage before attempting cloud delivery, ensuring no data loss during connection losses. & UC11, UC12 \\
-        FR14 & The edge node must periodically synchronize locally buffered telemetry and alerts with the cloud, removing successfully delivered records and retrying failures. & UC12 \\
-        FR15 & The edge node must periodically fetch enabled critical rules from the cloud \gls{API} and replace its local rule cache for local rule evaluation. & UC11 \\
+        FR01        & The system must allow users to register and authenticate before accessing protected platform functions.                                     & All            \\
+        FR02        & The system must allow users to register devices and provision them for cloud or edge deployment.                                            & UC01, UC05     \\
+        FR03        & The system must ingest telemetry from \gls{IoT} devices over multiple communication protocols.                                              & UC01           \\
+        FR04        & The system must allow devices to upload binary files for later processing by the platform.                                                  & UC01           \\
+        FR05        & The system must identify and register newly observed telemetry fields without previous manual schema configuration.                         & UC01           \\
+        FR06        & The system must allow users to create, edit, enable, disable, and delete monitoring rules with configurable conditions and severity levels. & UC02           \\
+        FR07        & The system must detect abnormal conditions in telemetry and generate alerts.                                                                & UC02           \\
+        FR08        & The system must provide authenticated users with real-time telemetry and alert updates for the devices they monitor.                        & UC01, UC03     \\
+        FR09        & The system must allow users to review, filter, acknowledge, and retrieve past alerts.                                                       & UC03, UC04     \\
+        FR10        & The system must allow users to query historical telemetry for a device over a selected time range.                                          & UC04           \\
+        FR11        & The system must notify users when abnormal conditions are detected, according to their configured notification preferences.                 & UC02           \\
+        FR12        & The edge node must record telemetry and alerts locally while cloud connectivity is unavailable.                                             & UC05           \\
+        FR13        & The edge node must synchronize locally buffered telemetry and alerts with the cloud after connectivity is restored.                         & UC05           \\
+        FR14        & The edge node must obtain and keep updated the monitoring rules required for local evaluation.                                              & UC05           \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 \subsection{Non-Functional Requirements}
 
-Table~\ref{tab:non-functional-requirements} lists the non-functional requirements that constrain how the system must behave in terms of performance, reliability, security, and maintainability.
+Table~\ref{tab:non-functional-requirements} presents the specified
+non-functional requirements. In particular, they define the main quality goals
+related to latency, heterogeneous payload support, extensibility, offline
+resilience, scalability, security, and data preservation.
 
 \begin{table}[H]
     \centering
@@ -54,20 +60,17 @@ Table~\ref{tab:non-functional-requirements} lists the non-functional requirement
     \rowcolors{2}{gray!8}{}
     \begin{tabularx}{\textwidth}{l X l}
         \toprule
-        \textbf{ID} & \textbf{Description} & \textbf{UC(s)} \\
+        \textbf{ID} & \textbf{Description}                                                                                                                & \textbf{UC(s)}   \\
         \midrule
-        NFR01 & The system must process telemetry from ingestion to real-time delivery and rule evaluation with minimal latency, using asynchronous event-driven communication between services. & UC04, UC10 \\
-        NFR02 & The system must support different kinds of \gls{IoT} devices with varying data formats and communication capabilities, accepting schema-agnostic \gls{JSON} payloads over multiple protocols without requiring pre-registration of schemas. & UC10 \\
-        NFR03 & The architecture must allow new event consumers to be added to existing message topics without modifying producers or existing consumers. & All \\
-        NFR04 & The edge node must maintain full functionality (ingestion, rule evaluation, alert generation, local persistence) during cloud connection losses. & UC11, UC12 \\
-        NFR05 & The system must support independent scaling of each backend service, with event-driven decoupling ensuring a slow consumer does not block upstream producers or other consumers. & All \\
-        NFR06 & The system must authenticate and authorize all entry points: device connections at the broker level, \gls{API} requests at the gateway, and WebSocket connections during the handshake. & UC01, UC09, UC04 \\
-        NFR07 & The system must enforce per-device \gls{MQTT} topic authorization through access control lists, preventing devices from publishing to another device's topic. & UC09, UC10 \\
-        NFR08 & The system must guarantee at-least-once delivery of telemetry from the \gls{MQTT} broker through to persistent storage, using \gls{QoS} 1 and durable Kafka retention with consumer offset tracking. & UC10, UC11, UC12 \\
-        NFR09 & The edge node must operate within the resource constraints of a Raspberry Pi, using lightweight components and restricting local rule evaluation to critical severity only. & UC11 \\
-        NFR10 & The system must record an audit trail of email notification delivery attempts, capturing recipient, severity, success status, and error details. & UC13 \\
+        NFR01       & The platform must keep telemetry ingestion latency low enough for live monitoring under supported load.                             & UC01             \\
+        NFR02       & The platform must accept telemetry payloads with different field structures without requiring device-specific schema configuration. & UC01             \\
+        NFR03       & The platform must allow new processing capabilities to be added without changing the existing ingestion flow.                       & All              \\
+        NFR04       & The edge deployment must continue monitoring during temporary loss of cloud connectivity.                                           & UC05             \\
+        NFR05       & The platform must allow backend components to scale independently according to its needs.                                           & All              \\
+        NFR06       & The platform must restrict access to authorized users and devices, and it must ensure secure communication with external entities.  & All              \\
+        NFR07       & The platform must preserve ingested telemetry and alerts data during temporary failures until it is stored or synchronized.         & UC01, UC03, UC05 \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-The architectural decisions presented in Section~\ref{sec:ProposedModelArchitecturalOverview} are designed to satisfy these requirements, and the following sections point out where each design choice ties back to these requirements.
+The following sections describe the platform architecture and explain how it addresses these requirements.

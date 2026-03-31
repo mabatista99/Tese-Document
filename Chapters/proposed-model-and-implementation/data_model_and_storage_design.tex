@@ -21,7 +21,7 @@ Section~\ref{sec:DataModelImplementation} covers the full schema definitions, co
 \subsection{Time-Series Storage Design}
 Telemetry is stored in a hypertable partitioned on the timestamp column. TimescaleDB splits this data into time-based chunks automatically, which makes both writes and time range queries faster.
 
-Each row holds a single data point and since telemetry values can be numbers, booleans, or strings, the table uses three nullable columns, one for each data type. Only the column matching the value's type is filled in; the other two stay null.
+Each row holds a single data point and since telemetry values can be numbers, booleans, or strings, the table uses three nullable columns, one for each data type. Only the column matching the value's type is filled in, and the other two stay null.
 
 Two other options were considered: Storing everything as strings would lose type information and make numeric aggregations like averages or min/max require type casting at query time, and a single \gls{JSON} column would keep the structure but require per-row extraction and casting at query time, adding overhead that defeats the performance advantages of TimescaleDB's native aggregation and indexing. The typed-column approach keeps native types, allows direct aggregation, and fits how TimescaleDB's query optimizer works.
 

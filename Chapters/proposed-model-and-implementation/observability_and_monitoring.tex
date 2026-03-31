@@ -24,7 +24,7 @@ Figure~\ref{fig:monitoring-architecture} summarizes this layout, showing Prometh
 
 \begin{figure}[htbp]
     \centering
-    \missingfigure{Monitoring architecture diagram showing Prometheus scraping cloud and edge targets, and Grafana reading from Prometheus and TimescaleDB}
+    \includegraphics[width=\textwidth]{Chapters/Figures/Monitoring/architecture.pdf}
     \caption{Monitoring architecture showing Prometheus scraping all instrumented targets and Grafana reading from both Prometheus and TimescaleDB.}
     \label{fig:monitoring-architecture}
 \end{figure}
@@ -45,18 +45,18 @@ Table~\ref{tab:cloud-custom-metrics} summarises the custom metrics defined in th
     \small
     \begin{tabular}{l l p{6cm}}
         \hline
-        \textbf{Metric name} & \textbf{Type} & \textbf{Purpose} \\
+        \textbf{Metric name}                            & \textbf{Type} & \textbf{Purpose}                        \\
         \hline
-        \texttt{iot\_messages\_received\_total}      & Counter   & Messages received from Kafka/\gls{MQTT} \\
-        \texttt{iot\_messages\_processed\_total}      & Counter   & Messages successfully processed \\
-        \texttt{iot\_messages\_failed\_total}         & Counter   & Messages that failed processing \\
-        \texttt{iot\_alerts\_emitted\_total}          & Counter   & Alerts produced by rule evaluation \\
-        \texttt{iot\_dlq\_messages\_total}            & Counter   & Messages sent to \glspl{DLQ} \\
-        \texttt{iot\_processing\_duration\_seconds}   & Histogram & Single message processing time \\
-        \texttt{http\_request\_duration\_seconds}     & Histogram & \gls{HTTP} request latency \\
-        \texttt{iot\_kafka\_produce\_duration\_seconds} & Histogram & Kafka produce latency \\
-        \texttt{iot\_db\_query\_duration\_seconds}    & Histogram & Database query execution time \\
-        \texttt{iot\_ws\_connected\_clients}          & Gauge     & WebSocket clients connected \\
+        \texttt{iot\_messages\_received\_total}         & Counter       & Messages received from Kafka/\gls{MQTT} \\
+        \texttt{iot\_messages\_processed\_total}        & Counter       & Messages successfully processed         \\
+        \texttt{iot\_messages\_failed\_total}           & Counter       & Messages that failed processing         \\
+        \texttt{iot\_alerts\_emitted\_total}            & Counter       & Alerts produced by rule evaluation      \\
+        \texttt{iot\_dlq\_messages\_total}              & Counter       & Messages sent to \glspl{DLQ}            \\
+        \texttt{iot\_processing\_duration\_seconds}     & Histogram     & Single message processing time          \\
+        \texttt{http\_request\_duration\_seconds}       & Histogram     & \gls{HTTP} request latency              \\
+        \texttt{iot\_kafka\_produce\_duration\_seconds} & Histogram     & Kafka produce latency                   \\
+        \texttt{iot\_db\_query\_duration\_seconds}      & Histogram     & Database query execution time           \\
+        \texttt{iot\_ws\_connected\_clients}            & Gauge         & WebSocket clients connected             \\
         \hline
     \end{tabular}
 \end{table}
@@ -78,16 +78,16 @@ Table~\ref{tab:grafana-dashboards} summarises the eight dashboards and their pur
     \label{tab:grafana-dashboards}
     \begin{tabular}{l l p{6.5cm}}
         \hline
-        \textbf{Folder} & \textbf{Dashboard} & \textbf{Purpose} \\
+        \textbf{Folder} & \textbf{Dashboard}    & \textbf{Purpose}                                                                        \\
         \hline
-        Cloud      & System Overview       & Service health, uptime, and request rates \\
-        Cloud      & Throughput \& Latency & Message throughput and latency percentiles (p50, p95, p99) across pipeline stages \\
-        Cloud      & Resource Usage        & Per-container \gls{CPU}, memory, and network metrics from cAdvisor \\
-        Cloud      & Database              & TimescaleDB query performance, connection pool, and hypertable sizes \\
-        Cloud      & Protocol Adapter      & Protocol adapter request rates, Kafka flush performance, and in-flight requests \\
-        Kafka      & Kafka                 & Broker health, topic throughput, consumer lag, and partition distribution \\
-        Edge       & Edge Node             & Edge \gls{CPU}, memory, processing rates, SQLite buffer depth, and cloud sync status \\
-        Comparison & Edge vs Cloud         & Side-by-side comparison of processing latency and resource usage between edge and cloud \\
+        Cloud           & System Overview       & Service health, uptime, and request rates                                               \\
+        Cloud           & Throughput \& Latency & Message throughput and latency percentiles (p50, p95, p99) across pipeline stages       \\
+        Cloud           & Resource Usage        & Per-container \gls{CPU}, memory, and network metrics from cAdvisor                      \\
+        Cloud           & Database              & TimescaleDB query performance, connection pool, and hypertable sizes                    \\
+        Cloud           & Protocol Adapter      & Protocol adapter request rates, Kafka flush performance, and in-flight requests         \\
+        Kafka           & Kafka                 & Broker health, topic throughput, consumer lag, and partition distribution               \\
+        Edge            & Edge Node             & Edge \gls{CPU}, memory, processing rates, SQLite buffer depth, and cloud sync status    \\
+        Comparison      & Edge vs Cloud         & Side-by-side comparison of processing latency and resource usage between edge and cloud \\
         \hline
     \end{tabular}
 \end{table}

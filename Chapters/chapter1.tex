@@ -36,7 +36,7 @@ To address these challenges, cloud architectures, allied to edge computing, prov
 that allow efficient data collection, seamless device integration, and powerful
 computational resources.
 
-Additionally, \gls{IoT} systems have been relying more and more on \gls{AI} and \gls{ML} for
+\gls{IoT} systems have also been relying more and more on \gls{AI} and \gls{ML} for
 anomaly detection and predictive analytics, yet deploying complex \gls{AI}
 models to resource-constrained \gls{IoT} devices remains a complex process.
 
@@ -59,21 +59,49 @@ adapt to diverse anomaly detection scenarios, and supports integration with
 \gls{AI}/\gls{ML}.
 \section{Proposed Solution}
 
-The goal of this project is to develop and document a robust and scalable
-\gls{IoT} backend platform that interacts with \gls{IoT} devices for monitoring and
-surveillance. These devices are programmed to detect a variety of different
-anomalies, like equipment failures, building alarms, and traffic violations.
+The proposed solution is an open cloud-based \gls{IoT} platform for monitoring
+and surveillance, complemented by an edge node for sites with unstable cloud
+connectivity. It targets scenarios where heterogeneous devices send telemetry
+continuously, abnormal conditions must be detected with low latency, and
+operators need access to both live and historical system data. Typical
+examples include equipment monitoring, building alarms, environmental sensing,
+and traffic supervision.
 
-The platform was developed using cloud and edge computing, ensuring
-scalability, flexibility, and offline resilience. The cloud infrastructure provides centralized data storage, analytics, and user-facing services, while an edge node deployed on a Raspberry Pi enables local telemetry processing and rule evaluation during network outages. The data received from the devices is stored
-in the adequate database system.
+The platform supports five user goals: monitoring devices in real time,
+automating anomaly detection, reviewing and acknowledging alerts,
+investigating device history, and continuing monitoring during temporary loss
+of cloud connectivity. To support these goals, it provides user
+authentication, device registration and provisioning, and telemetry ingestion
+over \gls{MQTT}, \gls{HTTP}, and \gls{CoAP}. It also accepts binary file
+uploads, discovers new telemetry fields automatically, supports rule-based and
+statistical anomaly detection, and provides live dashboards, historical
+queries, and configurable notifications.
 
-Additionally, the platform will be extensible, allowing the integration of new
-modules like \gls{ETL} for \gls{IoT}, big data analytics, business intelligence,
-and \gls{AI}/\gls{ML}.
+The solution combines cloud services with local edge processing. In the cloud,
+the platform offers centralized ingestion, storage, analytics, and web access
+through an event-driven microservice architecture. At the edge, a local node
+can ingest telemetry, evaluate the monitoring rules required for local
+operation, store telemetry and alerts, and synchronize buffered data with the
+cloud after connectivity is restored. This design addresses sites where
+permanent cloud access cannot be assumed.
 
-Other modules, for example, monitoring and alarm modules, can also be added, as
-well as rule engines.
+The main non-functional goals of the platform are low-latency monitoring,
+support for heterogeneous payload structures, extensibility, offline
+resilience, independent scaling of backend components, secure access for users
+and devices, and preservation of telemetry and alert data during temporary
+failures. These goals motivate the use of event-driven communication, which
+allows new processing services, such as \gls{ETL}, business intelligence, or
+\gls{AI}/\gls{ML} modules, to be added without changing the main ingestion
+flow.
 
-This project will also include the development of a simple IoT device and a
-frontend web page for testing purposes.
+\section{Dissertation Outline}
+
+This dissertation is organized into six chapters.
+
+\begin{description}
+	\item[Chapter~\ref{cha:State-Of-The-Art} -- State of the Art] reviews \gls{IoT} platforms, covering communication protocols, architectural patterns, edge computing, data storage, and related platforms. It identifies the gaps and limitations that motivate the design decisions in the following chapters.
+	\item[Chapter~\ref{cha:ArchitectureAndDesign} -- Design and Architecture] defines the use cases, functional and non-functional requirements, and the overall system architecture. It describes the five-layer design, the event-driven communication model, the read-write path separation, the edge node architecture, and the data model.
+	\item[Chapter~\ref{cha:Implementation} -- Implementation] details how the platform was built. It covers the technology stack, the backend service organization, deployment with Docker Compose, the security model, the database schema definitions, the implementation of each backend service and the edge node, the web application, and the observability stack.
+	\item[Chapter~\ref{cha:Evaluation} -- Experimental Results and Evaluation] evaluates the platform through five experiments: a baseline performance study across three ingestion protocols, a horizontal scaling study on the \gls{MQTT} path, an offline resilience test, an extensibility validation with a Python vision service, and a device heterogeneity test with a real Raspberry Pi sensor.
+	\item[Chapter~\ref{cha:Conclusions} -- Conclusions and Future Work] summarizes the main results, discusses the challenges encountered, and identifies directions for future work.
+\end{description}

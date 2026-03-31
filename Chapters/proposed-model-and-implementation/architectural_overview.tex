@@ -10,7 +10,7 @@
 The following section describes the architecture of the proposed platform, designed to satisfy the requirements defined in Section~\ref{sec:RequirementsSpecification}. It begins with a high-level overview of the system, followed by the communication model and the separation of read and write paths. Each service is designed to run as an independent containerized process, communicating only through the network and discovering dependencies by name. This enforces service boundaries at the infrastructure level and makes the platform portable across deployment environments. For experimental evaluation, all containers run on a single server using Docker Compose, but the same containers could be distributed across multiple servers under an orchestrator without changes to the application code. The platform also includes a built-in monitoring stack for observability across both cloud and edge components, described in Section~\ref{sec:ProposedModelObservabilityAndMonitoring}. Production-grade concerns such as high availability, broker clustering, secret management, and multi-tenancy are explicitly outside the scope of this work.
 
 \subsection{High-Level Architecture}
-The platform is organized into five layers, each with a distinct responsibility, as illustrated in Figure~\ref{fig:high-level-architecture}. This structure supports real-time processing (NFR01), extensibility (NFR03), and independent scalability (NFR05) by isolating concerns into loosely coupled components connected through asynchronous event-driven communication.
+The platform is organized into five layers, each with a distinct responsibility, as illustrated in Figure~\ref{fig:high-level-architecture}. This structure supports low-latency live monitoring (NFR01), extensibility (NFR03), and independent scalability (NFR05) by isolating concerns into loosely coupled components connected through asynchronous event-driven communication.
 
 The external layer represents two categories of clients that interact with the platform: \gls{IoT} devices and the web application. \gls{IoT} devices publish telemetry using \gls{MQTT} by connecting to either the edge or cloud \gls{MQTT} broker, or using \gls{HTTP}, or \gls{CoAP} via a Protocol Adapter Service in the communication layer. Devices can also upload binary files through the Protocol Adapter's \gls{HTTP} endpoint. The web application communicates over \gls{HTTP} and WebSockets.
 
@@ -20,15 +20,15 @@ The communication layer contains all the components responsible for routing mess
 
 The \gls{MQTT}-Kafka bridge is responsible for translating and forwarding \gls{MQTT} messages to the Kafka broker, which handles all communication between the backend microservices. Grouping these components into a single layer reflects their shared purpose: they route, translate, or distribute messages without implementing business logic.
 
-The backend services layer contains all of the platform's business logic and consists of five microservices each with its own responsibility: the Ingestion Service, the Analytics Service, the Notifications Service, the Read Service, and the Authentication Service. The Authentication Service acts as the identity provider for the platform.
+The backend services layer contains the platform's domain logic and consists of seven microservices with clearly separated responsibilities: the Authentication Service, the Ingestion Service, the Metadata Service, the Storage Service, the Analytics Service, the Notifications Service, and the Read Service. The Authentication Service acts as the identity provider for the platform. The Ingestion Service transforms incoming telemetry into a normalized event stream. The Metadata Service discovers device keys from that stream. The Storage Service persists telemetry and alerts. The Analytics Service evaluates rules and anomaly detectors. The Notifications Service sends email alerts, and the Read Service serves queries and real-time delivery.
 
-The storage layer consists of a TimescaleDB database, a Redis instance, and a MinIO object store. TimescaleDB stores both time-series telemetry data and metadata such as users, devices, rules, and alerts. Multiple backend services read from and write to the same database. A Redis instance provides caching for the backend microservices. MinIO provides S3-compatible object storage for binary files uploaded by devices, keeping large objects out of the time-series database.
+The storage layer consists of a TimescaleDB database, a Redis instance, and a MinIO object store. TimescaleDB stores telemetry, alert history, and the platform's relational metadata, including users, devices, rules, anomaly detector configurations, and notification preferences. Database access follows service ownership boundaries. The Storage Service owns the high-volume telemetry and alert writes, the Read Service performs read-only queries, and the remaining services write only the control-plane data that belongs to their own domains. Redis provides caching for the backend microservices. MinIO provides S3-compatible object storage for binary files uploaded by devices, keeping large objects out of the time-series database.
 
 Data flows mainly from the external layer to the storage layer, in a top to bottom direction, however, there are two exceptions: messages between services flow back up to the communication layer through Kafka, and the Read Service sends real-time data directly to the external layer over WebSockets.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[height=0.65\textheight, keepaspectratio]{Chapters/Figures/Architectures/high-level-architecture.pdf}
+    \includegraphics[width=\textwidth, keepaspectratio]{Chapters/Figures/Architectures/high-level-architecture.pdf}
     \caption{High-level architecture of the proposed IoT platform.}
     \label{fig:high-level-architecture}
 \end{figure}
@@ -38,11 +38,11 @@ The platform relies on three communication patterns: request-response, continuou
 No matter which protocol a device uses, the data is turned into Kafka events before being processed.
 
 Event-driven communication sits at the core of this architecture, since it is the only way backend services talk to each other.
-In the event-driven communication, producers emit events to a topic without knowing which or how many consumers will consume them. Consumers subscribe to topics independently and process events at their own pace, with the broker mediating all communication. This contrasts with synchronous approaches, where the caller must know the receiver's address and wait for a response, creating a direct dependency between the two. By removing this dependency, the platform satisfies the extensibility requirement (NFR03), as new features can be introduced by subscribing to existing topics, and the scalability requirement (NFR05), as each service scales independently without blocking the others. The non-blocking nature of asynchronous communication also satisfies the real-time processing requirement (NFR01), by allowing a second event to be sent before the first one finishes being processed.
+In the event-driven communication, producers emit events to a topic without knowing which or how many consumers will consume them. Consumers subscribe to topics independently and process events at their own pace, with the broker mediating all communication. This contrasts with synchronous approaches, where the caller must know the receiver's address and wait for a response, creating a direct dependency between the two. By removing this dependency, the platform satisfies the extensibility requirement (NFR03), as new features can be introduced by subscribing to existing topics, and the scalability requirement (NFR05), as each service scales independently without blocking the others. The non-blocking nature of asynchronous communication also supports the low-latency monitoring goal in NFR01, because telemetry can move through the pipeline without waiting for each consumer to finish before the next event is accepted.
 
 Kafka was chosen as the message broker because its log-based model fits the platform's needs well. Kafka stores events in an append-only log and lets each consumer track its own position. This means multiple services can read the same topic independently and at their own speed, which is exactly what the fan-out pattern requires. Traditional message brokers like RabbitMQ delete messages after a consumer acknowledges them, so serving multiple consumers from the same queue requires explicit routing rules for each one. With Kafka, adding a new consumer is just a matter of creating a new consumer group, and no changes to existing services or broker configuration are needed. Kafka also retains events after they have been consumed, so if a consumer crashes or restarts, it picks up where it left off without losing data.
 
-Messages in Kafka are organized into topics, and the platform defines nine topics, summarized in Table~\ref{tab:kafka-topics}.
+Messages in Kafka are organized into topics, and the platform defines ten topics, summarized in Table~\ref{tab:kafka-topics}.
 
 \begin{table}[htbp]
     \centering
@@ -52,17 +52,18 @@ Messages in Kafka are organized into topics, and the platform defines nine topic
     \rowcolors{2}{gray!8}{}
     \begin{tabularx}{\textwidth}{l l X X}
         \toprule
-        \textbf{Topic} & \textbf{Purpose} & \textbf{Producer(s)} & \textbf{Consumer(s)} \\
+        \textbf{Topic}                 & \textbf{Purpose}             & \textbf{Producer(s)}                & \textbf{Consumer(s)}                                               \\
         \midrule
-        \texttt{telemetry.raw}         & Raw device telemetry         & MQTT-Kafka Bridge, Protocol Adapter  & Ingestion Service \\
-        \texttt{telemetry.events}      & Normalized telemetry         & Ingestion Service         & Analytics, Read, Ingestion Service \\
-        \texttt{telemetry.normalized}  & Pre-normalized edge data     & MQTT-Kafka Bridge                    & Ingestion Service \\
-        \texttt{alerts.events}         & Generated alerts             & Analytics Service         & Read, Notifications Service \\
-        \texttt{alerts.from-edge}      & Edge-generated alerts        & MQTT-Kafka Bridge                    & Analytics Service \\
-        \texttt{device.registered}     & Device registration events   & Authentication Service    & Read Service \\
-        \texttt{alerts.dlq}            & Failed alert Kafka emissions & Analytics Service         & Analytics Service \\
-        \texttt{file.uploads}           & Device file upload metadata  & Protocol Adapter          & -- \\
-        \texttt{telemetry.dlq}         & Failed telemetry processing  & Ingestion Service         & Ingestion Service \\
+        \texttt{telemetry.raw}         & Raw device telemetry         & MQTT-Kafka Bridge, Protocol Adapter & Ingestion Service                                                  \\
+        \texttt{telemetry.events}      & Normalized telemetry         & Ingestion Service                   & Analytics Service, Read Service, Metadata Service, Storage Service \\
+        \texttt{telemetry.normalized}  & Pre-normalized edge data     & MQTT-Kafka Bridge                   & Ingestion Service                                                  \\
+        \texttt{alerts.events}         & Generated alerts             & Analytics Service                   & Read Service, Notifications Service, Storage Service               \\
+        \texttt{alerts.from-edge}      & Edge-generated alerts        & MQTT-Kafka Bridge                   & Analytics Service                                                  \\
+        \texttt{device.registered}     & Device registration events   & Authentication Service              & Read Service                                                       \\
+        \texttt{alerts.dlq}            & Failed alert Kafka emissions & Analytics Service                   & Analytics Service                                                  \\
+        \texttt{file.uploads}          & Device file upload metadata  & Protocol Adapter                    & --                                                                 \\
+        \texttt{telemetry.dlq}         & Failed telemetry processing  & Ingestion Service                   & Ingestion Service                                                  \\
+        \texttt{telemetry.storage.dlq} & Failed storage inserts       & Storage Service                     & Storage Service                                                    \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -76,10 +77,10 @@ Despite its advantages, the event-driven model has tradeoffs. Consumers process 
 \subsection{Read Path vs Write Path Separation}
 For the high-throughput telemetry and alert data flow, the platform separates write and read responsibilities into distinct services, applying a lightweight form of the \gls{CQRS} pattern. Both paths share the same TimescaleDB instance, but different services handle each side.
 
-The write path is event-driven: the Ingestion Service normalizes telemetry and a separate consumer persists it to the database, while the Analytics Service persists alert snapshots and emits events for downstream processing.
+The write path is event-driven. The Ingestion Service consumes raw telemetry, normalizes it, and republishes edge-normalized telemetry to the shared \texttt{telemetry.events} stream. The Metadata Service consumes that stream to register newly discovered device keys. The Storage Service consumes the same stream to persist telemetry to TimescaleDB. The Analytics Service also consumes \texttt{telemetry.events}, evaluates rules and anomaly detectors, and emits alert events to \texttt{alerts.events}. The Storage Service then consumes \texttt{alerts.events} to persist alert snapshots, while the Read and Notifications Services consume the same topic for delivery.
 
 The read path is handled by the Read Service, which is the single query endpoint for the platform. All its database interactions are read-only, covering telemetry queries, alert history, rule listings, and device listings.
 
-This separation satisfies the real-time processing (NFR01) and scalability (NFR05) requirements, as a spike in telemetry ingestion does not affect query performance for web application users, since the write and read workloads run in independent services.
+This separation supports the low-latency monitoring goal in NFR01 and the scalability goal in NFR05, as a spike in telemetry ingestion does not affect query performance for web application users, since the write and read workloads run in independent services.
 
-Other database writes, such as creating rules, registering devices, or acknowledging alerts, are low-volume operations that follow a standard request-response pattern. Each service handles the writes for its own domain, outside of this read-write separation.
+Other database writes, such as registering devices, creating rules, updating anomaly detector settings, or acknowledging alerts, are lower-volume operations that follow a standard request-response pattern. Each service handles the writes for its own domain, outside of this high-throughput read-write separation.

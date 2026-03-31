@@ -13,7 +13,7 @@
 
 This chapter provides a view of the state-of-the-art of \gls{IoT} platforms
 as well as web development technologies and connection with \gls{IoT} devices.
-It starts by addressing how \gls{IoT} impacts monitoring and surveillance and how it's
+It starts by addressing how \gls{IoT} impacts monitoring and surveillance and how it is
 possible to detect alarm situations with \gls{IoT} systems. Then it presents an overview on system architectures and compares common
 architecture patterns. After that, the backend development is addressed along with
 its frameworks, followed by a section dedicated to communication and security.
@@ -31,6 +31,14 @@ like traffic management, public safety, and environmental monitoring \cite{sharm
 illustrates how \gls{IoT} systems can be applied to smart cities, from public
 security to entertainment.
 
+This figure also shows why smart-city monitoring is challenging. A single
+platform may need to combine data from cameras, traffic sensors,
+environmental sensors, and other devices that use different technologies and
+produce different data formats. To support anomaly detection and operational
+response, the platform must process this heterogeneous data and help coordinate
+actions such as traffic regulation, incident handling, and public-space
+monitoring.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth, height=0.5\textheight, keepaspectratio]{Chapters/Figures/Monitoring/SmartCities.png}
@@ -40,8 +48,11 @@ security to entertainment.
 
 Agriculture can also benefit from these systems. Figure \ref{fig:monitoring:smartagriculture}
 shows an example of how \gls{IoT} can be used to monitor information like
-temperature, humidity, soil analysis, and ilumination. At the same time, the
+temperature, humidity, soil analysis, and illumination. At the same time, the
 agricultural area is being surveilled through a camera \cite{hengko_smart_agriculture}.
+These measurements help assess plant well-being and soil state, making it
+easier to decide when irrigation, ventilation, shading, or other interventions
+are needed.
 
 \begin{figure}[H]
 	\centering
@@ -108,12 +119,12 @@ Random forests are composed of multiple decision trees and use their data
 for ensemble learning, where multiple models work together to improve the
 overall performance. \cite{Zhang2022}
 
-Lastly, deep learning models utilize neural networks with multiple layers
+Lastly, deep learning models use neural networks with multiple layers
 to detect complex patterns in data. Techniques such as autoencoders, \gls{RNNs},
 \gls{LSTM} networks, and \gls{CNNs} are effective in detecting anomalies \cite{BHAROT2024574}.
 
 \subsubsection{Frameworks}
-Selecting the appropriate framework is crucial for implementing these models
+Selecting the appropriate framework is important for implementing these models
 effectively. Table \ref{tab:ai-ml:frameworks}
 compares some of the most popular frameworks in the \gls{IoT} context.
 
@@ -156,26 +167,26 @@ One challenge is the data imbalance.
 Anomalies are rare, and synthetic data generation may be needed to train
 the model.
 
-Another problem is that in the beginning, there's a low amount of data to
+Another problem is that in the beginning, there is a low amount of data to
 train the model.
 
-Lastly, there's the need to adapt to model drift as sensor behavior
+Lastly, there is the need to adapt to model drift as sensor behavior
 changes over time.
 
 \section{System Architecture Patterns}
 Designing an IoT event management platform relies heavily on the underlying
 system architecture. The architecture choice affects performance, scalability,
 fault tolerance, and the ability to process real-time data effectively. This
-section explores several architectural patterns, from the simplest---monolithic---to
-more complex ones that can be relevant for IoT---microservices,
-event-driven, serverless, and edge computing---each one with distinct
+section explores several architectural patterns, from the simplest (monolithic) to
+more complex ones that can be relevant for IoT, such as microservices,
+event-driven, serverless, and edge computing, each one with distinct
 advantages and challenges. Understanding these models provides a foundation for
-building the best architecture for robust IoT-system monitoring and anomaly
+building the best architecture for reliable IoT-system monitoring and anomaly
 detection systems.
 
 \subsection{Monolithic Architecture}
-A monolithic architecture is a software design pattern in which all parts---such
-as the \gls{UI}, business logic, and data access layers---are tightly
+A monolithic architecture is a software design pattern in which all parts, such
+as the \gls{UI}, business logic, and data access layers, are tightly
 coupled and deployed together as a single unit \cite{7436659}. This
 was the most popular approach for decades due to how simple it is, especially in
 the early stages of software development.
@@ -213,10 +224,10 @@ pipelines must coordinate multiple services.
 For bigger architectures, this solution might not be adequate as several
 challenges appear as applications grow in size and complexity.
 Scaling a monolithic system can be much harder when
-compared with other modular architectures. Let's say that hypothetically,
+compared with other modular architectures. Suppose that hypothetically,
 an application is composed of three modules. One is in constant
 overload and needs to be scaled with urgency, the second has some peaks of
-usage but doesn't require scaling, and the third is barely used and
+usage but does not require scaling, and the third is barely used and
 could be adjusted to use fewer resources. In an architecture where these
 modules are separated, for example, in three services, scaling publishers is
 efficient, and we can scale up the first service and scale down the third.
@@ -231,7 +242,7 @@ an architecture where dependencies between the system's elements are unclear,
 slowing the development process and making maintenance a hard and continuous
 process \cite{7333476}.
 
-Additionally, every change in the codebase requires the whole application to be
+Every change in the codebase also requires the whole application to be
 redeployed, increasing the risk of downtime and complicating release cycles. If
 an error is deployed to the public environment, it can cause the whole system
 to go down, while in modular systems, if a problem is deployed in one of the
@@ -242,7 +253,7 @@ Monoliths also suffer from a lack of flexibility. Since all of the application's
 logic resides in a single codebase, it will likely be enforced that everything
 should be developed using a uniform technology stack. In architectures that
 have the application divided into modules, it is possible for each module to have
-its own technology stack, which can facilitate the development of some specific
+its own technology stack, which can simplify the development of some specific
 features that are easier to do with specific technologies \cite{IBMMonolith}.
 \subsection{Microservices Architecture}
 The microservices architecture is a system design pattern that divides an
@@ -252,7 +263,7 @@ In this solution, the modules communicate between each other through
 synchronous communications using \gls{API}s based on technologies like
 \gls{HTTP}, \gls{gRPC}, or GraphQL, or through asynchronous communication,
 adopting tools like message brokers or event streaming platforms \cite{7436659}.
-The structure of a microservices application is depicted in \ref{fig:architectures:microservices}.
+The structure of a microservices application is depicted in Figure~\ref{fig:architectures:microservices}.
 In this example, the architecture is composed of a \gls{UI}, on the left,
 that communicates with the three different microservices via their \gls{API}s.
 Each microservice (the three blocks in the middle), in this case, communicates
@@ -325,8 +336,8 @@ this intermediary until they are processed, reducing the probability of
 losing data \cite{AWSEventDriven}.
 
 Another advantage is that, by decoupling producers from subscribers, a new
-consumer can be added and subscribe to existing events. This doesn't require
-any change in the producer in order to work, which facilitates the extension of
+consumer can be added and subscribe to existing events. This does not require
+any change in the producer in order to work, which makes it easier to extend
 the system \cite{MicrosoftEventDriven}.
 
 Lastly, despite what was said above about the events not needing to be processed
@@ -348,7 +359,7 @@ Observability tools are essential to diagnose problems \cite{manchana2021event}.
 Serverless architecture is a solution where the cloud provider manages all the
 server infrastructure, scaling, and maintaining it automatically as needed.
 Serverless applications are made of event-driven stateless functions that run
-only when needed. This functions are triggered
+only when needed. These functions are triggered
 through events like \gls{API} calls, database changes, message queues or
 \gls{IoT} events and shutdown after execution, making this a highly efficient
 solution\cite{s21030928}.
@@ -373,7 +384,7 @@ significantly bigger than normal \cite{GoogleServerless}.
 On top of that, unlike servers, which are usually paid by uptime, serverless functions are
 typically paid per execution, reducing costs when the application is idle.
 
-Another advantage is that since the developers don't need to handle all the infrastructure management,
+Another advantage is that since the developers do not need to handle all the infrastructure management,
 they can focus entirely on the code, usually resulting in improvements in
 productivity and code quality \cite{GoogleServerless}.
 
@@ -405,15 +416,15 @@ preprocess the data and, after that, send the data to a cloud server.
 \end{figure}
 
 Edge architectures have some advantages, especially in the context of IoT systems.
-Since there's no need to access a server, it allows for real-time decisions
-in systems like self-driving cars or industrial automation. When there's
+Since there is no need to access a server, it allows for real-time decisions
+in systems like self-driving cars or industrial automation. When there is
 still data being sent to a server, the data can be processed and filtered
 locally before being sent, reducing bandwidth usage \cite{s20226441}.
 
-It's also a reliable choice because it can operate offline by storing data
+It is also a reliable choice because it can operate offline by storing data
 locally until the connection is restored \cite{MicrosoftEdgeComputing}.
 
-Additionally, it enhances data privacy, as sensitive information, such as biometric data,
+It also enhances data privacy, as sensitive information, such as biometric data,
 can be kept on the device rather than being transmitted to the cloud \cite{MicrosoftEdgeComputing}.
 
 Despite the advantages, edge devices are usually constrained in processing power
@@ -428,21 +439,21 @@ their place in the software industry.
 
 Monolithic systems are a great choice for simpler and smaller applications.
 Startups and small businesses usually start by implementing this solution as
-its infrastructure is very simple, and it's relatively fast to have an initial
+its infrastructure is very simple, and it is relatively fast to have an initial
 functional product. This architecture is often used as a starting point, and
-eventually, as the application grows, it's migrated to more complex architectures.
+eventually, as the application grows, it is migrated to more complex architectures.
 Examples of real-world applications are basic e-commerce platforms, content
 management systems, and small desktop applications.
 
 Microservices architectures have become the go-to solution for more complex
-systems. It's widely used in bigger e-commerce applications where the application
+systems. It is widely used in bigger e-commerce applications where the application
 is divided into several microservices like user authentication, payment processing,
 shipping processing, etc. Streaming platforms like Netflix also tend to use this
 solution, dividing the application into services for content recommendation, user
 preferences, subscription handling, etc.
 
 The event-driven architecture shines in products where real-time
-responsiveness is crucial. It's widely used in \gls{IoT} systems, in
+responsiveness is crucial. It is widely used in \gls{IoT} systems, in
 applications like industrial monitoring, home automation, and environmental
 sensing, where \gls{IoT} devices send events to be processed in real-time.
 E-commerce platforms can also use event-driven architecture for
@@ -454,10 +465,10 @@ like backend applications, real-time data processing, and \gls{IoT} event handli
 there are periods with spikes and others with low usage.
 
 Lastly, edge architectures are great for applications that require low-latency
-real-time processing. It's widely used in \gls{IoT} systems in industrial
-automation or autonomous vehicles, where real-time decisions are crucial.
+real-time processing. It is widely used in \gls{IoT} systems in industrial
+automation or autonomous vehicles, where real-time decisions are critical.
 
-It's also common to mix different architectures in the same system using
+It is also common to mix different architectures in the same system using
 hybrid solutions. E-commerce platforms, for example, are referenced above in
 multiple architectures, as these platforms can use microservices for processing
 payments or user authentication and event-driven architecture to process orders.
@@ -479,19 +490,21 @@ a variety of languages. In the following sections, some of the most used
 frameworks will be discussed.
 \subsubsection{Express}
 Express is a minimalist and lightweight web application framework for Node.js,
-designed to simplify server-side development. It's characterized by being
+designed to simplify server-side development. It is characterized by being
 fast and unopinionated, which means that it is flexible in the way you implement
 things.
-In Express, it's possible to stack functions (middlewares) to handle \gls{HTTP}
+
+In Express, it is possible to stack functions (middlewares) to handle \gls{HTTP}
 requests sequentially, allowing custom logic to be easily integrated.
-Routing using this framework is straightforward. It's very simple to define
+Routing using this framework is straightforward. It is very simple to define
 paths and associate handlers. On top of that, Express allows the grouping of
 routes into distinct modules, improving code organization.
 Although this framework is mostly seen as a backend solution, it supports
 integration with various template engines like \gls{EJS}, Pug, and Handlebars,
 providing a way to render dynamic \gls{HTML} pages.
+
 Despite having a simple and clean approach to the development of \gls{REST} \gls{API}s,
-this framework lacks built-in features. Express doesn't provide features like
+this framework lacks built-in features. Express does not provide features like
 dependency injection, user authentication, database integration, or input
 validation, which all need to be implemented using third-party libraries.
 By being an unopinionated solution, it lacks structure, increasing the effort
@@ -531,10 +544,15 @@ applications.
 Due to its structured approach, it can be a great choice for more complex
 applications, especially applications with microservices or event-driven
 architectures.
+
+A typical use case for NestJS is a TypeScript backend that exposes \gls{REST}
+\gls{API}s while also consuming events from technologies such as Kafka or
+\gls{MQTT} in a modular microservice architecture.
+
 \subsubsection{Java Spring}
 Spring is the most popular framework for building complex and robust
-applications using Java. It's a great solution for developing scalable and secure
-applications. It's one of the most complete backend frameworks, having features
+applications using Java. It is a great solution for developing scalable and secure
+applications. It is one of the most complete backend frameworks, having features
 like dependency injection and extensions for developing \gls{REST} \gls{API}s and
 microservices \cite{GFGJava}.
 
@@ -550,7 +568,7 @@ Spring also includes support for testing tools like JUnit and Mockito.
 
 Applications developed in spring are easily scalable due to Spring's modular
 design.
-It's a very flexible solution handling every type of architecture, from
+It is a very flexible solution handling every type of architecture, from
 monoliths to microservices.
 
 On the other side, just like NestJS, Spring has a steeper learning curve when
@@ -560,12 +578,16 @@ experienced developers.
 On top of that, configuring Spring is a complex task that requires significant
 boilerplate code and \gls{XML} configuration. This effort can be reduced with Spring
 Boot.
-Another downside of this framework is that it's a heavy framework and
+Another downside of this framework is that it is a heavy framework and
 requires higher resources to run when compared with other lightweight solutions.
+
+A typical use case for Spring is an enterprise backend that must combine
+\gls{REST} \gls{API}s, strong security controls, and integration with several
+internal services.
 
 \subsubsection{ASP.NET Core}
 ASP.NET Core is an open-source framework developed and maintained by Microsoft.
-It's a high-performance framework designed for scalability and modularity and
+It is a high-performance framework designed for scalability and modularity and
 widely used for developing complex web applications \cite{ASPMicrosoft}.
 
 Contrary to all the other frameworks mentioned above, this framework can be
@@ -581,7 +603,7 @@ authentication and authorization, supporting common protocols like \gls{JWT} or 
 It also includes other security features like prevention against cross-site
 scripting attacks or data protection \cite{ASPMicrosoft}.
 
-Despite being mainly a backend framework, it's also possible to develop the
+Despite being mainly a backend framework, it is also possible to develop the
 frontend using this framework. Features like Razor Pages, \gls{MVC}, or Blazor allow
 some limited frontend capabilities \cite{ASPMicrosoft}.
 
@@ -595,11 +617,49 @@ Like other frameworks already mentioned, developers that are new to this
 technology may also face a steep learning curve, mainly regarding advanced
 features like dependency injection and middleware pipelines.
 
-Additionally, setting up the middleware pipeline and dependency injection can be a complex
+Setting up the middleware pipeline and dependency injection can also be a complex
 process.
 
 This framework can be a great choice for large-scale systems but overwhelming
 for smaller projects.
+
+A typical use case for ASP.NET Core is a high-performance web backend in an
+organization that already relies on the Microsoft ecosystem and needs strong
+support for authentication, middleware, and scalable deployment.
+
+Table~\ref{tab:backend-framework-synthesis} summarizes the main
+characteristics of the backend frameworks discussed above.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Synthesis of backend framework characteristics.}
+	\label{tab:backend-framework-synthesis}
+	\renewcommand{\arraystretch}{1.15}
+	\footnotesize
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.7cm}}
+		\toprule
+		\textbf{Framework} & \textbf{Typical Ecosystem} & \textbf{Main Strengths} & \textbf{Main Trade-Off} & \textbf{Best Fit} \\
+		\midrule
+		Express & Node.js and JavaScript & Lightweight routing, flexible middleware composition, and low entry barrier & Few built-in features and limited architectural guidance & Small-to-medium backends, prototypes, and custom \gls{REST} \gls{API}s \\
+		NestJS & Node.js and TypeScript & Strong modular structure, dependency injection, and native support for event-driven and microservice patterns & More opinionated and heavier than simpler Node.js frameworks & TypeScript backends with clear module boundaries and broker integration \\
+		Spring & Java ecosystem & Mature ecosystem, strong security support, rich integration options, and modular design & Higher complexity, steeper learning curve, and higher resource use & Enterprise services with strict security and integration requirements \\
+		ASP.NET Core & .NET ecosystem & High performance, strong tooling, modular middleware pipeline, and built-in security support & Can be complex for small systems with limited scope & Scalable web platforms in Microsoft-oriented environments \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+In this context, framework selection should be guided mainly by the system
+requirements. The main criteria are the intended architecture, the level of
+modularity required, the availability of built-in support for security and
+inter-service communication, the expected system scale, and the desired balance
+between flexibility and structure. Express is better suited to simpler
+backends or cases where the architecture is assembled manually. NestJS is more
+appropriate when a TypeScript system benefits from clear module boundaries and
+support for event-driven communication. Spring and ASP.NET Core fit better in
+larger systems that require mature security features, stronger integration
+support, and more complete application frameworks. As a secondary practical
+factor, prior knowledge of the language and ecosystem can also reduce
+implementation effort and development risk.
 
 \section{Communication and Security}
 Both communication and security are very important parts of any system.
@@ -623,17 +683,17 @@ a safe transmission between clients, implementing authentication and
 authorization features, and routing the messages from the publishers to
 the respective subscribers. The clients are every application that
 communicates with the broker, being either a publisher or a subscriber.
-It's commonly used in resource-constrained systems like IoT systems because
-it's easy to implement and requires low bandwidth \cite{Jayapal2019, CommunicationProtocols}.
+It is commonly used in resource-constrained systems like IoT systems because
+it is easy to implement and requires low bandwidth \cite{Jayapal2019, CommunicationProtocols}.
 
 \gls{AMQP} is another message protocol just like \gls{MQTT}.
 Despite being similar, these protocols have some differences. While \gls{MQTT} is
 focused on simplicity and low-bandwidth communication, \gls{AMQP} is optimized for
-more complex systems, providing robust and reliable message queuing and
+more complex systems, providing reliable message queuing and
 routing and introducing concepts like exchanges and queues \cite{CommunicationProtocols}.
 
 \gls{CoAP} is an \gls{HTTP}-based protocol optimized for resource-constrained
-environments, such as \gls{IoT} systems. It's built on \gls{UDP} instead of \gls{TCP},
+environments, such as \gls{IoT} systems. It is built on \gls{UDP} instead of \gls{TCP},
 resulting in a lightweight and faster solution.
 This protocol follows the \gls{REST}ful design, providing resources under a \gls{URL}
 using methods like GET, POST, PUT, and DELETE. Due to its similarity with
@@ -641,30 +701,30 @@ using methods like GET, POST, PUT, and DELETE. Due to its similarity with
 with \gls{HTTP} using proxies\cite{coap, Jayapal2019}.
 
 \subsection{Communication between Frontend and Backend}
-The backend is where all the business logic relies, and it's what provides the frontend
+The backend is where all the business logic relies, and it is what provides the frontend
 the data for it to display to the end user. Effective communication between
-these two parts is crucial for a well-designed system.
+these two parts is important for a well-designed system.
 \subsubsection{Protocols}
 There are many protocols that can be used to transmit data between the frontend
 and the backend.
 
 \gls{HTTP} is the most widely used protocol. It works on a
 request-response model, where the client sends the request and the server
-responds. It's a stateless, meaning each request is independent and doesn't
-affect the others. It's commonly used for fetching \gls{HTML}, images, videos,
+responds. It is a stateless, meaning each request is independent and does not
+affect the others. It is commonly used for fetching \gls{HTML}, images, videos,
 and other resources over the internet. \gls{HTTPS} is the same as \gls{HTTP}, but the
 data is encrypted using \gls{TLS} or \gls{SSL} \cite{CloudflareHTTP, CloudflareHTTPS}.
 
 WebSocket is a protocol designed for real-time bi-directional communication.
 It operates over \gls{TCP} and starts as an \gls{HTTP} connection which then changes to a
-WebSocket connection. Unlike \gls{HTTP}, it doesn't rely on requests, and both
+WebSocket connection. Unlike \gls{HTTP}, it does not rely on requests, and both
 parts can communicate at any time \cite{WebsocketRFC}.
 
 \gls{TCP} is a connection-oriented protocol that ensures reliability by
 establishing a connection via a three-way handshake, retrying lost
 packets, and ensuring data is received in the correct order.
 On the other side, \gls{UDP} is a connectionless protocol that sends data in
-independent packets. It doesn't guarantee delivery, order, or error
+independent packets. It does not guarantee delivery, order, or error
 correction. Because of this, \gls{UDP} is faster but less reliable \cite{al2018performance}.
 
 \subsection{APIs}
@@ -678,7 +738,7 @@ consumed using these protocols.
 These \gls{API}s' communications are stateless, meaning that each request must
 have all the information required for being processed.
 \gls{REST} \gls{API}s provide resources through unique \gls{URL}s associated with them, and
-each resource independent meaning that it doesn't depend on other
+each resource is independent, meaning that it does not depend on other
 requests. The transport protocol used by these \gls{API}s is \gls{HTTP} or \gls{HTTPS}\cite {9101226}.
 
 Another widely used API type is GraphQL.
@@ -693,9 +753,9 @@ real-time updates \cite{9101226}.
 \gls{gRPC} was developed by Google and can be seen as both a protocol and an
 \gls{API} type. With this protocol, both clients and servers can call
 functions on each other, just like if it was its own code.
-It's commonly used in microservices architectures and real-time applications \cite{newton2024benchmarking}.
+It is commonly used in microservices architectures and real-time applications \cite{newton2024benchmarking}.
 
-Despite \gls{SOAP} being defined as a protocol, it's more comparable to \gls{API}
+Despite \gls{SOAP} being defined as a protocol, it is more comparable to \gls{API}
 types since it runs on top of transport protocols like \gls{HTTP}, \gls{TCP}, or
 \gls{SMTP} (email).
 \gls{SOAP} is a lightweight protocol for exchanging structured data. It uses \gls{XML}
@@ -704,13 +764,12 @@ reliability and compatibility between systems \cite{newton2024benchmarking}.
 
 \subsection{Security}
 
-Security is a crucial part of any system, as it ensures the integrity of both
-the data and the system.
-
-When projecting the security in a system, some aspects need to be addressed.
+Security is an essential part of any system because it protects both the data
+and the system itself. When designing security, several aspects need to be
+addressed.
 
 One very common example is the authentication process.
-It's important that the component that does the request identify itself
+It is important that the component that does the request identify itself
 in a way that the other part can authenticate.
 In the case of \gls{IoT}-to-backend communication, \gls{IoT} devices must authenticate
 using approaches like token-based or certificate-based authentication \cite{schiller2022landscape}.
@@ -725,7 +784,7 @@ token. These tokens are stored in the client and sent in all of the
 following requests to the server. The access token is used to validate
 the access and has a short life span (usually around 15 minutes). When
 the access token expires, the refresh token is used to generate a new
-access token. The refresh token is valid for a longer period of time (tipically
+access token. The refresh token is valid for a longer period of time (typically
 one week).
 
 \begin{figure}[htbp]
@@ -742,24 +801,24 @@ For frontend-backend communication, this can be achieved using the \gls{HTTPS}
 protocol.
 For more sensitive applications, end-to-end encryption can be used \cite{schiller2022landscape}.
 
-Besides data encryption, it's also important to check data integrity.
-To ensure that data isn't changed during transmission, techniques like
+Besides data encryption, it is also important to check data integrity.
+To ensure that data is not changed during transmission, techniques like
 \gls{HMAC} can be used \cite{schiller2022landscape}.
 
-It's also important to control who can access each data.
+It is also important to control who can access each data.
 Some data may be restricted to a specific group of users, and therefore the
 system needs to check if the user that requests the data has
 authorization to get that data. Techniques like \gls{RBAC} can be used to
-prevent access to sensitive data from users that can't access it.
+prevent access to sensitive data from users that cannot access it.
 In the frontend-backend communication, \gls{CORS} policies can be used to
 restrict which origins can access the backend \gls{API}.
 
 Lastly, attacks like \gls{XSS}, \gls{SQL} Injection, or \gls{DoS} need to be prevented.
 In \gls{IoT} systems, the firmware must be updated regularly to prevent these
 attacks.
-\gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it's possible to enforce
+\gls{CSP} can be used to prevent \gls{XSS} attacks. For \gls{DoS}, it is possible to enforce
 rate limits and \gls{API} quotas. To prevent \gls{SQL} Injection, strategies like
-input sanitization or the use of an \gls{ORM} are essencial \cite{schiller2022landscape}.
+input sanitization or the use of an \gls{ORM} are essential \cite{schiller2022landscape}.
 
 \section{Database Systems}
 The storage and management of data is an essential part of \gls{IoT} platforms.
@@ -781,7 +840,7 @@ Relational databases organize data into tables with predefined schemas.
 These tables can have relationships of one to one, one to many, or many to many,
 defined using primary and foreign keys. Their transactions follow the \gls{ACID}
 properties, ensuring data
-consistency, integrity, and reliability. Additionally, they provide a way of
+consistency, integrity, and reliability. They also provide a way of
 doing complex querying through a query language called \gls{SQL}, making them
 a reliable choice for structured data requiring \gls{ACID} compliance \cite{bdcc7020097, Yadav2024}.
 Figure \ref{fig:databases:sql}
@@ -805,8 +864,7 @@ reliability \cite{bdcc7020097}.
 They also support complex queries, as the use of \gls{SQL} as a standard
 language allows complex queries with JOIN operations and nested queries for relational data analysis.
 
-Additionally, relational databases benefit from maturity, with robust tools being
-available for backup, replication, and access control, such as PostgreSQL and MySQL.
+Relational databases also benefit from maturity, with mature tools available for backup, replication, and access control, such as PostgreSQL and MySQL.
 
 However, relational databases also present some challenges.
 
@@ -860,7 +918,7 @@ database operations are generally faster when compared to relational databases.
 On top of this, many non-relational solutions implement in-memory storage,
 caching, and efficient indexing techniques, improving the performance even more.
 
-Flexibility is another crucial benefit.
+Flexibility is another key benefit.
 Unlike \gls{SQL} databases that restrict the data to predefined rigid schemas,
 \gls{NoSQL} databases allow for dynamic schema changes, meaning that fields can
 be added or removed to the schema on the fly without requiring database
@@ -883,11 +941,11 @@ between nodes, leading to inconsistency in the meantime and leading to
 consistency in the end \cite{Yadav2024}.
 
 Another challenge is having limited query capabilities.
-\gls{NoSQL} databases don't support complex queries with features like JOINs,
+\gls{NoSQL} databases do not support complex queries with features like JOINs,
 aggregations etc., making querying less flexible. Some databases have query
 languages like \gls{SQL}, but even those are not as powerful as \gls{SQL} queries.
 
-Additionally, there's also the problem of data duplication.
+There is also the problem of data duplication.
 In order to improve reading performance, some data is replicated across
 multiple documents or collections, increasing storage requirements, and
 making consistency harder to maintain \cite{bdcc7020097}.
@@ -926,10 +984,10 @@ are essential to the reduction of this problem.
 \subsection{Applications and Use Cases}
 Choosing the right databases to use is an important part of system design. This
 choice must have into account the system requirements. Relational databases are
-ideal when the system requires \gls{ACID} compliance. It's also a good choice for
+ideal when the system requires \gls{ACID} compliance. It is also a good choice for
 data that requires a rigid structure, consistency, or relies heavily on
 relationships between data. \gls{NoSQL} databases are mostly used for unstructured
-data, where flexibility is a crucial requirement.
+data, where flexibility is a key requirement.
 
 In many cases, the best choice is a hybrid approach with different databases
 being used for different types of data.
@@ -951,12 +1009,40 @@ relational databases, they are optimized in \gls{TSDB}s, making
 real-time analytics more efficient.
 
 \gls{NoSQL}, more precisely, document or column oriented databases, in the \gls{IoT} systems
-context, can also be a great choice for storing unstructured data that isn't
+context, can also be a great choice for storing unstructured data that is not
 time-based, for example, events spotted from analyzing sensor data.
 
 Lastly, for the web application, key-value databases like Redis can be useful
 for caching, and relational databases can be used for handling, for example,
 role-based access.
+
+Table~\ref{tab:database-synthesis} summarizes the main trade-offs of the
+database families discussed in this section.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Synthesis of database families for \gls{IoT} systems.}
+	\label{tab:database-synthesis}
+	\renewcommand{\arraystretch}{1.15}
+	\footnotesize
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{2cm} >{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.4cm}}
+		\toprule
+		\textbf{Database Family} & \textbf{Schema Model} & \textbf{Scalability} & \textbf{Query Strengths} & \textbf{Main Trade-Off} & \textbf{Best IoT Use} \\
+		\midrule
+		Relational & Fixed schema with tables and relations & Mostly vertical, with more complex horizontal scaling & Complex joins, transactional consistency, and structured queries & Rigid schema and harder scaling at very high volume & Users, devices, permissions, rules, and other structured metadata \\
+		NoSQL & Flexible documents, columns, graphs, or key-value pairs & Strong horizontal scaling & Fast access to semi-structured data and flexible records & Weaker consistency guarantees and limited relational queries & Flexible event records, cached views, and non-relational data \\
+		Time-Series & Timestamp-indexed records & High write scalability for telemetry workloads & Time-window queries, aggregations, and monitoring metrics & Less suitable for rich relational models and non-temporal data & Sensor telemetry, metrics, and high-frequency monitoring data \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Database selection should follow the data shape and the expected access
+patterns. In the context of this thesis, relational databases are the best fit
+for structured metadata and access control, time-series databases are the best
+fit for telemetry, and \gls{NoSQL} databases are useful for flexible
+non-time-based records. For many \gls{IoT} systems, the most adequate solution
+is therefore a hybrid one, with each database family being used where its
+strengths matter most.
 
 \section{Frontend Development}
 The frontend is the part of a web application that runs in the user's browser and
@@ -972,16 +1058,16 @@ to the languages that the browsers can understand, which are \gls{HTML} for
 markup, \gls{CSS} for styling, and Javascript for scripting.
 
 \subsection{Frameworks and Libraries}
-With the advance of technology, many libraries were created to facilitate the
+With the advance of technology, many libraries were created to simplify the
 frontend development experience. This section addresses the most popular
 frontend web development JavaScript libraries and frameworks.
 \subsubsection{ReactJS}
 ReactJS is an open-source javascript library created by Facebook in 2013 that
-simplifies the development of complex and dynamic user interfaces. It's the most widely
+simplifies the development of complex and dynamic user interfaces. It is the most widely
 used library of its kind.
 ReactJS applications are built using components. Components are reusable pieces of
-code that represent a part of the \gls{UI}, e.g., a button, a forml, or an entire section.
-Each component has its own logic and styling, and it's declarative, i.e., the
+code that represent a part of the \gls{UI}, e.g., a button, a form, or an entire section.
+Each component has its own logic and styling, and it is declarative, i.e., the
 component defines what the \gls{UI} should look like for a given state.
 Components can be nested inside other components to build more complex \gls{UI}s.
 The components are developed using JavaScript for scripting and JavaScript \gls{XML} (\gls{JSX}),
@@ -1000,7 +1086,7 @@ web application. Besides that, NextJS has several more advantages over ReactJS
 adding features such as file-system-based routing, \gls{SSR}
 and automatic code splitting.
 
-One of ReactJS problems is that it doesn't have built-in support for routing,
+One of ReactJS problems is that it does not have built-in support for routing,
 meaning that the page routing needed to be handled using third-party libraries
 like react-router-dom. NextJS solves this issue by having a file-system based
 routing. This works by automatically mapping every page file (a \gls{JSX}/\gls{TSX}
@@ -1009,14 +1095,14 @@ relative to the app folder, which means that a file in app/report/test/page.tsx
 is mapped to the endpoint report/test.
 
 Another improvement of NextJS relative to ReactJS is that it allows \gls{SSR}. In
-\gls{CSR}, used by ReactJS, the server sends to the server a small
+\gls{CSR}, used by ReactJS, the server sends to the client a small
 \gls{HTML} document and a link to the JavaScript, which the client needs to download
 and run. On the other side, with \gls{SSR}, the server sends to the browser the
 full \gls{HTML} document, which it just needs to render \cite{Salanke_A.R_G.S_Dalali_2022}.
 
 Apart from the clear performance increase, the \gls{SSR} also improves the \gls{SEO}.
 This happens because the search engine scans the static
-\gls{HTML} page and doesn't take into account the dynamic \gls{HTML} created after by
+\gls{HTML} page and does not take into account the dynamic \gls{HTML} created after by
 the script. \gls{SEO} can also be improved in another way, through the website
 metadata (title, description, keywords, etc.), which NextJS also makes easier to
 manage because of its ready-to-use Head component \cite{NextjsSSR}.
@@ -1064,10 +1150,10 @@ of data in real-time. Data pipelines must ensure scalability, fault tolerance,
 efficiency, data quality, and real-time processing.
 
 \subsection{ETL for IoT}
-\gls{ETL} is a workflow that transforms raw data into data that is ready for
-store. \gls{IoT} systems use \gls{ETL} pipelines to process and store data from sensors,
+\gls{ETL} is a workflow that transforms raw data into data that is ready to be
+stored and analyzed. \gls{IoT} systems use \gls{ETL} pipelines to process and store data from sensors,
 smart devices, and edge computing nodes. Figure \ref{fig:etl:pipeline}
-ilustrates the \gls{ETL} pipeline, with the data being extracted from de devices,
+illustrates the \gls{ETL} pipeline, with the data being extracted from the devices,
 transformed and then loaded to the database\cite{singu2022etl}.
 
 \begin{figure}[htbp]
@@ -1077,25 +1163,26 @@ transformed and then loaded to the database\cite{singu2022etl}.
 	\label{fig:etl:pipeline}
 \end{figure}
 
-\subsubsection{Extract}
-The first step is the extraction. In this step, the raw data is collected from
-\gls{IoT} devices, \gls{API}s, cloud platforms, or edge systems. This can be done through
-\gls{MQTT} brokers, \gls{HTTP} or \gls{CoAP} endpoints, Apache Kafka streams, or \gls{IoT} gateways.
+The extract stage collects raw data from \gls{IoT} devices, \gls{API}s, cloud
+platforms, or edge systems. This can be done through \gls{MQTT} brokers,
+\gls{HTTP} or \gls{CoAP} endpoints, Apache Kafka streams, or \gls{IoT}
+gateways.
 
-\subsubsection{Transform}
-The extracted data is then transformed through a sequence of processes. These
-processes, among others, include cleaning, filtering, and enriching.
-In the first, the data is cleaned, filtering noise, removing duplicates, and
-null values. In the filtering, the data is filtered, discarding irrelevant data
-for the purpose. For example, if the purpose is to use a temperature sensor to
-check for high temperatures, this process discards all the data that is
-considered a normal temperature. The data can also be enriched with metadata
-like timestamps, device location, etc. \cite{singu2022etl}. This stage can be done on the edge, on
-the cloud, or using a hybrid approach. There are cloud tools like Apache NiFi
-and \gls{AWS} \gls{IoT} Analytics designed for transforming data.
+After collection, the data is transformed through processes such as cleaning,
+filtering, and enrichment. Cleaning removes noise, duplicates, and null
+values. Filtering discards data that is not relevant for the target analysis.
+For example, if the goal is to detect high temperatures, the pipeline can
+discard measurements that remain within the normal range. The data can also be
+enriched with metadata such as timestamps and device location
+\cite{singu2022etl}. This stage can run on the edge, in the cloud, or in a
+hybrid setup. Tools such as Apache NiFi and \gls{AWS} \gls{IoT} Analytics
+support this kind of transformation.
 
-\subsubsection{Load}
-Load is the stage in which the transformed data is stored in databases.
+In the last stage, the transformed data is loaded into the systems that
+support the application, such as relational databases, time-series databases,
+object stores, or analytical repositories. This stage influences how
+efficiently the data can later be queried, aggregated, and exposed to
+dashboards or analytics services.
 
 \subsection{Business Intelligence}
 \gls{BI} refers to the strategies, technologies, and tools used to process and
@@ -1103,6 +1190,12 @@ analyze raw data for decision-making, monitoring, and strategic planning.
 This data can be shown through data visualization tools and analytics.
 In \gls{IoT} systems, \gls{BI} tools are essential to understand trends, detect
 anomalies, and optimize operations.
+
+In practical terms, \gls{BI} connects data collection, storage, analysis, and
+presentation so that raw telemetry becomes information that operators can
+inspect and act on. It is not limited to dashboards. It also includes the
+processes that prepare the data for comparison, trend analysis, and operational
+decision-making.
 
 The data visualization can be done through dashboards for monitoring real-time
 metrics, geospatial maps for visualization of devices or anomalies locations,
@@ -1115,6 +1208,12 @@ Prescriptive analytics use the predictions generated by predictive to recommend
 actions, and lastly, real-time analytics process data in real-time to make
 decisions instantly \cite{Adi2020}.
 
+These categories are complementary. Descriptive and diagnostic analytics help
+explain what has already happened, predictive and prescriptive analytics
+support future decisions, and real-time analytics supports immediate
+operational response. In monitoring systems, the value of \gls{BI} often comes
+from combining these perspectives instead of relying on only one of them.
+
 There are many \gls{BI} visualization tools available for integration with \gls{IoT} systems.
 Tableau, Microsoft Power BI, Looker, and Grafana are some of the most popular ones.
 
@@ -1123,6 +1222,104 @@ analytics from raw data. Examples include Apache Flink, Apache Spark,
 TensorFlow, and ElasticSearch.
 
 \section{Related Work}
+IoT monitoring platforms have different approaches on how to connect devices, route telemetry,
+and expose data to downstream applications. Cloud platforms usually provide scalable solutions with analytics, and edge
+services. Open-source platforms offer more control over deployment and data
+ownership, but usually require more integration work. This section reviews four solutions, AWS IoT Core, Microsoft Azure IoT Hub, ThingsBoard,
+and FIWARE, and highlights the trade-offs that are most relevant to this thesis.
 
+\subsection{AWS IoT Core}
+AWS IoT Core is a managed cloud platform designed for large-scale deployments.
+It combines secure device connectivity with message routing and
+integration with analytics, storage, and edge services. This makes it a strong
+option for enterprise environments that already rely on AWS and need a platform
+that can scale with high device and message volumes. At the same time, that
+strength comes from a broad ecosystem of services and configuration choices,
+which increases platform coupling and operational complexity. In practice, AWS
+IoT Core is well suited to stable industrial deployments, but it is less
+attractive when the goal is to build a lightweight monitoring pipeline
+\cite{panagou2025comprehensive, s22062196, article5}.
 
+\subsection{Microsoft Azure IoT Hub}
+Microsoft Azure IoT Hub follows a similar cloud-centered strategy. It provides
+bi-directional communication, device management, and integration with Azure
+services for analytics, storage, and edge processing. This modular structure is
+useful in enterprise settings, especially when the solution must fit into a
+larger Microsoft ecosystem. However, the same modularity increases setup effort
+and makes the final architecture depend on several coordinated services. As
+result, Azure IoT Hub offers scalability and flexibility, but not the simplest path
+for a focused monitoring platform that prioritizes a small and adaptable
+ingestion stack \cite{panagou2025comprehensive, s22062196}.
 
+\subsection{ThingsBoard}
+ThingsBoard is an open-source IoT platform that combines device management,
+data collection, processing, and visualization in the same system. It supports
+multiple protocols and provides dashboards and rule-based processing out of the
+box, which makes it attractive for self-hosted deployments and rapid
+development. This is also its main trade-off. ThingsBoard covers many
+concerns at once, from transport integration to user-facing visualization,
+which is useful for general IoT solutions but broader than needed for a more
+focused monitoring platform. For this thesis, it is an important reference
+because it shows the advantages of an integrated open-source platform, while
+also showing the cost of carrying features that are outside the main ingestion
+and processing path \cite{app12042172}.
+
+\subsection{FIWARE}
+FIWARE takes a different approach. Instead of offering a single vertically
+integrated platform, it defines a set of open standards and reusable
+components for context data management, with the context broker model at its
+core. This makes FIWARE especially strong in interoperability, integration with
+external services, and cross-domain scenarios where several systems need to
+share the same context. The trade-off is that a complete
+solution usually requires assembling multiple components, which gives more
+flexibility but also increases the effort. In the context of this
+thesis, FIWARE is a relevant reference because it represents the opposite end
+of the spectrum from a tightly scoped platform: it is open, extensible, and
+powerful, but heavier to configure for a focused telemetry monitoring solution
+\cite{app12042172}.
+
+\subsection{Related Work Synthesis}
+These platforms show two recurring trade-offs. AWS IoT Core and Azure IoT Hub
+provide scale and managed services, but they also tie the solution closely to
+their cloud ecosystems. ThingsBoard and FIWARE provide more deployment control,
+but they either combine many concerns in one platform or require more
+integration work. None of them is primarily designed for a lightweight,
+event-driven monitoring platform that accepts heterogeneous device data,
+transforms it with limited schema assumptions, and exposes it to a custom
+application stack. This gap motivates the platform proposed in this thesis \cite{panagou2025comprehensive, app12042172}.
+
+The proposed approach addresses the gaps identified in this synthesis, namely
+the need for a lightweight event-driven monitoring platform that accepts
+heterogeneous device data, supports extensibility, keeps deployment under the
+developer's control, and continues operating during temporary connectivity
+loss.
+
+Table~\ref{tab:related-work-comparison} summarizes the same discussion using
+the five design goals adopted in this thesis: genericity, real-time
+processing, extensibility, security, and offline resilience. In this context,
+genericity refers to accepting heterogeneous device data with limited schema
+assumptions. Security and offline resilience are included because they are
+explicit design goals of this thesis, even when they are not the main focus of
+every platform reviewed. In this table, \textit{Strong} means that the goal is
+central to the platform design, \textit{Partial} means that it is supported but
+not as a defining property, and \textit{Weak} means that it is outside the
+main focus of the platform.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Comparison of related platforms against the main design goals of this thesis.}
+	\label{tab:related-work-comparison}
+	\renewcommand{\arraystretch}{1.15}
+	\footnotesize
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X}
+		\toprule
+		\textbf{Platform}       & \textbf{Genericity} & \textbf{Real-Time Processing} & \textbf{Extensibility} & \textbf{Security} & \textbf{Offline Resilience} \\
+		\midrule
+		AWS IoT Core            & Partial             & Strong                        & Strong                 & Strong            & Partial                     \\
+		Microsoft Azure IoT Hub & Partial             & Strong                        & Strong                 & Strong            & Partial                     \\
+		ThingsBoard             & Strong              & Strong                        & Strong                 & Partial           & Strong                      \\
+		FIWARE                  & Strong              & Partial                       & Strong                 & Partial           & Weak                        \\
+		Proposed platform       & Strong              & Strong                        & Strong                 & Strong            & Strong                      \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
